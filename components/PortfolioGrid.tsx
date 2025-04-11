@@ -25,10 +25,10 @@ export function PortfolioGrid({ items, tipos }: PortfolioGridProps) {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       {/* Filter buttons */}
       {tipos.length > 0 && (
-        <div className="flex flex-wrap gap-3 justify-center mb-12">
+        <div className="flex flex-wrap gap-3 justify-center mb-8">
           <button
             onClick={() => setSelectedTipo(null)}
             className={`px-6 py-3 rounded-full text-base font-medium transition-colors
@@ -54,9 +54,9 @@ export function PortfolioGrid({ items, tipos }: PortfolioGridProps) {
       )}
 
       {/* Pinterest-style masonry grid */}
-      <div className="columns-1 md:columns-2 gap-6 space-y-6 [&>*]:break-inside-avoid">
+      <div className="columns-1 md:columns-2 gap-3 [&>*]:break-inside-avoid">
         {filteredItems.map((item) => (
-          <div key={item.id} className="mb-6 transform transition-transform hover:scale-[1.01]">
+          <div key={item.id} className="mb-3 transform transition-transform hover:scale-[1.01]">
             <PortfolioCard item={item} />
           </div>
         ))}

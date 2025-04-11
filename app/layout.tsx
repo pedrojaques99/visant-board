@@ -33,7 +33,7 @@ export default function RootLayout({
           <main className="min-h-screen flex flex-col items-center">
             <Navigation />
             <div className="flex-1 w-full flex flex-col gap-20 items-center">
-              <div className="flex flex-col gap-20 max-w-5xl p-5 w-full">
+              <div className="flex flex-col gap-20 max-w-7xl p-5 w-full">
                 {children}
               </div>
             </div>
