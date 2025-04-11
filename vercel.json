@@ -3,9 +3,27 @@
   "devCommand": "next dev",
   "installCommand": "npm install",
   "framework": "nextjs",
-  "regions": ["all"],
+  "regions": ["iad1"],
   "env": {
     "NEXT_PUBLIC_SUPABASE_URL": "your-supabase-url",
     "NEXT_PUBLIC_SUPABASE_ANON_KEY": "your-supabase-anon-key"
-  }
+  },
+  "functions": {
+    "app/**/*": {
+      "memory": 1024,
+      "maxDuration": 10,
+      "regions": ["iad1"]
+    }
+  },
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "x-vercel-region",
+          "value": "iad1"
+        }
+      ]
+    }
+  ]
 } 
