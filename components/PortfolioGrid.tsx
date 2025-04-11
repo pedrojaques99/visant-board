@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { PortfolioItem } from '@/utils/coda';
 import { PortfolioCard } from './PortfolioCard';
-import { FilterBar } from './FilterBar';
 
 interface PortfolioGridProps {
   items: PortfolioItem[];
@@ -13,37 +12,55 @@ interface PortfolioGridProps {
 export function PortfolioGrid({ items, tipos }: PortfolioGridProps) {
   const [selectedTipo, setSelectedTipo] = useState<string | null>(null);
 
-  if (!items || !Array.isArray(items)) {
+  const filteredItems = selectedTipo
+    ? items.filter((item) => item.type === selectedTipo)
+    : items;
+
+  if (!items?.length) {
     return (
       <div className="text-center py-12">
-        <p className="text-destructive">Error: Invalid portfolio items data</p>
+        <p className="text-muted-foreground">No portfolio items found.</p>
       </div>
     );
   }
 
-  const filteredItems = selectedTipo
-    ? items.filter(item => item.type === selectedTipo)
-    : items;
-
   return (
     <div className="space-y-8">
-      <FilterBar
-        tipos={tipos}
-        selectedTipo={selectedTipo}
-        onTipoChange={setSelectedTipo}
-      />
-      
-      {filteredItems.length > 0 ? (
-        <div className="grid gap-4 sm:gap-6 md:gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {filteredItems.map((item) => (
-            <PortfolioCard key={item.id} item={item} />
+      {/* Filter buttons */}
+      {tipos.length > 0 && (
+        <div className="flex flex-wrap gap-3 justify-center mb-12">
+          <button
+            onClick={() => setSelectedTipo(null)}
+            className={`px-6 py-3 rounded-full text-base font-medium transition-colors
+              ${!selectedTipo 
+                ? 'bg-primary text-primary-foreground' 
+                : 'bg-muted hover:bg-muted/80'}`}
+          >
+            All
+          </button>
+          {tipos.map((tipo) => (
+            <button
+              key={tipo}
+              onClick={() => setSelectedTipo(tipo)}
+              className={`px-6 py-3 rounded-full text-base font-medium transition-colors
+                ${selectedTipo === tipo 
+                  ? 'bg-primary text-primary-foreground' 
+                  : 'bg-muted hover:bg-muted/80'}`}
+            >
+              {tipo}
+            </button>
           ))}
         </div>
-      ) : (
-        <div className="text-center py-12 rounded-lg border border-border bg-muted/40">
-          <p className="text-muted-foreground">No projects found for this category.</p>
-        </div>
       )}
+
+      {/* Pinterest-style masonry grid */}
+      <div className="columns-1 md:columns-2 gap-6 space-y-6 [&>*]:break-inside-avoid">
+        {filteredItems.map((item) => (
+          <div key={item.id} className="mb-6 transform transition-transform hover:scale-[1.01]">
+            <PortfolioCard item={item} />
+          </div>
+        ))}
+      </div>
     </div>
   );
 } 

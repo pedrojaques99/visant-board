@@ -10,8 +10,8 @@ export default async function PortfolioPage() {
 
   return (
     <main className="min-h-screen bg-background antialiased">
-      <div className="max-w-7xl mx-auto py-8 sm:py-12 px-4 sm:px-6 lg:px-8">
-        <div className="text-center space-y-4">
+      <div className="max-w-[95%] mx-auto py-8 sm:py-12 px-4">
+        <div className="text-center space-y-4 mb-8">
           <h1 className="text-4xl sm:text-5xl font-bold tracking-tight text-foreground">
             Portfolio
           </h1>
