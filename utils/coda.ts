@@ -30,6 +30,13 @@ export interface PortfolioItem {
   image04: string;
 }
 
+interface PortfolioDataResponse {
+  success: boolean;
+  items?: PortfolioItem[];
+  tipos?: string[];
+  error?: string;
+}
+
 export async function testCodaAccess() {
   try {
     // First test the API token with a general API call
@@ -198,7 +205,7 @@ function collectImagesFromRow(values: any): string[] {
   return images.filter(url => typeof url === 'string' && url.trim().length > 0);
 }
 
-export async function getPortfolioData() {
+export async function getPortfolioData(): Promise<PortfolioDataResponse> {
   try {
     const response = await fetch(`${CODA_API_BASE}/docs/${CODA_DOC_ID}/tables/grid-7B5GsoqgKn/rows`, {
       headers: {
@@ -228,12 +235,12 @@ export async function getPortfolioData() {
     }));
 
     // Extract unique types for filtering
-    const tipos = new Set(items.map((item: PortfolioItem) => item.type).filter(Boolean));
+    const uniqueTypes = Array.from(new Set(items.map((item: PortfolioItem) => item.type))).filter(Boolean) as string[];
 
     return {
       success: true,
       items,
-      tipos: Array.from(tipos),
+      tipos: uniqueTypes
     };
   } catch (error) {
     console.error('Error fetching portfolio data:', error);
