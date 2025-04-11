@@ -18,7 +18,7 @@ function Loader() {
 }
 
 function Model() {
-  const gltf = useLoader(GLTFLoader, '/models/visant 3d gradient.glb');
+  const gltf = useLoader(GLTFLoader, '/models/visant 3d gradient 2.glb');
   const modelRef = useRef<THREE.Group>();
   const [hovered, setHovered] = useState(false);
   const { camera } = useThree();
