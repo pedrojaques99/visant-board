@@ -1,7 +1,7 @@
 import { getPortfolioItemById } from '@/utils/coda';
 import Image from 'next/image';
-import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import { Breadcrumb } from '@/components/ui/breadcrumb';
 
 interface Props {
   params: {
@@ -24,23 +24,24 @@ export default async function ProjectPage({ params }: Props) {
     .map(url => url.trim())
     .filter(url => url.length > 0 && url.startsWith('http'));
 
-  return (
-    <div className="min-h-screen bg-background">
-      <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-        {/* Back button */}
-        <Link 
-          href="/portfolio"
-          className="inline-flex items-center text-sm font-medium text-muted-foreground hover:text-foreground mb-8"
-        >
-          <svg className="mr-2 h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-            <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clipRule="evenodd" />
-          </svg>
-          Back to Portfolio
-        </Link>
+  const breadcrumbItems = [
+    { label: 'Home', href: '/' },
+    { label: 'Portfolio', href: '/portfolio' },
+    { label: item.title || 'Project Details' },
+  ];
 
+  return (
+    <main className="min-h-screen bg-background antialiased pb-12">
+      <div className="border-b bg-muted/40">
+        <div className="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
+          <Breadcrumb items={breadcrumbItems} />
+        </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto pt-8 px-4 sm:px-6 lg:px-8">
         {/* Project header */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-4">
+        <div className="mb-8 sm:mb-12">
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-foreground mb-4">
             {item.title || 'Untitled Project'}
           </h1>
           <div className="flex items-center gap-4 flex-wrap">
@@ -64,17 +65,17 @@ export default async function ProjectPage({ params }: Props) {
 
         {/* Project description */}
         {(item.description || item.ptbr) && (
-          <div className="prose max-w-none mb-12">
+          <div className="prose prose-gray dark:prose-invert max-w-none mb-12">
             {item.description && (
-              <div className="mb-4">
-                <h3 className="text-lg font-semibold mb-2">Description</h3>
-                <p className="text-muted-foreground">{item.description}</p>
+              <div className="mb-8">
+                <h2 className="text-xl font-semibold mb-3 text-foreground">Description</h2>
+                <p className="text-muted-foreground text-lg">{item.description}</p>
               </div>
             )}
             {item.ptbr && (
               <div>
-                <h3 className="text-lg font-semibold mb-2">Descrição</h3>
-                <p className="text-muted-foreground">{item.ptbr}</p>
+                <h2 className="text-xl font-semibold mb-3 text-foreground">Descrição</h2>
+                <p className="text-muted-foreground text-lg">{item.ptbr}</p>
               </div>
             )}
           </div>
@@ -82,9 +83,12 @@ export default async function ProjectPage({ params }: Props) {
 
         {/* Project images */}
         {images.length > 0 ? (
-          <div className="grid gap-8">
+          <div className="grid gap-6 sm:gap-8 md:gap-10">
             {images.map((imageUrl, index) => (
-              <div key={imageUrl} className="relative aspect-video w-full overflow-hidden rounded-lg shadow-lg">
+              <div 
+                key={imageUrl} 
+                className="relative aspect-video w-full overflow-hidden rounded-lg shadow-lg bg-muted"
+              >
                 <Image
                   src={imageUrl}
                   alt={`${item.title || 'Project'} - Image ${index + 1}`}
@@ -98,11 +102,11 @@ export default async function ProjectPage({ params }: Props) {
             ))}
           </div>
         ) : (
-          <div className="text-center py-12 bg-muted rounded-lg">
+          <div className="text-center py-12 rounded-lg border border-border bg-muted/40">
             <p className="text-muted-foreground">No images available for this project</p>
           </div>
         )}
       </div>
-    </div>
+    </main>
   );
 } 

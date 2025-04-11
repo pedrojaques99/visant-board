@@ -16,7 +16,7 @@ export function PortfolioGrid({ items, tipos }: PortfolioGridProps) {
   if (!items || !Array.isArray(items)) {
     return (
       <div className="text-center py-12">
-        <p className="text-red-500">Error: Invalid portfolio items data</p>
+        <p className="text-destructive">Error: Invalid portfolio items data</p>
       </div>
     );
   }
@@ -26,7 +26,7 @@ export function PortfolioGrid({ items, tipos }: PortfolioGridProps) {
     : items;
 
   return (
-    <div>
+    <div className="space-y-8">
       <FilterBar
         tipos={tipos}
         selectedTipo={selectedTipo}
@@ -34,14 +34,14 @@ export function PortfolioGrid({ items, tipos }: PortfolioGridProps) {
       />
       
       {filteredItems.length > 0 ? (
-        <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-4 sm:gap-6 md:gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {filteredItems.map((item) => (
             <PortfolioCard key={item.id} item={item} />
           ))}
         </div>
       ) : (
-        <div className="text-center py-12">
-          <p className="text-gray-500">No projects found for this category.</p>
+        <div className="text-center py-12 rounded-lg border border-border bg-muted/40">
+          <p className="text-muted-foreground">No projects found for this category.</p>
         </div>
       )}
     </div>
