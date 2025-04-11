@@ -1,16 +1,18 @@
 'use client';
 
 import { Suspense, useRef, useState, useEffect } from 'react';
-import { Canvas, useFrame, useLoader } from '@react-three/fiber';
+import { Canvas, useFrame, useLoader, useThree } from '@react-three/fiber';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
-import { Environment, OrbitControls, Float, useProgress, Html } from '@react-three/drei';
+import { Environment, OrbitControls, Float, useProgress, Html, PerspectiveCamera } from '@react-three/drei';
 import * as THREE from 'three';
 
 function Loader() {
   const { progress } = useProgress();
   return (
     <Html center>
-      <span className="text-foreground">{progress.toFixed(0)}%</span>
+      <div className="px-4 py-2 rounded-md bg-background/80 backdrop-blur-sm border border-border/50">
+        <span className="text-sm text-foreground">Loading {progress.toFixed(0)}%</span>
+      </div>
     </Html>
   );
 }
@@ -19,35 +21,44 @@ function Model() {
   const gltf = useLoader(GLTFLoader, '/models/visant 3d gradient.glb');
   const modelRef = useRef<THREE.Group>();
   const [hovered, setHovered] = useState(false);
+  const { camera } = useThree();
 
-  // Smooth rotation on mouse move
+  useEffect(() => {
+    if (modelRef.current) {
+      // Center the model
+      const box = new THREE.Box3().setFromObject(modelRef.current);
+      const center = box.getCenter(new THREE.Vector3());
+      modelRef.current.position.sub(center);
+    }
+  }, [gltf]);
+
+  // Smooth rotation and interaction
   useFrame((state, delta) => {
     if (modelRef.current) {
-      // Gentle auto-rotation when not hovered
       if (!hovered) {
-        modelRef.current.rotation.y += delta * 0.1;
-        modelRef.current.rotation.x += delta * 0.1;
+        // Gentle continuous rotation when not interacting
+        modelRef.current.rotation.y += delta * 0.15;
       }
       
-      // Smooth position lerping
-      modelRef.current.position.y = THREE.MathUtils.lerp(
-        modelRef.current.position.y,
-        hovered ? 0.5 : 0,
-        0.9
-      );
+      // Smooth camera movement
+      if (hovered) {
+        camera.position.lerp(new THREE.Vector3(0, 0, 8), 0.1);
+      } else {
+        camera.position.lerp(new THREE.Vector3(0, 0, 10), 0.1);
+      }
     }
   });
 
   return (
     <Float
-      speed={0.1} // Animation speed
-      rotationIntensity={0.5} // Rotation intensity
-      floatIntensity={0.5} // Float intensity
+      speed={1} // Animation speed
+      rotationIntensity={0.6} // Rotation intensity
+      floatIntensity={0.6} // Float intensity
     >
       <primitive
         ref={modelRef}
         object={gltf.scene}
-        scale={5} // Adjust scale as needed
+        scale={4.5} // Adjusted scale
         onPointerOver={() => setHovered(true)}
         onPointerOut={() => setHovered(false)}
         position={[0, 0, 0]}
@@ -62,7 +73,7 @@ export function Logo3D() {
       <Canvas
         camera={{
           position: [0, 0, 10],
-          fov: 95,
+          fov: 45,
           near: 0.1,
           far: 1000
         }}
@@ -72,35 +83,40 @@ export function Logo3D() {
           outputEncoding: THREE.sRGBEncoding,
           alpha: true
         }}
+        dpr={[1, 2]} // Responsive pixel ratio
       >
         <Suspense fallback={<Loader />}>
-          {/* Lighting */}
-          <ambientLight intensity={0.5} />
+          {/* Enhanced lighting setup */}
+          <ambientLight intensity={0.6} />
           <directionalLight
             position={[10, 10, 5]}
-            intensity={0.5}
+            intensity={1}
             castShadow
           />
           <directionalLight
             position={[-10, -10, -5]}
             intensity={0.5}
           />
+          <pointLight position={[0, 0, 5]} intensity={0.5} />
 
           {/* Model */}
           <Model />
 
           {/* Environment and effects */}
-          <Environment preset="night" />
+          <Environment preset="city" />
           
-          {/* Controls */}
+          {/* Enhanced controls */}
           <OrbitControls
-            enableZoom={false}
-            enablePan={true}
+            enableZoom={true}
+            enablePan={false}
+            minDistance={6}
+            maxDistance={15}
             minPolarAngle={Math.PI / 3}
             maxPolarAngle={Math.PI / 1.5}
-            minAzimuthAngle={-Math.PI / 4}
-            maxAzimuthAngle={Math.PI / 4}
-            rotateSpeed={0.2}
+            rotateSpeed={0.5}
+            zoomSpeed={0.8}
+            dampingFactor={0.1}
+            enableDamping={true}
           />
         </Suspense>
       </Canvas>
