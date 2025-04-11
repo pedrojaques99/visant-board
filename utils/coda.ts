@@ -1,0 +1,288 @@
+const CODA_API_TOKEN = process.env.CODA_API_TOKEN;
+const CODA_DOC_ID = process.env.CODA_DOC_ID;
+
+const CODA_API_BASE = 'https://coda.io/apis/v1';
+
+interface CodaTable {
+  id: string;
+  name: string;
+  description?: string;
+  rowCount: number;
+  columns: Array<{
+    id: string;
+    name: string;
+    type: string;
+  }>;
+}
+
+export interface PortfolioItem {
+  id: string;
+  title: string;
+  job: string;
+  client: string;
+  type: string;
+  date: string;
+  description: string;
+  ptbr: string;
+  image01: string;
+  image02: string;
+  image03: string;
+  image04: string;
+}
+
+export async function testCodaAccess() {
+  try {
+    // First test the API token with a general API call
+    const apiTest = await fetch(`${CODA_API_BASE}/whoami`, {
+      headers: {
+        'Authorization': `Bearer ${CODA_API_TOKEN}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!apiTest.ok) {
+      const errorBody = await apiTest.text();
+      throw new Error(`API token validation failed: ${apiTest.status} ${apiTest.statusText}\nDetails: ${errorBody}`);
+    }
+
+    const userInfo = await apiTest.json();
+    console.log('API Token belongs to:', userInfo.name);
+
+    // List all accessible documents
+    const listDocsResponse = await fetch(`${CODA_API_BASE}/docs`, {
+      headers: {
+        'Authorization': `Bearer ${CODA_API_TOKEN}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (listDocsResponse.ok) {
+      const docsData = await listDocsResponse.json();
+      console.log('Accessible documents:', docsData.items);
+    }
+
+    // Then test specific document access
+    const response = await fetch(`${CODA_API_BASE}/docs/${CODA_DOC_ID}`, {
+      headers: {
+        'Authorization': `Bearer ${CODA_API_TOKEN}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      const errorBody = await response.text();
+      console.error('Full error response:', errorBody);
+      throw new Error(`Coda API error: ${response.status} ${response.statusText}\nDetails: ${errorBody}`);
+    }
+
+    const data = await response.json();
+    console.log('Coda API Access Test Results:', data);
+    
+    return {
+      success: true,
+      documentName: data.name,
+      accessLevel: data.type,
+      userName: userInfo.name,
+      docId: CODA_DOC_ID
+    };
+  } catch (error) {
+    console.error('Error testing Coda API access:', error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
+      docId: CODA_DOC_ID
+    };
+  }
+}
+
+export async function listCodaTables() {
+  try {
+    // Get all tables in the document
+    const tablesResponse = await fetch(`${CODA_API_BASE}/docs/${CODA_DOC_ID}/tables`, {
+      headers: {
+        'Authorization': `Bearer ${CODA_API_TOKEN}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!tablesResponse.ok) {
+      throw new Error(`Failed to fetch tables: ${tablesResponse.status} ${tablesResponse.statusText}`);
+    }
+
+    const tablesData = await tablesResponse.json();
+    const tables: CodaTable[] = [];
+
+    // Get details for each table
+    for (const table of tablesData.items) {
+      // Get table columns
+      const columnsResponse = await fetch(`${CODA_API_BASE}/docs/${CODA_DOC_ID}/tables/${table.id}/columns`, {
+        headers: {
+          'Authorization': `Bearer ${CODA_API_TOKEN}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!columnsResponse.ok) {
+        console.warn(`Failed to fetch columns for table ${table.name}`);
+        continue;
+      }
+
+      const columnsData = await columnsResponse.json();
+      
+      // Get sample rows (first 5 rows)
+      const rowsResponse = await fetch(`${CODA_API_BASE}/docs/${CODA_DOC_ID}/tables/${table.id}/rows?limit=5`, {
+        headers: {
+          'Authorization': `Bearer ${CODA_API_TOKEN}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      let rowCount = 0;
+      if (rowsResponse.ok) {
+        const rowsData = await rowsResponse.json();
+        rowCount = rowsData.items.length;
+      }
+
+      tables.push({
+        id: table.id,
+        name: table.name,
+        description: table.description,
+        rowCount: rowCount,
+        columns: columnsData.items.map((col: any) => ({
+          id: col.id,
+          name: col.name,
+          type: col.type
+        }))
+      });
+    }
+
+    return {
+      success: true,
+      tables
+    };
+  } catch (error) {
+    console.error('Error fetching Coda tables:', error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error'
+    };
+  }
+}
+
+// Helper function to collect image URLs from a Coda row
+function collectImagesFromRow(values: any): string[] {
+  const images: string[] = [];
+  console.log('Collecting images from values:', values);
+
+  // Try column IDs first
+  for (let i = 1; i <= 10; i++) {
+    const imageKey = `Image ${i.toString().padStart(2, '0')}`;
+    const columnId = `c-image${i}`; // Replace with actual column IDs if different
+    
+    if (values[imageKey]) {
+      console.log(`Found image at ${imageKey}:`, values[imageKey]);
+      images.push(values[imageKey]);
+    } else if (values[columnId]) {
+      console.log(`Found image at ${columnId}:`, values[columnId]);
+      images.push(values[columnId]);
+    }
+  }
+
+  // Also check for a single image/thumbnail field
+  if (values['Thumbnail'] && !images.includes(values['Thumbnail'])) {
+    console.log('Found thumbnail:', values['Thumbnail']);
+    images.push(values['Thumbnail']);
+  }
+
+  console.log('Collected images:', images);
+  return images.filter(url => typeof url === 'string' && url.trim().length > 0);
+}
+
+export async function getPortfolioData() {
+  try {
+    const response = await fetch(`${CODA_API_BASE}/docs/${CODA_DOC_ID}/tables/grid-7B5GsoqgKn/rows`, {
+      headers: {
+        'Authorization': `Bearer ${CODA_API_TOKEN}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch portfolio data: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    const items = data.items.map((row: any) => ({
+      id: row.id,
+      title: row.values['c-iiN3n6MEYb'] || '',
+      job: row.values['c-XO-i1nglc5'] || '',
+      client: row.values['c-lR6pD7jLuH'] || '',
+      type: row.values['c-Rddnn9er3T'] || '',
+      date: row.values['c-OHfxznTpkF'] || '',
+      description: row.values['c-V1pN1xw0YX'] || '',
+      ptbr: row.values['c-is7YUDQ1sQ'] || '',
+      image01: row.values['c-E8jRBgytkd'] || '',
+      image02: row.values['c-z1ZQeSebCy'] || '',
+      image03: row.values['c-pGUgOu2reI'] || '',
+      image04: row.values['c-W6-LDMJSKa'] || '',
+    }));
+
+    // Extract unique types for filtering
+    const tipos = new Set(items.map((item: PortfolioItem) => item.type).filter(Boolean));
+
+    return {
+      success: true,
+      items,
+      tipos: Array.from(tipos),
+    };
+  } catch (error) {
+    console.error('Error fetching portfolio data:', error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
+    };
+  }
+}
+
+export async function getPortfolioItemById(id: string) {
+  try {
+    const response = await fetch(`${CODA_API_BASE}/docs/${CODA_DOC_ID}/tables/grid-7B5GsoqgKn/rows/${id}`, {
+      headers: {
+        'Authorization': `Bearer ${CODA_API_TOKEN}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch portfolio item: ${response.status} ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    
+    const item: PortfolioItem = {
+      id: data.id,
+      title: data.values['c-iiN3n6MEYb'] || '',
+      job: data.values['c-XO-i1nglc5'] || '',
+      client: data.values['c-lR6pD7jLuH'] || '',
+      type: data.values['c-Rddnn9er3T'] || '',
+      date: data.values['c-OHfxznTpkF'] || '',
+      description: data.values['c-V1pN1xw0YX'] || '',
+      ptbr: data.values['c-is7YUDQ1sQ'] || '',
+      image01: data.values['c-E8jRBgytkd'] || '',
+      image02: data.values['c-z1ZQeSebCy'] || '',
+      image03: data.values['c-pGUgOu2reI'] || '',
+      image04: data.values['c-W6-LDMJSKa'] || '',
+    };
+
+    return {
+      success: true,
+      item
+    };
+  } catch (error) {
+    console.error('Error fetching portfolio item:', error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error'
+    };
+  }
+} 

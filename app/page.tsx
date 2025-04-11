@@ -1,16 +1,22 @@
-import Hero from "@/components/hero";
-import ConnectSupabaseSteps from "@/components/tutorial/connect-supabase-steps";
-import SignUpUserSteps from "@/components/tutorial/sign-up-user-steps";
-import { hasEnvVars } from "@/utils/supabase/check-env-vars";
-
-export default async function Home() {
+export default function Home() {
   return (
-    <>
-      <Hero />
-      <main className="flex-1 flex flex-col gap-6 px-4">
-        <h2 className="font-medium text-xl mb-4">Next steps</h2>
-        {hasEnvVars ? <SignUpUserSteps /> : <ConnectSupabaseSteps />}
-      </main>
-    </>
+    <main className="flex-1 flex flex-col items-center justify-center min-h-screen p-4">
+      <div className="max-w-2xl w-full space-y-8 text-center">
+        <h1 className="text-4xl font-bold tracking-tight">
+          Welcome to Visant®
+        </h1>
+        <p className="text-muted-foreground">
+          Where visionarybrands are born.
+        </p>
+        <div className="flex gap-4 justify-center">
+          <a
+            href="/protected"
+            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+          >
+            Explore our work
+          </a>
+        </div>
+      </div>
+    </main>
   );
 }
