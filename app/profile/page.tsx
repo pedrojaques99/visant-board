@@ -3,6 +3,10 @@ import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import Image from 'next/image';
 
+// Add region configuration for Vercel deployment
+export const runtime = 'nodejs';
+export const preferredRegion = 'iad1'; // US East (N. Virginia)
+
 export default async function ProfilePage() {
   const supabase = createServerComponentClient({ cookies });
   const { data: { session } } = await supabase.auth.getSession();

@@ -1,5 +1,9 @@
 import { listCodaTables } from '@/utils/coda';
 
+// Add region configuration for Vercel deployment
+export const runtime = 'nodejs';
+export const preferredRegion = 'iad1'; // US East (N. Virginia)
+
 export default async function TablesPage() {
   const result = await listCodaTables();
 

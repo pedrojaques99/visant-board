@@ -3,6 +3,10 @@ import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { Breadcrumb } from '@/components/ui/breadcrumb';
 
+// Add region configuration for Vercel deployment
+export const runtime = 'nodejs';
+export const preferredRegion = 'iad1'; // US East (N. Virginia)
+
 interface Props {
   params: {
     id: string;

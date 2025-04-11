@@ -1,5 +1,9 @@
 import { testCodaAccess } from '@/utils/coda';
 
+// Add region configuration for Vercel deployment
+export const runtime = 'nodejs';
+export const preferredRegion = 'iad1'; // US East (N. Virginia)
+
 export default async function TestCodaPage() {
   const result = await testCodaAccess();
 

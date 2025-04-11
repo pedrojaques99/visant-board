@@ -1,3 +1,7 @@
+// Add region configuration for Vercel deployment
+export const runtime = 'nodejs';
+export const preferredRegion = 'iad1'; // US East (N. Virginia)
+
 const CODA_API_TOKEN = process.env.CODA_API_TOKEN;
 const CODA_DOC_ID = process.env.CODA_DOC_ID;
 

@@ -1,6 +1,10 @@
 import { createClient } from "@/utils/supabase/server";
 import { InfoIcon } from "lucide-react";
 
+// Add region configuration for Vercel deployment
+export const runtime = 'nodejs';
+export const preferredRegion = 'iad1'; // US East (N. Virginia)
+
 export default async function ProtectedPage() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();

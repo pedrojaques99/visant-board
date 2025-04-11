@@ -1,6 +1,10 @@
 import { getPortfolioData } from '@/utils/coda';
 import { PortfolioGrid } from '@/components/PortfolioGrid';
 
+// Add region configuration for Vercel deployment
+export const runtime = 'nodejs';
+export const preferredRegion = 'iad1'; // US East (N. Virginia)
+
 export default async function PortfolioPage() {
   const result = await getPortfolioData();
 
