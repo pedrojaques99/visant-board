@@ -107,15 +107,12 @@ export function Logo3D() {
           
           {/* Enhanced controls */}
           <OrbitControls
-            enableZoom={true}
+            enableZoom={false}
             enablePan={false}
-            minDistance={6}
-            maxDistance={15}
             minPolarAngle={Math.PI / 3}
             maxPolarAngle={Math.PI / 1.5}
-            rotateSpeed={0.5}
-            zoomSpeed={0.8}
-            dampingFactor={0.1}
+            rotateSpeed={0.4}
+            dampingFactor={0.05}
             enableDamping={true}
           />
         </Suspense>

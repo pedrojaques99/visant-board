@@ -14,7 +14,7 @@ export default function Hero() {
         <div className="absolute inset-0 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity duration-300 pointer-events-none">
           <div className="px-6 py-3 rounded-full bg-background/80 backdrop-blur-sm border border-border/50">
             <p className="text-sm text-muted-foreground">
-              Drag to rotate • Scroll to zoom
+              Click and drag to rotate
             </p>
           </div>
         </div>
