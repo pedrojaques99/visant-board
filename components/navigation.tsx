@@ -90,7 +90,7 @@ export function Navigation() {
         <div className="flex items-center gap-6">
           <NavLink href="/about" translationKey="navigation.about" fallback="About" />
           <NavLink href="/portfolio" translationKey="navigation.portfolio" fallback="Portfolio" />
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-3 ml-1">
             <ThemeSwitcher />
             <LanguageSwitcher />
           </div>

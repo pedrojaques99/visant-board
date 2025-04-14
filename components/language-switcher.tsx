@@ -8,10 +8,11 @@ import {
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Languages } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useI18n } from "@/context/i18n-context";
 import { Check } from "lucide-react";
+import { FlagIcon } from "@/components/ui/flag-icon";
+import { cn } from "@/lib/utils";
 
 const LanguageSwitcher = () => {
   const [mounted, setMounted] = useState(false);
@@ -30,39 +31,41 @@ const LanguageSwitcher = () => {
     setLocale(newLanguage);
   };
 
-  const ICON_SIZE = 16;
-
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size={"sm"} className="relative">
-          <Languages
-            size={ICON_SIZE}
-            className={"text-muted-foreground"}
+        <Button variant="ghost" size="sm" className="relative w-8 h-8 p-0">
+          <FlagIcon 
+            country={locale === 'en' ? 'us' : 'br'} 
+            className="text-muted-foreground"
           />
-          <span className="absolute -top-1 -right-1 text-[10px] font-bold bg-primary text-primary-foreground rounded-full w-4 h-4 flex items-center justify-center">
-            {locale === 'en' ? 'EN' : 'PT'}
-          </span>
+          <span className="sr-only">Switch language</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-32" align="end">
+      <DropdownMenuContent className="w-40" align="end">
         <DropdownMenuRadioGroup
           value={locale}
           onValueChange={handleLanguageChange}
         >
           <DropdownMenuRadioItem 
-            className="flex items-center justify-between px-3 py-2 cursor-pointer" 
+            className="flex items-center gap-2 px-3 py-2.5 cursor-pointer pl-3" 
             value="en"
           >
-            <span>English</span>
-            {locale === "en" && <Check size={16} className="text-primary" />}
+            <FlagIcon country="us" size={18} />
+            <span className="ml-1">English</span>
+            {locale === "en" && (
+              <Check size={16} className="ml-auto text-primary" />
+            )}
           </DropdownMenuRadioItem>
           <DropdownMenuRadioItem 
-            className="flex items-center justify-between px-3 py-2 cursor-pointer" 
+            className="flex items-center gap-2 px-3 py-2.5 cursor-pointer pl-3" 
             value="pt-br"
           >
-            <span>Português</span>
-            {locale === "pt-br" && <Check size={16} className="text-primary" />}
+            <FlagIcon country="br" size={18} />
+            <span className="ml-1">Português</span>
+            {locale === "pt-br" && (
+              <Check size={16} className="ml-auto text-primary" />
+            )}
           </DropdownMenuRadioItem>
         </DropdownMenuRadioGroup>
       </DropdownMenuContent>
