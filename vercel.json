@@ -4,8 +4,11 @@
   "installCommand": "npm install",
   "framework": "nextjs",
   "env": {
-    "NEXT_PUBLIC_SUPABASE_URL": "your-supabase-url",
-    "NEXT_PUBLIC_SUPABASE_ANON_KEY": "your-supabase-anon-key"
+    "NEXT_PUBLIC_SUPABASE_URL": "https://cndvlwjphohgfgydvgum.supabase.co",
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNuZHZsd2pwaG9oZ2ZneWR2Z3VtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQzODUxMzgsImV4cCI6MjA1OTk2MTEzOH0.kPPgXTz-gdcUdtkXw1GGyo_SmR8qxLvJ3LgiIdkoWD8",
+    "CODA_API_TOKEN": "e0754a6b-3a96-4944-9f3b-68c8e00138c3",
+    "CODA_DOC_ID": "XZ5B1pULuY",
+    "OPENAI_API_KEY": "your-openai-api-key"
   },
   "functions": {
     "app/**/*": {

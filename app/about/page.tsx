@@ -10,27 +10,28 @@ import { services, team, fadeInUp } from './constants';
 
 export default function About() {
   return (
-    <main className="min-h-screen bg-background text-foreground">
+    <div className="w-full -mt-20">
       {/* Who we are */}
-      <section className="py-32 px-6 md:px-12 relative overflow-hidden">
-        <div className="absolute inset-0 opacity-30">
+      <section className="min-h-screen relative flex items-center justify-center w-full">
+        <div className="absolute inset-0">
+          <TexturePattern className="w-full h-full opacity-30" />
           <div className="absolute inset-0 bg-gradient-to-b from-[#52ddeb]/5 to-transparent" />
         </div>
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-16">
+        <div className="max-w-[1800px] w-full mx-auto grid grid-cols-1 gap-16 relative z-10 p-5 md:px-12">
           <motion.div
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8 }}
-            className="flex flex-col justify-center"
+            className="flex flex-col justify-center items-center text-center"
           >
             <h1 className="text-5xl md:text-6xl font-bold mb-8 bg-clip-text text-transparent bg-gradient-to-r from-[#52ddeb] to-[#52ddeb]/70">
               Who we are
             </h1>
-            <p className="text-xl text-muted-foreground leading-relaxed">
+            <p className="text-xl text-muted-foreground leading-relaxed max-w-3xl">
               Visant® is a design studio founded by Pedro Xavier and Pedro Jaques.
               Based in Itajaí and Balneário Camboriú, we help brands grow through clarity, consistency, and beauty.
             </p>
-            <p className="text-xl text-muted-foreground leading-relaxed mt-4">
+            <p className="text-xl text-muted-foreground leading-relaxed mt-4 max-w-3xl">
               We work closely with founders, creatives, and companies that believe in the power of design.
             </p>
           </motion.div>
@@ -38,16 +39,14 @@ export default function About() {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="relative min-h-[400px] rounded-2xl"
-          >
-            <TexturePattern />
-          </motion.div>
+            className="relative min-h-[50px] rounded-2xl hidden md:block"
+          />
         </div>
       </section>
 
       {/* What we do */}
-      <section className="py-32 px-6 md:px-12">
-        <div className="max-w-7xl mx-auto">
+      <section className="w-full py-32">
+        <div className="max-w-[1800px] mx-auto px-5 md:px-12">
           <motion.h2 
             {...fadeInUp}
             className="text-4xl md:text-5xl font-bold mb-20 text-center bg-clip-text text-transparent bg-gradient-to-r from-[#52ddeb] to-[#52ddeb]/70"
@@ -63,8 +62,8 @@ export default function About() {
       </section>
 
       {/* Numbers */}
-      <section className="py-32 px-6 md:px-12">
-        <div className="max-w-8xl mx-auto">
+      <section className="w-full py-32">
+        <div className="max-w-[1800px] mx-auto px-5 md:px-12">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
             <Counter end={50} label="Projects" />
             <Counter end={30} label="Clients" />
@@ -124,6 +123,6 @@ export default function About() {
           </motion.button>
         </div>
       </section>
-    </main>
+    </div>
   );
 } 

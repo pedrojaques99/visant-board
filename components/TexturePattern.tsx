@@ -1,7 +1,13 @@
 'use client';
 
-export const TexturePattern = () => (
-  <div className="relative w-full h-full overflow-hidden rounded-2xl group">
+import { cn } from '../lib/utils';
+
+interface TexturePatternProps {
+  className?: string;
+}
+
+export const TexturePattern = ({ className }: TexturePatternProps) => (
+  <div className={cn("relative w-full h-full overflow-hidden rounded-2xl group", className)}>
     <div className="absolute inset-0 bg-gradient-to-br from-[#52ddeb]/5 to-[#52ddeb]/10 group-hover:from-[#52ddeb]/10 group-hover:to-[#52ddeb]/20 transition-all duration-700" />
     <div className="absolute inset-0 opacity-10 group-hover:opacity-20 transition-opacity duration-700">
       {[...Array(10)].map((_, i) => (

@@ -23,7 +23,10 @@ export default async function ProjectPage({ params }: Props) {
   const { item } = result;
   
   // Collect all valid images
-  const images = [item.image01, item.image02, item.image03, item.image04]
+  const images = Array.from({ length: 25 }, (_, i) => {
+    const key = `image${String(i + 1).padStart(2, '0')}` as keyof typeof item;
+    return item[key];
+  })
     .filter((url): url is string => typeof url === 'string')
     .map(url => url.trim())
     .filter(url => url.length > 0 && url.startsWith('http'));

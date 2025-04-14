@@ -14,8 +14,8 @@ export function PortfolioCard({ item }: PortfolioCardProps) {
   const [showDebug, setShowDebug] = useState(false);
   
   // Validate image URL
-  const imageUrl = typeof item.image01 === 'string' 
-    ? item.image01.trim() 
+  const imageUrl = typeof item.thumb === 'string' 
+    ? item.thumb.trim() 
     : '';
   const hasValidImage = imageUrl.length > 0 && imageUrl.startsWith('http');
 
