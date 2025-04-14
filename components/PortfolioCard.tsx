@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { PortfolioItem } from '@/utils/coda';
 
 interface PortfolioCardProps {
@@ -11,13 +11,23 @@ interface PortfolioCardProps {
 
 export function PortfolioCard({ item }: PortfolioCardProps) {
   const [imageError, setImageError] = useState(false);
+  const [hoverImageErrors, setHoverImageErrors] = useState<Record<string, boolean>>({});
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [isHovering, setIsHovering] = useState(false);
   const [showDebug, setShowDebug] = useState(false);
   
-  // Validate image URL
-  const imageUrl = typeof item.thumb === 'string' 
+  // Validate thumb image URL
+  const thumbUrl = typeof item.thumb === 'string' 
     ? item.thumb.trim() 
     : '';
-  const hasValidImage = imageUrl.length > 0 && imageUrl.startsWith('http');
+  const hasValidThumb = thumbUrl.length > 0 && thumbUrl.startsWith('http');
+
+  // Get all valid hover images (02 to 10)
+  const hoverImages = Array.from({ length: 9 }, (_, i) => {
+    const key = `image${String(i + 2).padStart(2, '0')}` as keyof typeof item;
+    const url = typeof item[key] === 'string' ? item[key].trim() : '';
+    return url.length > 0 && url.startsWith('http') ? url : null;
+  }).filter((url): url is string => url !== null);
 
   // Validate item data
   if (!item || !item.id) {
@@ -34,39 +44,80 @@ export function PortfolioCard({ item }: PortfolioCardProps) {
     );
   }
 
+  // Cycle through images only when hovering
+  useEffect(() => {
+    if (hoverImages.length === 0 || !isHovering) return;
+
+    const interval = setInterval(() => {
+      setCurrentImageIndex((prev) => (prev + 1) % hoverImages.length);
+    }, 200); // Change image every 200ms
+
+    return () => clearInterval(interval);
+  }, [hoverImages.length, isHovering]);
+
   return (
     <Link href={`/portfolio/${item.id}`}>
-      <div className="group relative overflow-hidden rounded-xl bg-muted/40 transition-all duration-300 hover:shadow-xl">
+      <div 
+        className="group relative overflow-hidden rounded-xl bg-muted/40 transition-all duration-300 hover:shadow-xl"
+        onMouseEnter={() => setIsHovering(true)}
+        onMouseLeave={() => {
+          setIsHovering(false);
+          setCurrentImageIndex(0); // Reset to first image when leaving
+        }}
+      >
         {/* Image container with dynamic aspect ratio */}
         <div className="relative w-full">
-          {hasValidImage && !imageError ? (
-            <Image
-              src={imageUrl}
-              alt={item.title || 'Portfolio item'}
-              width={3840}
-              height={2160}
-              className="w-full object-cover transition-transform duration-300 group-hover:scale-105"
-              sizes="(max-width: 768px) 95vw, (max-width: 1280px) 45vw, 45vw"
-              onError={() => {
-                console.error('Image failed to load:', imageUrl);
-                setImageError(true);
-              }}
-              priority={false}
-              quality={90}
-            />
+          {hasValidThumb && !imageError ? (
+            <>
+              {/* Main image */}
+              <Image
+                src={thumbUrl}
+                alt={item.title || 'Portfolio item'}
+                width={3840}
+                height={2160}
+                className="w-full object-cover transition-all duration-300 group-hover:opacity-0"
+                sizes="(max-width: 768px) 95vw, (max-width: 1280px) 45vw, 45vw"
+                onError={() => {
+                  console.error('Image failed to load:', thumbUrl);
+                  setImageError(true);
+                }}
+                priority={false}
+                quality={90}
+              />
+              {/* Hover images */}
+              {hoverImages.map((url, index) => (
+                <Image
+                  key={url}
+                  src={url}
+                  alt={`${item.title || 'Portfolio item'} - View ${index + 2}`}
+                  width={3840}
+                  height={2160}
+                  className={`absolute inset-0 w-full h-full object-cover transition-all duration-200 ${
+                    currentImageIndex === index ? 'opacity-100' : 'opacity-0'
+                  }`}
+                  sizes="(max-width: 768px) 95vw, (max-width: 1280px) 45vw, 45vw"
+                  onError={() => {
+                    console.error('Hover image failed to load:', url);
+                    setHoverImageErrors(prev => ({ ...prev, [url]: true }));
+                  }}
+                  priority={false}
+                  quality={90}
+                />
+              ))}
+            </>
           ) : (
             <div className="aspect-[16/9] w-full bg-muted flex items-center justify-center">
               <span className="text-muted-foreground">No image available</span>
             </div>
           )}
           
-          {/* Overlay with project info */}
-          <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-8">
-            <h3 className="text-2xl font-semibold text-foreground line-clamp-2 mb-3">
+          {/* Overlay with project info - using black gradient */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-8">
+            <h3 className="text-2xl font-semibold text-white line-clamp-2 mb-3">
               {item.title || 'Untitled Project'}
             </h3>
             {item.type && (
-              <span className="inline-block px-4 py-2 rounded-full bg-primary/10 text-primary text-base font-medium">
+              <span className="inline-block px-4 py-2 rounded-full bg-white/10 text-white text-base font-medium">
                 {item.type}
               </span>
             )}

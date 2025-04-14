@@ -46,7 +46,6 @@ export function PortfolioGrid({ items, tipos }: PortfolioGridProps) {
 
   const getResponsiveColumns = () => {
     if (isMobile) return 1;
-    if (cardSize === 1) return 1;
     return columns;
   };
 
