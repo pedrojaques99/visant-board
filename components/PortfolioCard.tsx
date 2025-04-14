@@ -44,7 +44,7 @@ export function PortfolioCard({ item }: PortfolioCardProps) {
     );
   }
 
-  // Cycle through images only when hovering
+  // Cycle through images only when hovering and if we have hover images
   useEffect(() => {
     if (hoverImages.length === 0 || !isHovering) return;
 
@@ -69,13 +69,15 @@ export function PortfolioCard({ item }: PortfolioCardProps) {
         <div className="relative w-full">
           {hasValidThumb && !imageError ? (
             <>
-              {/* Main image */}
+              {/* Main image - only hide if we have hover images */}
               <Image
                 src={thumbUrl}
                 alt={item.title || 'Portfolio item'}
                 width={3840}
                 height={2160}
-                className="w-full object-cover transition-all duration-300 group-hover:opacity-0"
+                className={`w-full object-cover transition-all duration-300 ${
+                  hoverImages.length > 0 ? 'group-hover:opacity-0' : ''
+                }`}
                 sizes="(max-width: 768px) 95vw, (max-width: 1280px) 45vw, 45vw"
                 onError={() => {
                   console.error('Image failed to load:', thumbUrl);
@@ -84,8 +86,8 @@ export function PortfolioCard({ item }: PortfolioCardProps) {
                 priority={false}
                 quality={90}
               />
-              {/* Hover images */}
-              {hoverImages.map((url, index) => (
+              {/* Hover images - only show if we have them */}
+              {hoverImages.length > 0 && hoverImages.map((url, index) => (
                 <Image
                   key={url}
                   src={url}
@@ -112,15 +114,17 @@ export function PortfolioCard({ item }: PortfolioCardProps) {
           )}
           
           {/* Overlay with project info - using black gradient */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-8">
-            <h3 className="text-2xl font-semibold text-white line-clamp-2 mb-3">
-              {item.title || 'Untitled Project'}
-            </h3>
-            {item.type && (
-              <span className="inline-block px-4 py-2 rounded-full bg-white/10 text-white text-base font-medium">
-                {item.type}
-              </span>
-            )}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
+            <div className="max-w-[80%] flex flex-wrap items-center gap-2">
+              <h3 className="text-xl font-semibold text-white line-clamp-2">
+                {item.title || 'Untitled Project'}
+              </h3>
+              {item.type && (
+                <span className="inline-block px-2 py-0.5 rounded-full border border-white/20 text-white text-xs font-medium whitespace-nowrap">
+                  {item.type}
+                </span>
+              )}
+            </div>
           </div>
         </div>
       </div>

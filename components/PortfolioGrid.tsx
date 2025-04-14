@@ -118,10 +118,11 @@ export function PortfolioGrid({ items, tipos }: PortfolioGridProps) {
           <div className="flex flex-wrap gap-2 justify-center">
             <button
               onClick={() => setSelectedTipo(null)}
-              className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium transition-colors
-                ${!selectedTipo 
-                  ? 'bg-primary text-primary-foreground' 
-                  : 'bg-muted hover:bg-muted/80'}`}
+              className={`px-3 py-2 rounded-full text-xs font-medium transition-colors border ${
+                !selectedTipo 
+                  ? 'border-primary text-primary hover:bg-primary/5' 
+                  : 'border-muted-foreground/20 text-muted-foreground hover:border-muted-foreground/40'
+              }`}
             >
               All
             </button>
@@ -129,10 +130,11 @@ export function PortfolioGrid({ items, tipos }: PortfolioGridProps) {
               <button
                 key={tipo}
                 onClick={() => setSelectedTipo(tipo)}
-                className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium transition-colors
-                  ${selectedTipo === tipo 
-                    ? 'bg-primary text-primary-foreground' 
-                    : 'bg-muted hover:bg-muted/80'}`}
+                className={`px-3 py-2 rounded-full text-xs font-medium transition-colors border ${
+                  selectedTipo === tipo 
+                    ? 'border-primary text-primary hover:bg-primary/5' 
+                    : 'border-muted-foreground/20 text-muted-foreground hover:border-muted-foreground/40'
+                }`}
               >
                 {tipo}
               </button>
