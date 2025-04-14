@@ -33,22 +33,22 @@ export default function Home() {
   }, []);
   
   return (
-    <main className="relative flex-1 min-h-screen overflow-hidden">
+    <main className="relative flex-1 h-screen overflow-hidden">
       {/* Hero Section with 3D Logo */}
-      <div className="absolute inset-0 w-full h-full">
+      <div className="absolute inset-0 w-full h-full -translate-y-[15vh]">
         <Hero />
       </div>
 
       {/* Content Layer */}
-      <div className="relative z-10 flex flex-col items-center justify-center min-h-screen pointer-events-none">
-        <div className="max-w-2xl w-full space-y-8 text-center px-4">
+      <div className="relative z-10 flex flex-col items-center justify-center h-screen pointer-events-none -translate-y-[15vh]">
+        <div className="max-w-2xl w-full space-y-5 text-center px-4">
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70">
             {t(messages, 'home.title', 'Welcome to Visant®')}
           </h1>
           <p className="text-lg sm:text-xl text-muted-foreground">
             {t(messages, 'home.subtitle', 'Where visionary brands are born.')}
           </p>
-          <div className="flex gap-4 justify-center pt-4">
+          <div className="flex gap-4 justify-center pt-2">
             <a
               href="/portfolio"
               className="group relative inline-flex items-center justify-center rounded-md bg-primary/90 px-6 py-3 text-sm font-medium text-primary-foreground transition-all hover:bg-primary hover:scale-105 active:scale-100 pointer-events-auto"
