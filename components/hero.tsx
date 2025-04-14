@@ -1,6 +1,12 @@
+'use client';
+
 import { Logo3D } from '@/components/logo3d';
+import { useI18n } from '@/context/i18n-context';
+import { t } from '@/utils/translations';
 
 export default function Hero() {
+  const { messages } = useI18n();
+  
   return (
     <div className="relative w-full h-full">
       {/* Background gradient for depth */}
@@ -14,7 +20,7 @@ export default function Hero() {
         <div className="absolute inset-0 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity duration-300 pointer-events-none">
           <div className="px-6 py-3 rounded-full bg-background/80 backdrop-blur-sm border border-border/50">
             <p className="text-sm text-muted-foreground">
-              Click and drag to rotate
+              {t(messages, 'home.rotateHint', 'Click and drag to rotate')}
             </p>
           </div>
         </div>

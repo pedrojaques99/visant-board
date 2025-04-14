@@ -8,8 +8,12 @@ import { TeamMember } from '../../components/TeamMember';
 import { BrandSlider } from '../../components/BrandSlider';
 import { services, team, fadeInUp } from './constants';
 import { cn } from '@/lib/utils';
+import { useI18n } from '@/context/i18n-context';
+import { t } from '@/utils/translations';
 
 export default function About() {
+  const { messages } = useI18n();
+  
   return (
     <div className="w-full -mt-20">
       {/* Who we are */}
@@ -26,14 +30,13 @@ export default function About() {
             className="flex flex-col justify-center items-center text-center"
           >
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6 sm:mb-8 bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/70">
-              Who we are
+              {t(messages, 'about.title', 'Who we are')}
             </h1>
             <p className="text-lg sm:text-xl text-muted-foreground leading-relaxed max-w-3xl">
-              Visant® is a design studio founded by Pedro Xavier and Pedro Jaques.
-              Based in Itajaí and Balneário Camboriú, we help brands grow through clarity, consistency, and beauty.
+              {t(messages, 'about.description', 'Visant® is a design studio founded by Pedro Xavier and Pedro Jaques. Based in Itajaí and Balneário Camboriú, we help brands grow through clarity, consistency, and beauty.')}
             </p>
             <p className="text-lg sm:text-xl text-muted-foreground leading-relaxed mt-4 max-w-3xl">
-              We work closely with founders, creatives, and companies that believe in the power of design.
+              {t(messages, 'about.descriptionMore', 'We work closely with founders, creatives, and companies that believe in the power of design.')}
             </p>
           </motion.div>
           <motion.div
@@ -52,7 +55,7 @@ export default function About() {
             {...fadeInUp}
             className="text-3xl sm:text-4xl md:text-5xl font-bold mb-12 sm:mb-20 text-center bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/70"
           >
-            What we do
+            {t(messages, 'about.whatWeDo', 'What we do')}
           </motion.h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8">
             {services.map((service, index) => (
@@ -66,9 +69,9 @@ export default function About() {
       <section className="w-full py-16 sm:py-32">
         <div className="max-w-[1800px] mx-auto px-4 sm:px-5 md:px-12">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 sm:gap-12">
-            <Counter end={50} label="Projects" />
-            <Counter end={30} label="Clients" />
-            <Counter end={25} label="Brands" />
+            <Counter end={50} label={t(messages, 'about.projects', 'Projects')} />
+            <Counter end={30} label={t(messages, 'about.clients', 'Clients')} />
+            <Counter end={25} label={t(messages, 'about.brands', 'Brands')} />
           </div>
         </div>
       </section>
@@ -79,7 +82,7 @@ export default function About() {
           {...fadeInUp}
           className="text-3xl sm:text-4xl md:text-5xl font-bold mb-12 sm:mb-20 text-center bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/70"
         >
-          Trusted by
+          {t(messages, 'about.trustedBy', 'Trusted by')}
         </motion.h2>
         <div className="max-w-7xl mx-auto">
           <BrandSlider />
@@ -93,7 +96,7 @@ export default function About() {
             {...fadeInUp}
             className="text-3xl sm:text-4xl md:text-5xl font-bold mb-12 sm:mb-20 text-center bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/70"
           >
-            Team
+            {t(messages, 'about.team', 'Team')}
           </motion.h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8">
             {team.map((member, index) => (
@@ -113,7 +116,7 @@ export default function About() {
             transition={{ duration: 0.6 }}
             className="text-3xl sm:text-4xl md:text-5xl font-bold mb-8 sm:mb-12 text-foreground"
           >
-            Looking for a bold visual identity?
+            {t(messages, 'about.cta', 'Looking for a bold visual identity?')}
           </motion.h2>
           <motion.button
             whileHover={{ scale: 1.05 }}
@@ -123,7 +126,7 @@ export default function About() {
               "hover:shadow-[0_0_20px_rgba(var(--primary),0.3)] transition-all duration-300"
             )}
           >
-            Get in touch
+            {t(messages, 'about.getInTouch', 'Get in touch')}
           </motion.button>
         </div>
       </section>

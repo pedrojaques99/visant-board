@@ -3,15 +3,19 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { ThemeSwitcher } from './theme-switcher';
+import { LanguageSwitcher } from './language-switcher';
 import { createBrowserClient } from '@supabase/ssr';
 import { useEffect, useState } from 'react';
 import { Session } from '@supabase/supabase-js';
 import { motion } from 'framer-motion';
 import { usePathname } from 'next/navigation';
+import { useI18n } from '@/context/i18n-context';
+import { t } from '@/utils/translations';
 
-const NavLink = ({ href, children }: { href: string; children: React.ReactNode }) => {
+const NavLink = ({ href, translationKey, fallback }: { href: string; translationKey: string; fallback: string }) => {
   const pathname = usePathname();
   const isActive = pathname === href;
+  const { messages } = useI18n();
 
   return (
     <Link href={href} className="relative">
@@ -22,7 +26,7 @@ const NavLink = ({ href, children }: { href: string; children: React.ReactNode }
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
       >
-        {children}
+        {t(messages, translationKey, fallback)}
       </motion.span>
       {isActive && (
         <motion.div
@@ -84,9 +88,12 @@ export function Navigation() {
         </motion.div>
         
         <div className="flex items-center gap-6">
-          <NavLink href="/about">About</NavLink>
-          <NavLink href="/portfolio">Portfolio</NavLink>
-          <ThemeSwitcher />
+          <NavLink href="/about" translationKey="navigation.about" fallback="About" />
+          <NavLink href="/portfolio" translationKey="navigation.portfolio" fallback="Portfolio" />
+          <div className="flex items-center gap-1">
+            <ThemeSwitcher />
+            <LanguageSwitcher />
+          </div>
         </div>
       </div>
     </nav>

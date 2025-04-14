@@ -1,29 +1,60 @@
-import { getPortfolioData } from '@/utils/coda';
+'use client';
+
 import { PortfolioGrid } from '@/components/PortfolioGrid';
+import { useI18n } from '@/context/i18n-context';
+import { t } from '@/utils/translations';
+import { useEffect, useState } from 'react';
 
-// Add region configuration for Vercel deployment
-export const runtime = 'nodejs';
-export const preferredRegion = 'iad1'; // US East (N. Virginia)
+export default function PortfolioPage() {
+  const { messages } = useI18n();
+  const [portfolioData, setPortfolioData] = useState<any>({ success: false, items: [], tipos: [] });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-export default async function PortfolioPage() {
-  const result = await getPortfolioData();
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        // Use a more reliable approach with fetch directly
+        const response = await fetch('/api/portfolio');
+        
+        if (!response.ok) {
+          throw new Error(`Failed to fetch data: ${response.status} ${response.statusText}`);
+        }
+        
+        const result = await response.json();
+        setPortfolioData(result);
+      } catch (error) {
+        console.error('Error fetching portfolio data:', error);
+        setError(error instanceof Error ? error.message : 'Failed to load portfolio data');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   return (
     <div className="w-full">
       <section className="w-full py-20">
         <div className="max-w-[1800px] mx-auto px-5 md:px-12">
           <div className="text-center space-y-4 mb-12">
-            <h1 className="text-4xl sm:text-5xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-[#52ddeb] to-[#52ddeb]/70">
-              Portfolio
+            <h1 className="text-4xl sm:text-5xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/70">
+              {t(messages, 'portfolio.title', 'Portfolio')}
             </h1>
             <p className="mt-3 text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto">
-              Explore our collection of projects and client work
+              {t(messages, 'portfolio.subtitle', 'Explore our collection of projects and client work')}
             </p>
           </div>
 
-          {result.success && result.items ? (
+          {loading ? (
+            <div className="flex justify-center items-center min-h-[200px]">
+              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+            </div>
+          ) : portfolioData.success && portfolioData.items && portfolioData.items.length > 0 ? (
             <div className="w-full">
-              <PortfolioGrid items={result.items} tipos={(result.tipos || []) as string[]} />
+              <PortfolioGrid items={portfolioData.items} tipos={(portfolioData.tipos || []) as string[]} />
             </div>
           ) : (
             <div className="mt-8 sm:mt-10">
@@ -39,7 +70,7 @@ export default async function PortfolioPage() {
                       Error Loading Portfolio
                     </h3>
                     <div className="mt-2 text-sm text-destructive/80">
-                      {result.error}
+                      {error || portfolioData.error || 'Failed to load portfolio data'}
                     </div>
                   </div>
                 </div>

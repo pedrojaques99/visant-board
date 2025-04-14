@@ -3,6 +3,15 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
 export async function middleware(request: NextRequest) {
+  // Check if URL is a direct language path and redirect to home
+  const { pathname } = request.nextUrl;
+  const languagePathRegex = /^\/(pt-br|en)$/i;
+  
+  if (languagePathRegex.test(pathname)) {
+    // Redirect to homepage
+    return NextResponse.redirect(new URL('/', request.url));
+  }
+  
   let response = NextResponse.next({
     request: {
       headers: request.headers,

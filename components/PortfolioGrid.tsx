@@ -5,6 +5,8 @@ import { PortfolioItem } from '@/utils/coda';
 import { PortfolioCard } from './PortfolioCard';
 import { cn } from "@/lib/utils";
 import { LayoutGrid } from 'lucide-react';
+import { useI18n } from '@/context/i18n-context';
+import { t } from '@/utils/translations';
 
 interface PortfolioGridProps {
   items: PortfolioItem[];
@@ -12,6 +14,7 @@ interface PortfolioGridProps {
 }
 
 export function PortfolioGrid({ items, tipos }: PortfolioGridProps) {
+  const { messages } = useI18n();
   const [selectedTipo, setSelectedTipo] = useState<string | null>(null);
   const [cardSize, setCardSize] = useState(1);
   const [showControls, setShowControls] = useState(false);
@@ -118,19 +121,19 @@ export function PortfolioGrid({ items, tipos }: PortfolioGridProps) {
           <div className="flex flex-wrap gap-2 justify-center">
             <button
               onClick={() => setSelectedTipo(null)}
-              className={`px-3 py-2 rounded-full text-xs font-medium transition-colors border ${
+              className={`px-2 py-1 rounded-full text-xs font-medium transition-colors border ${
                 !selectedTipo 
                   ? 'border-primary text-primary hover:bg-primary/5' 
                   : 'border-muted-foreground/20 text-muted-foreground hover:border-muted-foreground/40'
               }`}
             >
-              All
+              {t(messages, 'portfolio.filter.all', 'All')}
             </button>
             {tipos.map((tipo) => (
               <button
                 key={tipo}
                 onClick={() => setSelectedTipo(tipo)}
-                className={`px-3 py-2 rounded-full text-xs font-medium transition-colors border ${
+                className={`px-2 py-1 rounded-full text-xs font-medium transition-colors border ${
                   selectedTipo === tipo 
                     ? 'border-primary text-primary hover:bg-primary/5' 
                     : 'border-muted-foreground/20 text-muted-foreground hover:border-muted-foreground/40'

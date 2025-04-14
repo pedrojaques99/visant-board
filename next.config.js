@@ -24,7 +24,7 @@ const nextConfig = {
       }
     ]
   },
-  webpack: (config) => {
+  webpack: (config, { dev }) => {
     config.module.rules.push({
       test: /\.(glb|gltf)$/,
       type: 'asset/resource',
@@ -32,8 +32,16 @@ const nextConfig = {
         filename: 'static/chunks/[path][name].[hash][ext]'
       }
     });
+    
+    // Disable webpack caching in development to prevent ENOENT errors
+    if (dev) {
+      config.cache = false;
+    }
+    
     return config;
-  }
+  },
+  // Removed the i18n config as we're handling language switching with context 
+  // instead of URL-based routing
 };
 
 module.exports = nextConfig; 

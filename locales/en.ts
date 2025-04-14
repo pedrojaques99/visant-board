@@ -1,0 +1,48 @@
+// English translations
+export const messages = {
+  common: {
+    backToHome: "Back to Home",
+    home: "Home",
+    share: "Share",
+    copied: "Copied!",
+  },
+  navigation: {
+    about: "About",
+    portfolio: "Portfolio",
+    contact: "Contact",
+  },
+  home: {
+    title: "Welcome to Visant",
+    subtitle: "Where visionary brands are born.",
+    interactionHint: "Click and drag to interact with the 3D logo",
+    rotateHint: "Click and drag to rotate",
+  },
+  portfolio: {
+    title: "Portfolio",
+    subtitle: "Explore our collection of projects and client work",
+    exploreOurWork: "Explore our work",
+    filter: {
+      all: "All",
+    },
+    projectDetails: "Project Details",
+    untitledProject: "Untitled Project",
+    noClient: "No client specified",
+    description: "Description",
+    portugueseDescription: "Descrição",
+    project: "Project",
+    noImages: "No images available for this project",
+  },
+  about: {
+    title: "Who we are",
+    description: "Visant® is a design studio founded by Pedro Xavier and Pedro Jaques. Based in Itajaí and Balneário Camboriú, we help brands grow through clarity, consistency, and beauty.",
+    descriptionMore: "We work closely with founders, creatives, and companies that believe in the power of design.",
+    whatWeDo: "What we do",
+    team: "Team",
+    cta: "Looking for a bold visual identity?",
+    getInTouch: "Get in touch",
+    trustedBy: "Trusted by",
+    projects: "Projects",
+    clients: "Clients",
+    brands: "Brands",
+  },
+}; 

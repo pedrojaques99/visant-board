@@ -1,10 +1,17 @@
-import { GeistSans } from "geist/font";
+import { Manrope } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import { Navigation } from "@/components/navigation";
 import "./globals.css";
 import type { Metadata } from 'next';
 import { PageTransition } from "@/components/PageTransition";
 import { Analytics } from "@vercel/analytics/react"
+import { I18nProvider } from "@/context/i18n-context";
+
+const manrope = Manrope({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-manrope',
+});
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -27,7 +34,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={GeistSans.className} suppressHydrationWarning>
+    <html lang="en" className={`${manrope.variable} font-sans`} suppressHydrationWarning>
       <body className="bg-background text-foreground">
         <ThemeProvider
           attribute="class"
@@ -35,16 +42,18 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <main className="min-h-screen flex flex-col items-center">
-            <Navigation />
-            <div className="flex-1 w-full flex flex-col gap-20 items-center">
-              <div className="flex flex-col gap-20 max-w-[1800px] p-5 w-full">
-                <PageTransition>
-                  {children}
-                </PageTransition>
+          <I18nProvider>
+            <main className="min-h-screen flex flex-col items-center">
+              <Navigation />
+              <div className="flex-1 w-full flex flex-col gap-20 items-center">
+                <div className="flex flex-col gap-20 max-w-[1800px] p-5 w-full">
+                  <PageTransition>
+                    {children}
+                  </PageTransition>
+                </div>
               </div>
-            </div>
-          </main>
+            </main>
+          </I18nProvider>
         </ThemeProvider>
         <Analytics />
       </body>
