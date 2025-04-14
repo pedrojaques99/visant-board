@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { PortfolioItem } from '@/utils/coda';
 import { PortfolioCard } from './PortfolioCard';
 import { cn } from "@/lib/utils";
+import { SlidersHorizontal } from 'lucide-react';
 
 interface PortfolioGridProps {
   items: PortfolioItem[];
@@ -13,6 +14,7 @@ interface PortfolioGridProps {
 export function PortfolioGrid({ items, tipos }: PortfolioGridProps) {
   const [selectedTipo, setSelectedTipo] = useState<string | null>(null);
   const [cardSize, setCardSize] = useState(1);
+  const [showControls, setShowControls] = useState(false);
 
   const sizeOptions = [
     { value: 0.7, label: '70%', columns: 4 },
@@ -36,7 +38,38 @@ export function PortfolioGrid({ items, tipos }: PortfolioGridProps) {
   const currentSizeOption = sizeOptions.find(option => option.value === cardSize) || sizeOptions[3];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 relative">
+      {/* Size controls toggle */}
+      <div className="absolute top-0 right-4 z-10">
+        <button
+          onClick={() => setShowControls(!showControls)}
+          className="p-2 rounded-full border border-muted-foreground/20 hover:border-muted-foreground/40 transition-colors bg-background/80 backdrop-blur-sm"
+          aria-label="Toggle size controls"
+        >
+          <SlidersHorizontal className="w-4 h-4 text-muted-foreground" />
+        </button>
+        
+        {showControls && (
+          <div className="absolute right-0 mt-2 w-48 p-3 rounded-lg border border-muted-foreground/20 bg-background/80 backdrop-blur-sm">
+            <div className="flex flex-col gap-2">
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-muted-foreground">Size</span>
+                <span className="text-sm text-muted-foreground">{Math.round(cardSize * 100)}%</span>
+              </div>
+              <input
+                type="range"
+                min="0.7"
+                max="1"
+                step="0.1"
+                value={cardSize}
+                onChange={(e) => setCardSize(parseFloat(e.target.value))}
+                className="w-full h-1 bg-muted rounded-lg appearance-none cursor-pointer accent-primary"
+              />
+            </div>
+          </div>
+        )}
+      </div>
+
       {/* Controls */}
       <div className="flex flex-col gap-4 px-4 sm:px-6">
         {/* Filter buttons */}
@@ -65,29 +98,6 @@ export function PortfolioGrid({ items, tipos }: PortfolioGridProps) {
             ))}
           </div>
         )}
-
-        {/* Size controls */}
-        <div className="flex flex-col gap-2 max-w-md mx-auto w-full">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-muted-foreground">Size</span>
-            <div className="flex gap-2">
-              {sizeOptions.map((option) => (
-                <button
-                  key={option.value}
-                  onClick={() => setCardSize(option.value)}
-                  className={cn(
-                    "px-3 py-1.5 text-xs sm:text-sm rounded-md transition-colors",
-                    cardSize === option.value
-                      ? "bg-primary text-primary-foreground"
-                      : "bg-muted hover:bg-muted/80"
-                  )}
-                >
-                  {option.label}
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
       </div>
 
       {/* Pinterest-style masonry grid */}
