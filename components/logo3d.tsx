@@ -5,6 +5,7 @@ import { Canvas, useFrame, useLoader, useThree } from '@react-three/fiber';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { Environment, OrbitControls, Float, useProgress, Html, PerspectiveCamera, Points, Point } from '@react-three/drei';
 import * as THREE from 'three';
+import { useMediaQuery } from '@/hooks/use-media-query';
 
 function Loader() {
   const { progress } = useProgress();
@@ -17,28 +18,95 @@ function Loader() {
   );
 }
 
-function Model() {
-  const gltf = useLoader(GLTFLoader, '/models/visant 3d gradient 2.glb');
+function MobileModel() {
+  const gltf = useLoader(GLTFLoader, '/models/visant-3d-simple-2.glb');
   const modelRef = useRef<THREE.Group>();
   const [hovered, setHovered] = useState(false);
 
   useEffect(() => {
     if (modelRef.current) {
+      // Center the model
       const box = new THREE.Box3().setFromObject(modelRef.current);
       const center = box.getCenter(new THREE.Vector3());
       modelRef.current.position.sub(center);
-      
-      // Set wireframe for all materials
+      // Apply minimal wireframe only to main meshes with reduced complexity
       modelRef.current.traverse((child) => {
         if (child instanceof THREE.Mesh) {
-          child.material.wireframe = true;
-          child.material.transparent = true;
-          child.material.opacity = 0.1;
-          child.material.color.set('#52ddeb'); // Cor do wireframe
+          // Reduce geometry complexity for mobile
+          const geometry = child.geometry;
+          if (geometry.attributes.position.count > 100) {
+            const decimatedGeometry = geometry.clone();
+            // Reduce vertex count by ~50%
+            const positions = geometry.attributes.position.array;
+            const newPositions = new Float32Array(positions.length / 2);
+            for (let i = 0; i < positions.length; i += 6) {
+              newPositions[i/2] = positions[i];
+              newPositions[i/2 + 1] = positions[i + 1];
+              newPositions[i/2 + 2] = positions[i + 2];
+            }
+            decimatedGeometry.setAttribute('position', new THREE.BufferAttribute(newPositions, 3));
+            child.geometry = decimatedGeometry;
+          }
+          child.material = new THREE.MeshBasicMaterial({
+            color: '#52ddeb',
+            wireframe: true,
+            opacity: 0.5,
+            transparent: true,
+          });
         }
       });
     }
   }, [gltf]);
+
+  useFrame((state, delta) => {
+    if (modelRef.current && !hovered) {
+      modelRef.current.rotation.y += delta * 0.1; // Reduced rotation speed
+    }
+  });
+
+  return (
+    <primitive
+      ref={modelRef}
+      object={gltf.scene}
+      scale={4}
+      onPointerOver={() => setHovered(true)}
+      onPointerOut={() => setHovered(false)}
+      position={[0, 0, 0]}
+    />
+  );
+}
+
+function Model() {
+  const gltf = useLoader(GLTFLoader, '/models/visant-3d-simple-2.glb');
+  const { gl } = useThree();
+  const modelRef = useRef<THREE.Group>();
+  const [hovered, setHovered] = useState(false);
+
+  useEffect(() => {
+    if (modelRef.current) {
+      // Center the model
+      const box = new THREE.Box3().setFromObject(modelRef.current);
+      const center = box.getCenter(new THREE.Vector3());
+      modelRef.current.position.sub(center);
+      // Apply minimal wireframe only to main meshes
+      modelRef.current.traverse((child) => {
+        if (child instanceof THREE.Mesh) {
+          child.material = new THREE.MeshBasicMaterial({
+            color: '#52ddeb',
+            wireframe: true,
+            opacity: 0.5,
+            transparent: true,
+          });
+        }
+      });
+    }
+  }, [gltf]);
+
+  useEffect(() => {
+    if (gl) {
+      gl.outputColorSpace = THREE.SRGBColorSpace;
+    }
+  }, [gl]);
 
   useFrame((state, delta) => {
     if (modelRef.current && !hovered) {
@@ -64,8 +132,64 @@ function Model() {
   );
 }
 
+function MobileParticles() {
+  const count = 20; // Reduced number of particles for mobile
+  const positions = useRef<number[]>([]);
+
+  useEffect(() => {
+    positions.current = [];
+    for (let i = 0; i < count; i++) {
+      const radius = 8;
+      const theta = Math.random() * 2 * Math.PI;
+      const phi = Math.acos(2 * Math.random() - 1);
+      
+      positions.current.push(
+        radius * Math.sin(phi) * Math.cos(theta),
+        radius * Math.sin(phi) * Math.sin(theta),
+        radius * Math.cos(phi)
+      );
+    }
+  }, []);
+
+  useFrame((state) => {
+    if (state.clock) {
+      const time = state.clock.getElapsedTime() * 0.05; // Reduced animation speed
+      state.scene.traverse((child) => {
+        if (child instanceof THREE.Points) {
+          child.rotation.y = time * 0.05;
+        }
+      });
+    }
+  });
+
+  return (
+    <Points limit={count}>
+      <pointsMaterial
+        size={0.15}
+        transparent
+        opacity={0.3}
+        color="#666666"
+        sizeAttenuation
+        depthWrite={false}
+      />
+      {positions.current.map((_, i) => (
+        i % 3 === 0 && (
+          <Point
+            key={i}
+            position={[
+              positions.current[i],
+              positions.current[i + 1],
+              positions.current[i + 2]
+            ]}
+          />
+        )
+      ))}
+    </Points>
+  );
+}
+
 function Particles() {
-  const count = 50; // Small number of particles for minimal effect
+  const count = 50;
   const positions = useRef<number[]>([]);
 
   useEffect(() => {
@@ -121,29 +245,82 @@ function Particles() {
 }
 
 export function Logo3D() {
+  const isMobile = useMediaQuery('(max-width: 768px)');
+  const [shouldRender3D, setShouldRender3D] = useState(true);
+
+  useEffect(() => {
+    // Check if device can handle 3D well
+    const checkPerformance = () => {
+      if (isMobile) {
+        // Check if device has enough memory and cores
+        if (
+          // @ts-ignore - navigator.deviceMemory is not in TypeScript types
+          (navigator.deviceMemory && navigator.deviceMemory < 4) ||
+          // @ts-ignore - navigator.hardwareConcurrency is not in TypeScript types
+          (navigator.hardwareConcurrency && navigator.hardwareConcurrency < 4)
+        ) {
+          setShouldRender3D(false);
+          return;
+        }
+        
+        // Test WebGL capabilities
+        const canvas = document.createElement('canvas');
+        const gl = canvas.getContext('webgl');
+        if (!gl) {
+          setShouldRender3D(false);
+          return;
+        }
+        
+        // Check if device supports enough texture units
+        const maxTextureUnits = gl.getParameter(gl.MAX_TEXTURE_IMAGE_UNITS);
+        if (maxTextureUnits < 8) {
+          setShouldRender3D(false);
+          return;
+        }
+      }
+    };
+    
+    checkPerformance();
+  }, [isMobile]);
+
+  if (!shouldRender3D && isMobile) {
+    return (
+      <div className="w-full h-full flex items-center justify-center">
+        <div className="relative w-48 h-48 animate-float">
+          <img
+            src="/images/visant-2d-logo.png"
+            alt="Visant Logo"
+            className="w-full h-full object-contain opacity-80"
+          />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="absolute inset-0">
       <Canvas
         camera={{
           position: [0, 0, 10],
-          fov: 45,
+          fov: isMobile ? 50 : 45, // Wider FOV for mobile
           near: 0.1,
           far: 1000
         }}
         gl={{
-          antialias: true,
+          antialias: !isMobile, // Disable antialiasing on mobile
           toneMapping: THREE.ACESFilmicToneMapping,
           outputEncoding: THREE.sRGBEncoding,
-          alpha: true
+          alpha: true,
+          powerPreference: isMobile ? 'low-power' : 'high-performance'
         }}
-        dpr={[1, 2]}
+        dpr={isMobile ? [1, 1] : [1, 2]} // Lower resolution on mobile
       >
         <Suspense fallback={<Loader />}>
           <ambientLight intensity={0.6} />
           <directionalLight
             position={[10, 10, 5]}
             intensity={1}
-            castShadow
+            castShadow={!isMobile}
           />
           <directionalLight
             position={[-10, -10, -5]}
@@ -151,20 +328,20 @@ export function Logo3D() {
           />
           <pointLight position={[0, 0, 5]} intensity={0.5} />
 
-          <Model />
-          <Particles />
+          {isMobile ? <MobileModel /> : <Model />}
+          {isMobile ? <MobileParticles /> : <Particles />}
 
           <Environment preset="city" />
           
           <OrbitControls
             enableZoom={true}
-            enablePan={true}
-            minPolarAngle={0}
-            maxPolarAngle={Math.PI}
-            minDistance={5}
-            maxDistance={15}
-            rotateSpeed={0.5}
-            dampingFactor={0.1}
+            enablePan={false}
+            minPolarAngle={Math.PI / 4}
+            maxPolarAngle={Math.PI * 3/4}
+            minAzimuthAngle={-Math.PI / 2}
+            maxAzimuthAngle={Math.PI / 2}
+            rotateSpeed={isMobile ? 0.2 : 0.3}
+            dampingFactor={isMobile ? 0.08 : 0.05}
             enableDamping={true}
           />
         </Suspense>

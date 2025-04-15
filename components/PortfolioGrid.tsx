@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { PortfolioItem } from '@/utils/coda';
 import { PortfolioCard } from './PortfolioCard';
 import { cn } from "@/lib/utils";
@@ -20,6 +21,7 @@ export function PortfolioGrid({ items, tipos }: PortfolioGridProps) {
   const [showControls, setShowControls] = useState(false);
   const [columns, setColumns] = useState(2);
   const [isMobile, setIsMobile] = useState(false);
+  const [isInitialLoading, setIsInitialLoading] = useState(true);
 
   const displayToActualSize = (display: number) => Math.min(display, 0.99);
   const actualToDisplaySize = (actual: number) => Math.min(actual, 1);
@@ -35,9 +37,24 @@ export function PortfolioGrid({ items, tipos }: PortfolioGridProps) {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
+  useEffect(() => {
+    // Only show skeleton on initial load
+    const timer = setTimeout(() => setIsInitialLoading(false), 600);
+    return () => clearTimeout(timer);
+  }, []);
+
   const filteredItems = selectedTipo
     ? items.filter((item) => item.type === selectedTipo)
     : items;
+
+  const SkeletonCard = () => (
+    <motion.div
+      initial={{ opacity: 0.5 }}
+      animate={{ opacity: 1 }}
+      transition={{ repeat: Infinity, duration: 1, repeatType: "reverse" }}
+      className="w-full aspect-[3/4] rounded-xl bg-muted/60"
+    />
+  );
 
   if (!items?.length) {
     return (
@@ -121,7 +138,7 @@ export function PortfolioGrid({ items, tipos }: PortfolioGridProps) {
           <div className="flex flex-wrap gap-2 justify-center">
             <button
               onClick={() => setSelectedTipo(null)}
-              className={`px-2 py-1 rounded-full text-xs font-medium transition-colors border ${
+              className={`px-8 py-3 rounded-full text-xs font-medium transition-colors border ${
                 !selectedTipo 
                   ? 'border-primary text-primary hover:bg-primary/5' 
                   : 'border-muted-foreground/20 text-muted-foreground hover:border-muted-foreground/40'
@@ -133,7 +150,7 @@ export function PortfolioGrid({ items, tipos }: PortfolioGridProps) {
               <button
                 key={tipo}
                 onClick={() => setSelectedTipo(tipo)}
-                className={`px-2 py-1 rounded-full text-xs font-medium transition-colors border ${
+                className={`px-8 py-3 rounded-full text-xs font-medium transition-colors border ${
                   selectedTipo === tipo 
                     ? 'border-primary text-primary hover:bg-primary/5' 
                     : 'border-muted-foreground/20 text-muted-foreground hover:border-muted-foreground/40'
@@ -154,19 +171,45 @@ export function PortfolioGrid({ items, tipos }: PortfolioGridProps) {
           columnGap: `${GAP}px`,
         }}
       >
-        {filteredItems.map((item) => (
-          <div 
-            key={item.id} 
-            className="inline-block w-full break-inside-avoid"
-            style={{
-              transform: `scale(${displayToActualSize(cardSize)})`,
-              transformOrigin: 'top center',
-              marginBottom: `${GAP}px`,
-            }}
-          >
-            <PortfolioCard item={item} />
-          </div>
-        ))}
+        <AnimatePresence mode="popLayout">
+          {isInitialLoading ? (
+            // Skeleton loading state - only shown on initial load
+            Array.from({ length: 6 }).map((_, index) => (
+              <div 
+                key={`skeleton-${index}`} 
+                className="inline-block w-full break-inside-avoid mb-6"
+              >
+                <SkeletonCard />
+              </div>
+            ))
+          ) : (
+            // Actual content with smooth filtering transitions
+            filteredItems.map((item) => (
+              <motion.div 
+                key={item.id} 
+                className="inline-block w-full break-inside-avoid"
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: displayToActualSize(cardSize) }}
+                exit={{ opacity: 0, scale: 0.9 }}
+                transition={{ 
+                  duration: 0.2,
+                  ease: "easeOut",
+                  layout: {
+                    duration: 0.3,
+                    ease: "easeInOut"
+                  }
+                }}
+                layout
+                style={{
+                  transformOrigin: 'top center',
+                  marginBottom: `${GAP}px`,
+                }}
+              >
+                <PortfolioCard item={item} />
+              </motion.div>
+            ))
+          )}
+        </AnimatePresence>
       </div>
     </div>
   );

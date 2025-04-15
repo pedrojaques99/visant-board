@@ -30,7 +30,7 @@ export function PortfolioCard({ item }: PortfolioCardProps) {
   }).filter((url): url is string => url !== null);
 
   // Validate item data
-  if (!item || !item.id) {
+  if (!item || !item.id || !hasValidThumb) {
     console.error('Invalid portfolio item:', item);
     return (
       <div className="bg-card text-card-foreground rounded-lg overflow-hidden shadow-sm p-4">
