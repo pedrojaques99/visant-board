@@ -5,6 +5,7 @@ export const messages = {
     home: "Home",
     share: "Share",
     copied: "Copied!",
+    showDetails: "Show details",
   },
   navigation: {
     about: "About",
@@ -16,6 +17,8 @@ export const messages = {
     subtitle: "Where visionary brands are born.",
     interactionHint: "Click and drag to interact with the 3D logo",
     rotateHint: "Click and drag to rotate",
+    latestProjects: "Latest Branding Projects",
+    startProject: "Start a project",
   },
   portfolio: {
     title: "Portfolio",
