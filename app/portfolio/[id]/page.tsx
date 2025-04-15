@@ -195,6 +195,28 @@ export default function ProjectPage({ params }: Props) {
           </div>
         )}
 
+        {/* Project Video */}
+        {item.video && (
+          <div className="mb-16">
+            <div className="relative w-full overflow-hidden bg-muted aspect-video rounded-lg">
+              <iframe
+                src={item.video}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                className="absolute top-0 left-0 w-full h-full"
+              />
+            </div>
+          </div>
+        )}
+
+        {/* Project Credits */}
+        {item.credits && (
+          <div className="mb-16 prose prose-gray dark:prose-invert max-w-none">
+            <h2 className="text-xl font-semibold mb-3 text-foreground">{t(messages, 'portfolio.credits', 'Credits')}</h2>
+            <div className="text-muted-foreground text-lg whitespace-pre-wrap">{item.credits}</div>
+          </div>
+        )}
+
         {/* Call to Action */}
         <section className="py-24 sm:py-32 px-4 sm:px-6 md:px-8 bg-gradient-to-b from-primary/40 to-background relative overflow-hidden rounded-2xl mt-8">
           <div className="absolute inset-0 pointer-events-none" />

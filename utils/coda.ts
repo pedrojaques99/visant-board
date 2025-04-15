@@ -29,6 +29,8 @@ export interface PortfolioItem {
   description: string;
   ptbr: string;
   thumb: string;
+  video: string;
+  credits: string;
   image02: string;
   image03: string;
   image04: string;
@@ -253,6 +255,8 @@ export async function getPortfolioData(): Promise<PortfolioDataResponse> {
       description: row.values['c-V1pN1xw0YX'] || '',
       ptbr: row.values['c-is7YUDQ1sQ'] || '',
       thumb: row.values['c-E8jRBgytkd'] || '',
+      video: row.values['c-czpRT8O481'] || '',
+      credits: row.values['c-IlJ9HvA1wE'] || '',
       image02: row.values['c-z1ZQeSebCy'] || '',
       image03: row.values['c-pGUgOu2reI'] || '',
       image04: row.values['c-W6-LDMJSKa'] || '',
@@ -320,6 +324,8 @@ export async function getPortfolioItemById(id: string) {
       description: data.values['c-V1pN1xw0YX'] || '',
       ptbr: data.values['c-is7YUDQ1sQ'] || '',
       thumb: data.values['c-E8jRBgytkd'] || '',
+      video: data.values['c-czpRT8O481'] || '',
+      credits: data.values['c-IlJ9HvA1wE'] || '',
       image02: data.values['c-z1ZQeSebCy'] || '',
       image03: data.values['c-pGUgOu2reI'] || '',
       image04: data.values['c-W6-LDMJSKa'] || '',
