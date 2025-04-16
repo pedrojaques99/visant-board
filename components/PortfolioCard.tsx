@@ -30,8 +30,8 @@ export function PortfolioCard({ item }: PortfolioCardProps) {
   }).filter((url): url is string => url !== null);
 
   // Validate item data
-  if (!item || !item.id || !hasValidThumb) {
-    console.error('Invalid portfolio item:', item);
+  if (!item || !item.id) {
+    console.error('Invalid portfolio item (missing required fields):', item);
     return (
       <div className="bg-card text-card-foreground rounded-lg overflow-hidden shadow-sm p-4">
         <p className="text-destructive text-sm">Invalid portfolio item</p>
@@ -62,7 +62,7 @@ export function PortfolioCard({ item }: PortfolioCardProps) {
         onMouseEnter={() => setIsHovering(true)}
         onMouseLeave={() => {
           setIsHovering(false);
-          setCurrentImageIndex(0); // Reset to first image when leaving
+          setCurrentImageIndex(0);
         }}
       >
         {/* Image container with dynamic aspect ratio */}
@@ -109,7 +109,10 @@ export function PortfolioCard({ item }: PortfolioCardProps) {
             </>
           ) : (
             <div className="aspect-[16/9] w-full bg-muted flex items-center justify-center">
-              <span className="text-muted-foreground">No image available</span>
+              <div className="text-center p-4">
+                <div className="text-4xl mb-2">🎨</div>
+                <span className="text-muted-foreground text-sm">Coming soon</span>
+              </div>
             </div>
           )}
           
