@@ -7,11 +7,12 @@ import { Breadcrumb } from '@/components/ui/breadcrumb';
 import { useI18n } from '@/context/i18n-context';
 import { t } from '@/utils/translations';
 import { Share2 } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
+import ColorThief from 'colorthief';
 
 interface Props {
   params: {
@@ -19,18 +20,79 @@ interface Props {
   };
 }
 
+interface ColorPalette {
+  dominant: string;
+  secondary: string;
+  accent: string;
+}
+
+function rgbToHex(r: number, g: number, b: number): string {
+  return '#' + [r, g, b].map(x => {
+    const hex = x.toString(16);
+    return hex.length === 1 ? '0' + hex : hex;
+  }).join('');
+}
+
+function adjustColorBrightness(color: string, factor: number): string {
+  const rgb = color.substring(1).match(/.{2}/g)?.map(x => parseInt(x, 16)) || [0, 0, 0];
+  const adjusted = rgb.map(c => Math.min(255, Math.floor(c * factor)));
+  return rgbToHex(adjusted[0], adjusted[1], adjusted[2]);
+}
+
+function calculateTextColor(bgColor: string): string {
+  const rgb = bgColor.substring(1).match(/.{2}/g)?.map(x => parseInt(x, 16)) || [0, 0, 0];
+  const brightness = (rgb[0] * 299 + rgb[1] * 587 + rgb[2] * 114) / 1000;
+  return brightness > 128 ? '#000000' : '#ffffff';
+}
+
 export default function ProjectPage({ params }: Props) {
-  const { messages } = useI18n();
+  const { messages, locale } = useI18n();
   const [item, setItem] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [colorPalette, setColorPalette] = useState<ColorPalette | null>(null);
+
+  const analyzeImageColor = useCallback(async (imageUrl: string) => {
+    try {
+      const colorThief = new ColorThief();
+      const img = new window.Image();
+      img.crossOrigin = 'Anonymous';
+      
+      await new Promise((resolve, reject) => {
+        img.onload = resolve;
+        img.onerror = reject;
+        img.src = imageUrl;
+      });
+
+      const [r, g, b] = colorThief.getColor(img);
+      const palette = colorThief.getPalette(img, 3);
+      const [r2, g2, b2] = palette[1];
+      const [r3, g3, b3] = palette[2];
+
+      const dominant = rgbToHex(r, g, b);
+      const secondary = rgbToHex(r2, g2, b2);
+      const accent = rgbToHex(r3, g3, b3);
+
+      setColorPalette({
+        dominant,
+        secondary,
+        accent
+      });
+
+      // Apply color scheme to CSS variables
+      document.documentElement.style.setProperty('--project-bg', `${adjustColorBrightness(dominant, 0.15)}`);
+      document.documentElement.style.setProperty('--project-text', calculateTextColor(dominant));
+      document.documentElement.style.setProperty('--project-accent', accent);
+    } catch (error) {
+      console.error('Error analyzing image color:', error);
+    }
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        // Use API route instead of direct function call
         const response = await fetch(`/api/portfolio/${params.id}`);
         
         if (!response.ok) {
@@ -44,6 +106,11 @@ export default function ProjectPage({ params }: Props) {
           return;
         }
         setItem(result.item);
+
+        // Analyze the first image's color once data is loaded
+        if (result.item.thumb) {
+          await analyzeImageColor(result.item.thumb);
+        }
       } catch (error) {
         setError('Failed to load project details');
         console.error(error);
@@ -53,7 +120,14 @@ export default function ProjectPage({ params }: Props) {
     };
 
     fetchData();
-  }, [params.id]);
+
+    // Cleanup function to reset color scheme
+    return () => {
+      document.documentElement.style.removeProperty('--project-bg');
+      document.documentElement.style.removeProperty('--project-text');
+      document.documentElement.style.removeProperty('--project-accent');
+    };
+  }, [params.id, analyzeImageColor]);
 
   const handleShare = () => {
     if (navigator.share) {
@@ -103,9 +177,18 @@ export default function ProjectPage({ params }: Props) {
     { label: item.title || t(messages, 'portfolio.projectDetails', 'Project Details') },
   ];
 
+  // Get the description based on current language
+  const currentDescription = locale === 'pt' ? item?.ptbr : item?.description;
+
   return (
-    <main className="min-h-screen bg-background antialiased pb-12">
-      <div className="border-b bg-muted/40">
+    <main 
+      className="min-h-screen antialiased pb-12 transition-colors duration-1000"
+      style={{
+        backgroundColor: 'var(--project-bg, var(--background))',
+        color: 'var(--project-text, var(--foreground))'
+      }}
+    >
+      <div className="border-b" style={{ backgroundColor: 'var(--project-accent, var(--muted))' }}>
         <div className="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
           <Breadcrumb items={breadcrumbItems} />
         </div>
@@ -115,21 +198,21 @@ export default function ProjectPage({ params }: Props) {
         {/* Project header with share button */}
         <div className="mb-8 sm:mb-12 flex justify-between items-start">
           <div>
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-foreground mb-4">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight mb-4">
               {item.title || t(messages, 'portfolio.untitledProject', 'Untitled Project')}
             </h1>
-            <div className="flex items-center gap-4 flex-wrap">
-              <span className="text-muted-foreground">{item.client || t(messages, 'portfolio.noClient', 'No client specified')}</span>
+            <div className="flex items-center gap-4 flex-wrap opacity-80">
+              <span>{item.client || t(messages, 'portfolio.noClient', 'No client specified')}</span>
               {formattedDate && (
                 <>
-                  <span className="text-muted-foreground/60">•</span>
-                  <span className="text-muted-foreground">{formattedDate}</span>
+                  <span className="opacity-60">•</span>
+                  <span>{formattedDate}</span>
                 </>
               )}
               {item.type && (
                 <>
-                  <span className="text-muted-foreground/60">•</span>
-                  <span className="px-3 py-1 text-xs font-medium rounded-full border border-muted-foreground/20 text-muted-foreground">
+                  <span className="opacity-60">•</span>
+                  <span className="px-3 py-1 text-xs font-medium rounded-full border opacity-80">
                     {item.type}
                   </span>
                 </>
@@ -142,7 +225,7 @@ export default function ProjectPage({ params }: Props) {
             onClick={handleShare}
             className={cn(
               "transition-all duration-300",
-              copied ? "bg-primary text-primary-foreground" : ""
+              copied ? "bg-[var(--project-accent)] text-[var(--project-text)]" : ""
             )}
           >
             <Share2 className="h-4 w-4 mr-2" />
@@ -151,20 +234,28 @@ export default function ProjectPage({ params }: Props) {
         </div>
 
         {/* Project description */}
-        {(item.description || item.ptbr) && (
-          <div className="prose prose-gray dark:prose-invert max-w-none mb-12">
-            {item.description && (
-              <div className="mb-8">
-                <h2 className="text-xl font-semibold mb-3 text-foreground">{t(messages, 'portfolio.description', 'Description')}</h2>
-                <p className="text-muted-foreground text-lg">{item.description}</p>
-              </div>
-            )}
-            {item.ptbr && (
-              <div>
-                <h2 className="text-xl font-semibold mb-3 text-foreground">{t(messages, 'portfolio.portugueseDescription', 'Descrição')}</h2>
-                <p className="text-muted-foreground text-lg">{item.ptbr}</p>
-              </div>
-            )}
+        {currentDescription && (
+          <div className="prose max-w-none mb-12" style={{ color: 'var(--project-text)' }}>
+            <div className="mb-8">
+              <h2 className="text-xl font-semibold mb-3">
+                {t(messages, 'portfolio.description', locale === 'pt' ? 'Descrição' : 'Description')}
+              </h2>
+              <p className="text-lg opacity-80">{currentDescription}</p>
+            </div>
+          </div>
+        )}
+
+        {/* Project Video - Show First */}
+        {item.video && (
+          <div className="mb-16">
+            <div className="relative w-full overflow-hidden bg-muted aspect-video rounded-lg">
+              <iframe
+                src={item.video}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                className="absolute top-0 left-0 w-full h-full"
+              />
+            </div>
           </div>
         )}
 
@@ -195,50 +286,44 @@ export default function ProjectPage({ params }: Props) {
           </div>
         )}
 
-        {/* Project Video */}
-        {item.video && (
-          <div className="mb-16">
-            <div className="relative w-full overflow-hidden bg-muted aspect-video rounded-lg">
-              <iframe
-                src={item.video}
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-                className="absolute top-0 left-0 w-full h-full"
-              />
-            </div>
-          </div>
-        )}
-
         {/* Project Credits */}
         {item.credits && (
           <div className="mb-16 prose prose-gray dark:prose-invert max-w-none">
-            <h2 className="text-xl font-semibold mb-3 text-foreground">{t(messages, 'portfolio.credits', 'Credits')}</h2>
+            <h2 className="text-xl font-semibold mb-3 text-foreground">
+              {t(messages, 'portfolio.credits', locale === 'pt' ? 'Créditos' : 'Credits')}
+            </h2>
             <div className="text-muted-foreground text-lg whitespace-pre-wrap">{item.credits}</div>
           </div>
         )}
 
         {/* Call to Action */}
-        <section className="py-24 sm:py-32 px-4 sm:px-6 md:px-8 bg-gradient-to-b from-primary/40 to-background relative overflow-hidden rounded-2xl mt-8">
+        <section className="py-24 sm:py-32 px-4 sm:px-6 md:px-8 relative overflow-hidden rounded-2xl mt-8"
+          style={{ 
+            background: `linear-gradient(to bottom, ${colorPalette?.accent || 'var(--primary)'}, var(--project-bg))`,
+            color: 'var(--project-text)'
+          }}
+        >
           <div className="absolute inset-0 pointer-events-none" />
           <div className="max-w-4xl mx-auto text-center relative">
             <motion.h2
               initial={{ opacity: 0, y: 20 }}     
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
-              className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 sm:mb-8 text-foreground"
+              className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 sm:mb-8"
             >
-              {t(messages, 'about.cta', 'Looking for a bold visual identity?')}
+              {t(messages, 'about.cta', locale === 'pt' ? 'Procurando uma identidade visual marcante?' : 'Looking for a bold visual identity?')}
             </motion.h2>
             <Link href="/contact">
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className={cn(
-                  "bg-primary text-primary-foreground px-6 sm:px-8 py-3 sm:py-4 rounded-xl text-base sm:text-lg font-bold",
-                  "hover:shadow-[0_0_20px_rgba(var(--primary),0.3)] transition-all duration-300"
-                )}
+                className="px-6 sm:px-8 py-3 sm:py-4 rounded-xl text-base sm:text-lg font-bold transition-all duration-300 hover:shadow-[0_0_20px_rgba(0,0,0,0.3)]"
+                style={{ 
+                  backgroundColor: colorPalette?.accent || 'var(--primary)',
+                  color: 'var(--project-text)'
+                }}
               >
-                {t(messages, 'about.getInTouch', 'Get in touch')}
+                {t(messages, 'about.getInTouch', locale === 'pt' ? 'Entre em contato' : 'Get in touch')}
               </motion.button>
             </Link>
           </div>
