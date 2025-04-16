@@ -408,7 +408,7 @@ export async function listCodaTableColumnIds(tableId: string): Promise<{ success
 export async function getStatistics() {
   try {
     // Get total projects (all rows from grid-7B5GsoqgKn)
-    const projectsResponse = await fetch(`${CODA_API_BASE}/docs/${CODA_DOC_ID}/tables/grid-7B5GsoqgKn/rows`, {
+    const projectsResponse = await fetch(`${CODA_API_BASE}/docs/${CODA_DOC_ID}/tables/grid-7B5GsoqgKn/rows?limit=1000`, {
       headers: {
         'Authorization': `Bearer ${CODA_API_TOKEN}`,
         'Content-Type': 'application/json',
@@ -416,37 +416,34 @@ export async function getStatistics() {
     });
 
     // Get total clients (all rows from grid-emZAaCaN7j)
-    const clientsResponse = await fetch(`${CODA_API_BASE}/docs/${CODA_DOC_ID}/tables/grid-emZAaCaN7j/rows`, {
+    const clientsResponse = await fetch(`${CODA_API_BASE}/docs/${CODA_DOC_ID}/tables/grid-emZAaCaN7j/rows?limit=1000`, {
       headers: {
         'Authorization': `Bearer ${CODA_API_TOKEN}`,
         'Content-Type': 'application/json',
       },
     });
 
-    // Get branding projects (all rows from grid-7B5GsoqgKn that contain "branding" in the c-Rddnn9er3T column)
-    const brandingResponse = await fetch(`${CODA_API_BASE}/docs/${CODA_DOC_ID}/tables/grid-7B5GsoqgKn/rows?query=c-Rddnn9er3T:contains:"branding"`, {
-      headers: {
-        'Authorization': `Bearer ${CODA_API_TOKEN}`,
-        'Content-Type': 'application/json',
-      },
-    });
-
-    if (!projectsResponse.ok || !clientsResponse.ok || !brandingResponse.ok) {
+    if (!projectsResponse.ok || !clientsResponse.ok) {
       throw new Error('Failed to fetch data from Coda');
     }
 
-    const [projectsData, clientsData, brandingData] = await Promise.all([
+    const [projectsData, clientsData] = await Promise.all([
       projectsResponse.json(),
-      clientsResponse.json(),
-      brandingResponse.json()
+      clientsResponse.json()
     ]);
+
+    // Count branding projects by filtering the projects data
+    const brandingProjects = projectsData.items.filter((item: any) => {
+      const type = item.values['c-Rddnn9er3T'] || '';
+      return type.toLowerCase().includes('branding');
+    });
 
     return {
       success: true,
       statistics: {
         totalProjects: projectsData.items?.length || 0,
         totalClients: clientsData.items?.length || 0,
-        totalBrands: brandingData.items?.length || 0
+        totalBrands: brandingProjects.length || 0
       }
     };
   } catch (error) {

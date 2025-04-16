@@ -136,7 +136,7 @@ export default function About() {
       </section>
 
       {/* Call to Action */}
-      <section className="py-24 sm:py-48 px-4 sm:px-6 md:px-12 bg-gradient-to-b from-primary/40 to-background relative overflow-hidden rounded-2xl">
+      <section className="py-24 sm:py-48 px-4 sm:px-6 md:px-12 bg-gradient-to-b from-accent/20 to-background relative overflow-hidden rounded-2xl">
         <div className="absolute inset-0 pointer-events-none" />
         <div className="max-w-8xl mx-auto text-center relative">
           <motion.h2
