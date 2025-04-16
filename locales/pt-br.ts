@@ -18,7 +18,7 @@ export const messages = {
     subtitle: "Onde marcas visionárias nascem.",
     interactionHint: "Clique e arraste para interagir com o logo 3D",
     rotateHint: "Clique e arraste para girar",
-    latestProjects: "Últimos Projetos de Branding",
+    latestProjects: "Últimos Projetos",
     startProject: "Começar um projeto",
     swipeHint: "Role ou arraste para explorar",
   },

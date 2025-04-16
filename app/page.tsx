@@ -136,7 +136,7 @@ export default function Home() {
         const data = await response.json();
         if (data.success && data.items) {
           const brandingProjects = data.items
-            .filter((item: PortfolioItem) => item.title.toLowerCase().includes('branding'))
+            .filter((item: PortfolioItem) => item.type.toLowerCase().includes('branding'))
             .sort((a: PortfolioItem, b: PortfolioItem) => {
               return new Date(b.date).getTime() - new Date(a.date).getTime();
             })
@@ -300,19 +300,19 @@ export default function Home() {
   }
 
   return (
-    <main className="relative h-[100dvh] overflow-hidden">
+    <main className="relative h-[90dvh] overflow-hidden">
       {/* Hero Section with 3D Logo */}
-      <div className="absolute inset-0 -translate-y-[8vh]">
+      <div className="absolute inset-0 -translate-y-[13vh]">
         <Hero />
       </div>
 
       {/* Gradient Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-b from-background via-background/30 to-background pointer-events-none z-[3]" />
+      <div className="absolute inset-0 bg-gradient-to-b from-background via-background/30 to-background pointer-events-none z-[2]" />
 
       {/* Content Layer */}
       <div 
         className={cn(
-          "relative z-[4] flex flex-col items-center min-h-[100dvh] justify-center -translate-y-[8vh] pointer-events-none"
+          "relative z-[4] flex flex-col items-center min-h-[100dvh] justify-center -translate-y-[13vh] pointer-events-none"
         )}
       >
         <div className="w-full max-w-[90%] sm:max-w-2xl space-y-4 sm:space-y-5 text-center">
@@ -360,7 +360,7 @@ export default function Home() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 0.3 }}
           transition={{ duration: 0.6, delay: 0.4 }}
-          className="absolute bottom-8 left-1/2 -translate-x-1/2 text-center z-10"
+          className="absolute bottom-32 left-1/2 -translate-x-1/2 text-center z-10"
         >
           <p className="text-xs text-muted-foreground animate-pulse">
             {t(messages, 'home.interactionHint', 'Click and drag to interact with the 3D logo')}
@@ -449,12 +449,12 @@ export default function Home() {
           <div className="container mx-auto px-4 py-3 sm:py-4">
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-16">
               <span className="text-xs text-muted-foreground font-medium">
-                {t(messages, 'home.latestProjects', 'Latest Branding Projects')}:
+                {t(messages, 'home.latestProjects', 'Latest Projects')}:
               </span>
               <div className="flex flex-wrap sm:flex-nowrap justify-center items-center gap-3 sm:gap-16">
                 {latestProjects.map((project, index) => (
                   <div key={project.id} className="relative group">
-                    {index > 0 && <span className="hidden sm:block absolute -left-8 top-1/2 -translate-y-1/2 text-muted-foreground/30">•</span>}
+                    {index > 0 && <span className="hidden sm:block absolute -left-8 top-1/2 -translate-y-1/2 text-muted-foreground/30">|</span>}
                     <Link
                       href={`/portfolio/${project.id}`}
                       className={cn(

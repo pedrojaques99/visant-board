@@ -36,6 +36,42 @@ function rgbToHex(r: number, g: number, b: number): string {
   }).join('');
 }
 
+// Calculate relative luminance for WCAG contrast ratio
+function getLuminance(r: number, g: number, b: number): number {
+  const [rs, gs, bs] = [r, g, b].map(c => {
+    c = c / 255;
+    return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+  });
+  return 0.2126 * rs + 0.7152 * gs + 0.0722 * bs;
+}
+
+// Calculate contrast ratio between two colors
+function getContrastRatio(l1: number, l2: number): number {
+  const lighter = Math.max(l1, l2);
+  const darker = Math.min(l1, l2);
+  return (lighter + 0.05) / (darker + 0.05);
+}
+
+// Adjust color to meet minimum contrast ratio
+function adjustColorForContrast(bgColor: string, textColor: string, minContrast: number = 4.5): string {
+  const bg = bgColor.match(/\w\w/g)?.map(x => parseInt(x, 16)) || [0, 0, 0];
+  const text = textColor.match(/\w\w/g)?.map(x => parseInt(x, 16)) || [255, 255, 255];
+  
+  const bgLuminance = getLuminance(bg[0], bg[1], bg[2]);
+  const textLuminance = getLuminance(text[0], text[1], text[2]);
+  let contrast = getContrastRatio(bgLuminance, textLuminance);
+  
+  // If contrast is insufficient, adjust text color
+  if (contrast < minContrast) {
+    const adjustedText = textLuminance > bgLuminance 
+      ? [255, 255, 255]  // Make lighter
+      : [0, 0, 0];       // Make darker
+    return rgbToHex(adjustedText[0], adjustedText[1], adjustedText[2]);
+  }
+  
+  return textColor;
+}
+
 function adjustColorBrightness(color: string, factor: number): string {
   const rgb = color.substring(1).match(/.{2}/g)?.map(x => parseInt(x, 16)) || [0, 0, 0];
   const adjusted = rgb.map(c => Math.min(255, Math.floor(c * factor)));
@@ -95,18 +131,37 @@ export default function ProjectPage({ params }: Props) {
       const secondary = rgbToHex(r2, g2, b2);
       const accent = rgbToHex(r3, g3, b3);
 
+      // Calculate background color with proper contrast
+      const bgColor = adjustColorBrightness(dominant, 0.15);
+      const textColor = adjustColorForContrast(bgColor, '#ffffff');
+      const accentWithContrast = adjustColorForContrast(bgColor, accent);
+
       setColorPalette({
-        dominant,
-        secondary,
-        accent
+        dominant: bgColor,
+        secondary: adjustColorForContrast(bgColor, secondary),
+        accent: accentWithContrast
       });
 
-      // Apply color scheme to CSS variables
-      document.documentElement.style.setProperty('--project-bg', `${adjustColorBrightness(dominant, 0.15)}`);
-      document.documentElement.style.setProperty('--project-text', calculateTextColor(dominant));
-      document.documentElement.style.setProperty('--project-accent', accent);
+      // Apply color scheme to CSS variables with guaranteed contrast
+      document.documentElement.style.setProperty('--project-bg', bgColor);
+      document.documentElement.style.setProperty('--project-text', textColor);
+      document.documentElement.style.setProperty('--project-accent', accentWithContrast);
     } catch (error) {
       console.error('Error analyzing image color:', error);
+      // Fallback to safe, high-contrast colors
+      const fallbackColors = {
+        bg: '#1a1a1a',
+        text: '#ffffff',
+        accent: '#52ddeb'
+      };
+      setColorPalette({
+        dominant: fallbackColors.bg,
+        secondary: fallbackColors.text,
+        accent: fallbackColors.accent
+      });
+      document.documentElement.style.setProperty('--project-bg', fallbackColors.bg);
+      document.documentElement.style.setProperty('--project-text', fallbackColors.text);
+      document.documentElement.style.setProperty('--project-accent', fallbackColors.accent);
     }
   }, []);
 
@@ -306,13 +361,12 @@ export default function ProjectPage({ params }: Props) {
           </div>
         )}
 
-        {/* Project SVG 3D View */}
-        {item.svg3d && (
+        {/* Project 3D View */}
+        {item.model3d && (
           <div className="mb-8 sm:mb-16">
             <ProjectMedia3D 
-              svgUrl={item.svg3d} 
+              modelUrl={item.model3d}
               color={colorPalette?.accent || '#52ddeb'}
-              extrudeDepth={4}
             />
           </div>
         )}

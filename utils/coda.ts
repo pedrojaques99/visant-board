@@ -31,7 +31,8 @@ export interface PortfolioItem {
   thumb: string;
   video: string;
   credits: string;
-  svg3d: string;
+  model3d: string;
+  logo2d: string;
   image02: string;
   image03: string;
   image04: string;
@@ -258,7 +259,8 @@ export async function getPortfolioData(): Promise<PortfolioDataResponse> {
       thumb: row.values['c-E8jRBgytkd'] || '',
       video: row.values['c-czpRT8O481'] || '',
       credits: row.values['c-IlJ9HvA1wE'] || '',
-      svg3d: row.values['c-oQXi3wWbeZ'] || '',
+      model3d: row.values['c-oQXi3wWbeZ'] || '',
+      logo2d: row.values['c-logo2d'] || '',
       image02: row.values['c-z1ZQeSebCy'] || '',
       image03: row.values['c-pGUgOu2reI'] || '',
       image04: row.values['c-W6-LDMJSKa'] || '',
@@ -328,7 +330,8 @@ export async function getPortfolioItemById(id: string) {
       thumb: data.values['c-E8jRBgytkd'] || '',
       video: data.values['c-czpRT8O481'] || '',
       credits: data.values['c-IlJ9HvA1wE'] || '',
-      svg3d: data.values['c-oQXi3wWbeZ'] || '',
+      model3d: data.values['c-oQXi3wWbeZ'] || '',
+      logo2d: data.values['c-logo2d'] || '',
       image02: data.values['c-z1ZQeSebCy'] || '',
       image03: data.values['c-pGUgOu2reI'] || '',
       image04: data.values['c-W6-LDMJSKa'] || '',
