@@ -2,7 +2,7 @@
 
 import { Suspense, useRef, useState, useEffect } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { Html, useGLTF } from '@react-three/drei';
+import { Html, useGLTF, OrbitControls } from '@react-three/drei';
 import * as THREE from 'three';
 import { useMediaQuery } from '@/hooks/use-media-query';
 
@@ -33,9 +33,8 @@ function GLBModel({ url, color = '#52ddeb' }: { url: string; color?: string }) {
         if (child instanceof THREE.Mesh) {
           child.material = new THREE.MeshBasicMaterial({
             color: color,
-            wireframe: true,
             transparent: true,
-            opacity: 0.6,
+            opacity: 0.9,
           });
         }
       });
@@ -52,7 +51,8 @@ function GLBModel({ url, color = '#52ddeb' }: { url: string; color?: string }) {
     <primitive
       ref={meshRef}
       object={scene}
-      scale={2}
+      scale={isMobile ? 10 : 6}
+      position={[0, 1, 0]}
       onPointerOver={() => setHovered(true)}
       onPointerOut={() => setHovered(false)}
     />
@@ -62,15 +62,27 @@ function GLBModel({ url, color = '#52ddeb' }: { url: string; color?: string }) {
 export function ProjectMedia3D({ modelUrl, color }: ProjectMedia3DProps) {
   if (!modelUrl) return null;
 
+  // Simple check to prevent loading non-GLB files
+  if (!modelUrl.toLowerCase().endsWith('.glb')) {
+    console.warn('Invalid model URL. Only GLB files are supported.');
+    return null;
+  }
+
   return (
-    <div className="w-full aspect-[21/9] rounded-lg overflow-hidden bg-background/5 backdrop-blur-sm">
+    <div className="w-full max-w-4xl mx-auto aspect-[4/3] rounded-lg overflow-hidden bg-background/5 backdrop-blur-sm">
       <Canvas
-        camera={{ position: [0, 0, 15], fov: 45 }}
+        camera={{ position: [0, 0, 25], fov: 45 }}
         style={{ width: '100%', height: '100%' }}
       >
         <Suspense fallback={<Loader />}>
-          <ambientLight intensity={0.5} />
-          <pointLight position={[10, 10, 10]} />
+          <ambientLight intensity={0.8} />
+          <pointLight position={[15, 15, 15]} intensity={1.5} />
+          <OrbitControls 
+            enableZoom={false}
+            enablePan={false}
+            minPolarAngle={Math.PI / 3}
+            maxPolarAngle={Math.PI / 2}
+          />
           <GLBModel url={modelUrl} color={color} />
         </Suspense>
       </Canvas>

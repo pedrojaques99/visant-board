@@ -53,7 +53,7 @@ export default function About() {
         </div>
         <div className="max-w-[1800px] w-[90%] mx-auto grid grid-cols-1 gap-8 sm:gap-16 relative z-10 p-4 sm:p-5 md:px-12">
           <motion.div
-            initial={{ opacity: 0, x: -50 }}
+            initial={{ opacity: 0, x: 0 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8 }}
             className="flex flex-col justify-center items-center text-center"
