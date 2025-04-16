@@ -407,15 +407,15 @@ export async function listCodaTableColumnIds(tableId: string): Promise<{ success
 
 export async function getStatistics() {
   try {
-    // Get total projects (all rows from grid-7B5GsoqgKn)
-    const projectsResponse = await fetch(`${CODA_API_BASE}/docs/${CODA_DOC_ID}/tables/grid-7B5GsoqgKn/rows?limit=1000`, {
+    // Get total projects (all rows from grid-mYMdZdBNZ_)
+    const projectsResponse = await fetch(`${CODA_API_BASE}/docs/${CODA_DOC_ID}/tables/grid-mYMdZdBNZ_/rows?limit=1000`, {
       headers: {
         'Authorization': `Bearer ${CODA_API_TOKEN}`,
         'Content-Type': 'application/json',
       },
     });
 
-    // Get total clients (all rows from grid-emZAaCaN7j)
+    // Get total clients (all rows from grid-emZAaCaN7j)  
     const clientsResponse = await fetch(`${CODA_API_BASE}/docs/${CODA_DOC_ID}/tables/grid-emZAaCaN7j/rows?limit=1000`, {
       headers: {
         'Authorization': `Bearer ${CODA_API_TOKEN}`,
@@ -434,7 +434,7 @@ export async function getStatistics() {
 
     // Count branding projects by filtering the projects data
     const brandingProjects = projectsData.items.filter((item: any) => {
-      const type = item.values['c-Rddnn9er3T'] || '';
+      const type = item.values['c-vUzo5D-u60'] || '';
       return type.toLowerCase().includes('branding');
     });
 
