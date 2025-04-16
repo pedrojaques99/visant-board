@@ -11,6 +11,7 @@ import { motion } from 'framer-motion';
 import { usePathname } from 'next/navigation';
 import { useI18n } from '@/context/i18n-context';
 import { t } from '@/utils/translations';
+import { useMediaQuery } from '@/hooks/use-media-query';
 
 const NavLink = ({ href, translationKey, fallback }: { href: string; translationKey: string; fallback: string }) => {
   const pathname = usePathname();
@@ -47,6 +48,7 @@ const NavLink = ({ href, translationKey, fallback }: { href: string; translation
 
 export function Navigation() {
   const [session, setSession] = useState<Session | null>(null);
+  const isExtraSmall = useMediaQuery('(max-width: 400px)');
   const supabase = createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
@@ -76,14 +78,25 @@ export function Navigation() {
           whileTap={{ scale: 0.98 }}
         >
           <Link href="/" className="flex items-center gap-2">
-            <Image
-              src="/assets/brand/logo.png"
-              alt="Visant Logo"
-              width={120}
-              height={32}
-              priority
-              className="invert dark:invert-0"
-            />
+            {isExtraSmall ? (
+              <Image
+                src="/assets/brand/icon visant.svg"
+                alt="Visant Icon"
+                width={32}
+                height={32}
+                priority
+                className="invert dark:invert-0"
+              />
+            ) : (
+              <Image
+                src="/assets/brand/logo.png"
+                alt="Visant Logo"
+                width={120}
+                height={32}
+                priority
+                className="invert dark:invert-0"
+              />
+            )}
           </Link>
         </motion.div>
         
@@ -96,7 +109,7 @@ export function Navigation() {
           </div>
           <div className="hidden sm:flex items-center gap-8">
             <Link
-              href="https://wa.me/your_number_here"
+              href="https://wa.me/+554788475891"
               target="_blank"
               rel="noopener noreferrer"
               className="transition-transform hover:scale-110 active:scale-100 opacity-70 hover:opacity-100"
@@ -110,7 +123,7 @@ export function Navigation() {
               />
             </Link>
             <Link
-              href="https://instagram.com/your_handle_here"
+              href="https://instagram.com/visant.co"
               target="_blank"
               rel="noopener noreferrer"
               className="transition-transform hover:scale-110 active:scale-100 opacity-70 hover:opacity-100"

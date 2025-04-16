@@ -6,6 +6,7 @@ export const messages = {
     share: "Compartilhar",
     copied: "Copiado!",
     showDetails: "Ver detalhes",
+    swipeHint: "Role ou arraste para explorar",
   },
   navigation: {
     about: "Sobre",
@@ -13,12 +14,13 @@ export const messages = {
     contact: "Contato",
   },
   home: {
-    title: "Bem-vindo à Visant",
+    title: "Bem-vindo à Visant®",
     subtitle: "Onde marcas visionárias nascem.",
     interactionHint: "Clique e arraste para interagir com o logo 3D",
     rotateHint: "Clique e arraste para girar",
     latestProjects: "Últimos Projetos de Branding",
     startProject: "Começar um projeto",
+    swipeHint: "Role ou arraste para explorar",
   },
   portfolio: {
     title: "Portfólio",
@@ -42,6 +44,7 @@ export const messages = {
     whatWeDo: "O que fazemos",
     team: "Equipe",
     cta: "Procurando uma identidade visual marcante?",
+    ctaDescription: "Estamos prontos para criar algo incrível juntos.",
     getInTouch: "Entre em contato",
     trustedBy: "Confiam em nós",
     projects: "Projetos",

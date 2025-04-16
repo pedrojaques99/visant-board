@@ -246,104 +246,73 @@ function Particles() {
 
 export function Logo3D() {
   const isMobile = useMediaQuery('(max-width: 768px)');
-  const [shouldRender3D, setShouldRender3D] = useState(true);
+  const [isPerformant, setIsPerformant] = useState(true);
 
   useEffect(() => {
-    // Check if device can handle 3D well
-    const checkPerformance = () => {
-      if (isMobile) {
-        // Check if device has enough memory and cores
-        if (
-          // @ts-ignore - navigator.deviceMemory is not in TypeScript types
-          (navigator.deviceMemory && navigator.deviceMemory < 4) ||
-          // @ts-ignore - navigator.hardwareConcurrency is not in TypeScript types
-          (navigator.hardwareConcurrency && navigator.hardwareConcurrency < 4)
-        ) {
-          setShouldRender3D(false);
-          return;
-        }
-        
-        // Test WebGL capabilities
-        const canvas = document.createElement('canvas');
-        const gl = canvas.getContext('webgl');
-        if (!gl) {
-          setShouldRender3D(false);
-          return;
-        }
-        
-        // Check if device supports enough texture units
-        const maxTextureUnits = gl.getParameter(gl.MAX_TEXTURE_IMAGE_UNITS);
-        if (maxTextureUnits < 8) {
-          setShouldRender3D(false);
-          return;
-        }
-      }
-    };
-    
     checkPerformance();
-  }, [isMobile]);
+  }, []);
 
-  if (!shouldRender3D && isMobile) {
-    return (
-      <div className="w-full h-full flex items-center justify-center">
-        <div className="relative w-48 h-48 animate-float">
-          <img
-            src="/images/visant-2d-logo.png"
-            alt="Visant Logo"
-            className="w-full h-full object-contain opacity-80"
-          />
-        </div>
-      </div>
-    );
-  }
+  const checkPerformance = () => {
+    // Check if device can handle 3D well
+    if (isMobile) {
+      // Check if device has enough memory and cores
+      if (
+        // @ts-ignore - navigator.deviceMemory is not in TypeScript types
+        (navigator.deviceMemory && navigator.deviceMemory < 4) ||
+        // @ts-ignore - navigator.hardwareConcurrency is not in TypeScript types
+        (navigator.hardwareConcurrency && navigator.hardwareConcurrency < 4)
+      ) {
+        setIsPerformant(false);
+        return;
+      }
+      
+      // Test WebGL capabilities
+      const canvas = document.createElement('canvas');
+      const gl = canvas.getContext('webgl');
+      if (!gl) {
+        setIsPerformant(false);
+        return;
+      }
+      
+      // Check if device supports enough texture units
+      const maxTextureUnits = gl.getParameter(gl.MAX_TEXTURE_IMAGE_UNITS);
+      if (maxTextureUnits < 8) {
+        setIsPerformant(false);
+        return;
+      }
+    }
+  };
 
   return (
     <div className="absolute inset-0">
       <Canvas
-        camera={{
-          position: [0, 0, 10],
-          fov: isMobile ? 50 : 45, // Wider FOV for mobile
-          near: 0.1,
-          far: 1000
-        }}
-        gl={{
-          antialias: !isMobile, // Disable antialiasing on mobile
-          toneMapping: THREE.ACESFilmicToneMapping,
-          outputEncoding: THREE.sRGBEncoding,
-          alpha: true,
-          powerPreference: isMobile ? 'low-power' : 'high-performance'
-        }}
-        dpr={isMobile ? [1, 1] : [1, 2]} // Lower resolution on mobile
+        camera={{ position: [0, 0, 15], fov: 50 }}
+        style={{ width: '100%', height: '100%' }}
       >
         <Suspense fallback={<Loader />}>
-          <ambientLight intensity={0.6} />
-          <directionalLight
-            position={[10, 10, 5]}
-            intensity={1}
-            castShadow={!isMobile}
-          />
-          <directionalLight
-            position={[-10, -10, -5]}
-            intensity={0.5}
-          />
-          <pointLight position={[0, 0, 5]} intensity={0.5} />
-
-          {isMobile ? <MobileModel /> : <Model />}
-          {isMobile ? <MobileParticles /> : <Particles />}
-
-          <Environment preset="city" />
-          
           <OrbitControls
-            enableZoom={true}
             enablePan={false}
-            minPolarAngle={Math.PI / 4}
-            maxPolarAngle={Math.PI * 3/4}
-            minAzimuthAngle={-Math.PI / 2}
-            maxAzimuthAngle={Math.PI / 2}
-            rotateSpeed={isMobile ? 0.2 : 0.3}
-            dampingFactor={isMobile ? 0.08 : 0.05}
-            enableDamping={true}
+            enableZoom={!isMobile}
+            minPolarAngle={Math.PI / 2.5}
+            maxPolarAngle={Math.PI / 1.5}
+            rotateSpeed={0.5}
+            enableDamping
+            dampingFactor={0.05}
+            minDistance={0.5}
+            maxDistance={20}
+            touches={{
+              ONE: isMobile ? undefined : THREE.TOUCH.ROTATE,
+              TWO: isMobile ? THREE.TOUCH.ROTATE : THREE.TOUCH.DOLLY_ROTATE
+            }}
           />
+          {isPerformant ? (
+            <>
+              {isMobile ? <MobileModel /> : <Model />}
+              {isMobile ? <MobileParticles /> : <Particles />}
+            </>
+          ) : (
+            <MobileModel />
+          )}
         </Suspense>
       </Canvas>
     </div>
