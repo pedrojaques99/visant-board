@@ -4,18 +4,20 @@ import { PortfolioGrid } from '@/components/PortfolioGrid';
 import { useI18n } from '@/context/i18n-context';
 import { t } from '@/utils/translations';
 import { useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 
 export default function PortfolioPage() {
   const { messages } = useI18n();
+  const searchParams = useSearchParams();
   const [portfolioData, setPortfolioData] = useState<any>({ success: false, items: [], tipos: [] });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const initialType = searchParams.get('type');
 
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        // Use a more reliable approach with fetch directly
         const response = await fetch('/api/portfolio');
         
         if (!response.ok) {
@@ -54,7 +56,11 @@ export default function PortfolioPage() {
             </div>
           ) : portfolioData.success && portfolioData.items && portfolioData.items.length > 0 ? (
             <div className="w-full">
-              <PortfolioGrid items={portfolioData.items} tipos={(portfolioData.tipos || []) as string[]} />
+              <PortfolioGrid 
+                items={portfolioData.items} 
+                tipos={(portfolioData.tipos || []) as string[]} 
+                initialType={initialType || undefined}
+              />
             </div>
           ) : (
             <div className="mt-8 sm:mt-10">

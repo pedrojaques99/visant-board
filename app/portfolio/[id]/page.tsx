@@ -14,6 +14,8 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import ColorThief from 'colorthief';
 import { useMediaQuery } from '@/hooks/use-media-query';
+import { ProjectMedia3D } from '@/components/project-media-3d';
+import { PortfolioCard } from '@/components/PortfolioCard';
 
 interface Props {
   params: {
@@ -46,6 +48,22 @@ function calculateTextColor(bgColor: string): string {
   return brightness > 128 ? '#000000' : '#ffffff';
 }
 
+// Add a new function to ensure text contrast
+function ensureTextContrast(bgColor: string, textColor: string): string {
+  const bgBrightness = (parseInt(bgColor.slice(1, 3), 16) * 299 +
+    parseInt(bgColor.slice(3, 5), 16) * 587 +
+    parseInt(bgColor.slice(5, 7), 16) * 114) / 1000;
+  
+  const textBrightness = (parseInt(textColor.slice(1, 3), 16) * 299 +
+    parseInt(textColor.slice(3, 5), 16) * 587 +
+    parseInt(textColor.slice(5, 7), 16) * 114) / 1000;
+  
+  const contrast = Math.abs(bgBrightness - textBrightness);
+  
+  // If contrast is too low, return the opposite color
+  return contrast < 128 ? (bgBrightness > 128 ? '#000000' : '#ffffff') : textColor;
+}
+
 export default function ProjectPage({ params }: Props) {
   const { messages, locale } = useI18n();
   const [item, setItem] = useState<any>(null);
@@ -53,6 +71,7 @@ export default function ProjectPage({ params }: Props) {
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const [colorPalette, setColorPalette] = useState<ColorPalette | null>(null);
+  const [relatedProjects, setRelatedProjects] = useState<any[]>([]);
   const isMobile = useMediaQuery('(max-width: 768px)');
 
   const analyzeImageColor = useCallback(async (imageUrl: string) => {
@@ -95,6 +114,7 @@ export default function ProjectPage({ params }: Props) {
     const fetchData = async () => {
       setLoading(true);
       try {
+        // Fetch current project
         const response = await fetch(`/api/portfolio/${params.id}`);
         
         if (!response.ok) {
@@ -108,6 +128,19 @@ export default function ProjectPage({ params }: Props) {
           return;
         }
         setItem(result.item);
+
+        // Fetch all projects for related items
+        const allProjectsResponse = await fetch('/api/portfolio');
+        if (allProjectsResponse.ok) {
+          const allProjects = await allProjectsResponse.json();
+          if (allProjects.success && allProjects.items) {
+            // Filter related projects by type, excluding current project
+            const related = allProjects.items
+              .filter((p: any) => p.type === result.item.type && p.id !== result.item.id)
+              .slice(0, 3); // Get up to 3 related projects
+            setRelatedProjects(related);
+          }
+        }
 
         // Analyze the first image's color once data is loaded
         if (result.item.thumb) {
@@ -180,7 +213,7 @@ export default function ProjectPage({ params }: Props) {
   ];
 
   // Get the description based on current language
-  const currentDescription = locale === 'pt' ? item?.ptbr : item?.description;
+  const currentDescription = locale === 'pt' ? item?.ptbr || item?.description : item?.description || item?.ptbr;
 
   return (
     <main 
@@ -190,9 +223,18 @@ export default function ProjectPage({ params }: Props) {
         color: 'var(--project-text, var(--foreground))'
       }}
     >
-      <div className="border-b" style={{ backgroundColor: 'var(--project-accent, var(--muted))' }}>
+      <div 
+        className="border-b" 
+        style={{ 
+          backgroundColor: 'var(--project-accent, var(--muted))',
+          color: ensureTextContrast(colorPalette?.accent || '#000000', 'var(--project-text, var(--foreground))')
+        }}
+      >
         <div className="max-w-7xl mx-auto py-3 sm:py-4 px-4 sm:px-6 lg:px-8">
-          <Breadcrumb items={breadcrumbItems} />
+          <Breadcrumb 
+            items={breadcrumbItems} 
+            className="text-current opacity-90 hover:opacity-100 transition-opacity"
+          />
         </div>
       </div>
 
@@ -214,9 +256,12 @@ export default function ProjectPage({ params }: Props) {
               {item.type && (
                 <>
                   <span className="opacity-60">•</span>
-                  <span className="px-2 sm:px-3 py-0.5 sm:py-1 text-xs font-medium rounded-full border opacity-80">
+                  <Link 
+                    href={`/portfolio?type=${encodeURIComponent(item.type)}`}
+                    className="px-2 sm:px-3 py-0.5 sm:py-1 text-xs font-medium rounded-full border opacity-80 hover:opacity-100 transition-all"
+                  >
                     {item.type}
-                  </span>
+                  </Link>
                 </>
               )}
             </div>
@@ -261,13 +306,24 @@ export default function ProjectPage({ params }: Props) {
           </div>
         )}
 
+        {/* Project SVG 3D View */}
+        {item.svg3d && (
+          <div className="mb-8 sm:mb-16">
+            <ProjectMedia3D 
+              svgUrl={item.svg3d} 
+              color={colorPalette?.accent || '#52ddeb'}
+              extrudeDepth={4}
+            />
+          </div>
+        )}
+
         {/* Project images with responsive gap */}
         {images.length > 0 ? (
           <div className="grid gap-2 sm:gap-1 mb-8 sm:mb-16">
             {images.map((imageUrl, index) => (
               <div 
                 key={imageUrl} 
-                className="relative w-full overflow-hidden bg-muted rounded-lg sm:rounded-none"
+                className="relative w-full overflow-hidden bg-muted rounded-lg sm:rounded-lg"
               >
                 <Image
                   src={imageUrl}
@@ -331,6 +387,33 @@ export default function ProjectPage({ params }: Props) {
             </Link>
           </div>
         </section>
+
+        {/* Related Projects */}
+        {relatedProjects.length > 0 && (
+          <section className="max-w-7xl mx-auto mt-16 sm:mt-24 px-4 sm:px-6 lg:px-8">
+            <motion.h2
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              className="text-xl sm:text-2xl font-bold mb-8"
+            >
+              {t(messages, 'portfolio.relatedProjects', locale === 'pt' ? 'Projetos Relacionados' : 'Related Projects')}
+            </motion.h2>
+            
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {relatedProjects.map((project) => (
+                <motion.div
+                  key={project.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6 }}
+                >
+                  <PortfolioCard item={project} />
+                </motion.div>
+              ))}
+            </div>
+          </section>
+        )}
       </div>
     </main>
   );

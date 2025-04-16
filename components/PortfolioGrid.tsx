@@ -12,11 +12,12 @@ import { t } from '@/utils/translations';
 interface PortfolioGridProps {
   items: PortfolioItem[];
   tipos: string[];
+  initialType?: string;
 }
 
-export function PortfolioGrid({ items, tipos }: PortfolioGridProps) {
+export function PortfolioGrid({ items, tipos, initialType }: PortfolioGridProps) {
   const { messages } = useI18n();
-  const [selectedTipo, setSelectedTipo] = useState<string | null>(null);
+  const [selectedTipo, setSelectedTipo] = useState<string | null>(initialType || null);
   const [cardSize, setCardSize] = useState(1);
   const [showControls, setShowControls] = useState(false);
   const [columns, setColumns] = useState(2);
