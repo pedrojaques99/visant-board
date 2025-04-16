@@ -1,6 +1,40 @@
 export const brands = [
-  'Brand 1', 'Brand 2', 'Brand 3', 'Brand 4', 'Brand 5', 
-  'Brand 6', 'Brand 7', 'Brand 8'
+  {
+    name: 'Olsson',
+    logo: '/assets/images/olsson.png'
+  },
+  {
+    name: 'Wega',
+    logo: '/assets/images/wega.png'
+  },
+  {
+    name: 'AMC',
+    logo: '/assets/images/amc.png'
+  },
+  {
+    name: 'Têxtil Cristina',
+    logo: '/assets/images/cristina.png'
+  },
+  {
+    name: 'Dura Mais',
+    logo: '/assets/images/dura-mais.png'
+  },
+  {
+    name: 'Forno D\'Lenha',
+    logo: '/assets/images/forno-d-lenha.png'
+  },
+  {
+    name: 'Hotel D\'Sintra',
+    logo: '/assets/images/d-sintra.png'
+  },
+  {
+    name: 'Divino',
+    logo: '/assets/images/divino.png'
+  },
+  {
+    name: 'JVLN',
+    logo: '/assets/images/jvln.png'
+  }
 ];
 
 export const services = [
@@ -24,17 +58,17 @@ export const services = [
 export const team = [
   { 
     name: 'Pedro Xavier', 
-    role: 'Creative Director',
+    role: 'Co-founder',
     image: '/assets/images/pedro.webp'
   },
   { 
     name: 'Pedro Jaques', 
-    role: 'Design Director',
+    role: 'Co-founder',
     image: '/assets/images/jacao.webp'
   },
   { 
     name: 'Miguel Soares', 
-    role: 'Art Director',
+    role: 'Designer',
     image: '/assets/images/Captura de tela 2025-04-12 145420.png'
   }
 ];

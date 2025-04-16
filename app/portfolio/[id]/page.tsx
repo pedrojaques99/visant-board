@@ -6,7 +6,7 @@ import { notFound } from 'next/navigation';
 import { Breadcrumb } from '@/components/ui/breadcrumb';
 import { useI18n } from '@/context/i18n-context';
 import { t } from '@/utils/translations';
-import { Share2 } from 'lucide-react';
+import { Share2, Eye, EyeOff } from 'lucide-react';
 import { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -109,11 +109,12 @@ export default function ProjectPage({ params }: Props) {
   const [colorPalette, setColorPalette] = useState<ColorPalette | null>(null);
   const [relatedProjects, setRelatedProjects] = useState<any[]>([]);
   const isMobile = useMediaQuery('(max-width: 768px)');
+  const [show3D, setShow3D] = useState(false);
 
   const analyzeImageColor = useCallback(async (imageUrl: string) => {
     try {
       const colorThief = new ColorThief();
-      const img = new window.Image();
+      const img = document.createElement('img');
       img.crossOrigin = 'Anonymous';
       
       await new Promise((resolve, reject) => {
@@ -123,22 +124,41 @@ export default function ProjectPage({ params }: Props) {
       });
 
       const [r, g, b] = colorThief.getColor(img);
-      const palette = colorThief.getPalette(img, 3);
-      const [r2, g2, b2] = palette[1];
-      const [r3, g3, b3] = palette[2];
+      const palette = colorThief.getPalette(img, 5); // Aumentado para 5 cores para mais opções
+      
+      // Encontrar a cor mais vibrante do palette para usar como accent
+      const vibrantColor = palette.reduce((most, current) => {
+        const [r, g, b] = current;
+        const saturation = Math.max(r, g, b) - Math.min(r, g, b);
+        const brightness = (r + g + b) / 3;
+        const vibrancy = saturation * brightness;
+        
+        if (vibrancy > most.vibrancy) {
+          return { color: current, vibrancy };
+        }
+        return most;
+      }, { color: palette[0], vibrancy: 0 }).color;
+
+      const [r3, g3, b3] = vibrantColor;
 
       const dominant = rgbToHex(r, g, b);
-      const secondary = rgbToHex(r2, g2, b2);
       const accent = rgbToHex(r3, g3, b3);
 
       // Calculate background color with proper contrast
       const bgColor = adjustColorBrightness(dominant, 0.15);
       const textColor = adjustColorForContrast(bgColor, '#ffffff');
-      const accentWithContrast = adjustColorForContrast(bgColor, accent);
+      
+      // Ensure accent color has good contrast with background
+      const accentWithContrast = adjustColorForContrast(bgColor, accent, 4.5);
+      
+      // Create a lighter/darker version of accent for hover states
+      const accentHover = calculateTextColor(accentWithContrast) === '#ffffff' 
+        ? adjustColorBrightness(accentWithContrast, 1.2)
+        : adjustColorBrightness(accentWithContrast, 0.8);
 
       setColorPalette({
         dominant: bgColor,
-        secondary: adjustColorForContrast(bgColor, secondary),
+        secondary: textColor,
         accent: accentWithContrast
       });
 
@@ -146,6 +166,7 @@ export default function ProjectPage({ params }: Props) {
       document.documentElement.style.setProperty('--project-bg', bgColor);
       document.documentElement.style.setProperty('--project-text', textColor);
       document.documentElement.style.setProperty('--project-accent', accentWithContrast);
+      document.documentElement.style.setProperty('--project-accent-hover', accentHover);
     } catch (error) {
       console.error('Error analyzing image color:', error);
       // Fallback to safe, high-contrast colors
@@ -162,60 +183,79 @@ export default function ProjectPage({ params }: Props) {
       document.documentElement.style.setProperty('--project-bg', fallbackColors.bg);
       document.documentElement.style.setProperty('--project-text', fallbackColors.text);
       document.documentElement.style.setProperty('--project-accent', fallbackColors.accent);
+      document.documentElement.style.setProperty('--project-accent-hover', '#3ac8d6');
     }
   }, []);
 
   useEffect(() => {
+    let mounted = true;
+
     const fetchData = async () => {
       setLoading(true);
       try {
-        // Fetch current project
-        const response = await fetch(`/api/portfolio/${params.id}`);
+        // Fetch current project and related projects in parallel
+        const [projectResponse, allProjectsResponse] = await Promise.all([
+          fetch(`/api/portfolio/${params.id}`),
+          fetch('/api/portfolio')
+        ]);
         
-        if (!response.ok) {
-          throw new Error(`Failed to fetch project: ${response.status} ${response.statusText}`);
+        if (!mounted) return;
+
+        if (!projectResponse.ok) {
+          throw new Error(`Failed to fetch project: ${projectResponse.status}`);
         }
         
-        const result = await response.json();
+        const result = await projectResponse.json();
         
         if (!result.success || !result.item) {
           setError('Project not found');
           return;
         }
+
         setItem(result.item);
 
-        // Fetch all projects for related items
-        const allProjectsResponse = await fetch('/api/portfolio');
+        // Pre-load thumbnail image for color analysis
+        if (result.item.thumb) {
+          const img = document.createElement('img');
+          img.crossOrigin = 'Anonymous';
+          img.src = result.item.thumb;
+        }
+
+        // Process related projects if available
         if (allProjectsResponse.ok) {
           const allProjects = await allProjectsResponse.json();
           if (allProjects.success && allProjects.items) {
-            // Filter related projects by type, excluding current project
             const related = allProjects.items
               .filter((p: any) => p.type === result.item.type && p.id !== result.item.id)
-              .slice(0, 3); // Get up to 3 related projects
+              .slice(0, 3);
             setRelatedProjects(related);
           }
         }
 
-        // Analyze the first image's color once data is loaded
+        // Analyze colors after setting the item
         if (result.item.thumb) {
           await analyzeImageColor(result.item.thumb);
         }
       } catch (error) {
-        setError('Failed to load project details');
-        console.error(error);
+        if (mounted) {
+          setError('Failed to load project details');
+          console.error(error);
+        }
       } finally {
-        setLoading(false);
+        if (mounted) {
+          setLoading(false);
+        }
       }
     };
 
     fetchData();
 
-    // Cleanup function to reset color scheme
     return () => {
+      mounted = false;
       document.documentElement.style.removeProperty('--project-bg');
       document.documentElement.style.removeProperty('--project-text');
       document.documentElement.style.removeProperty('--project-accent');
+      document.documentElement.style.removeProperty('--project-accent-hover');
     };
   }, [params.id, analyzeImageColor]);
 
@@ -268,7 +308,7 @@ export default function ProjectPage({ params }: Props) {
   ];
 
   // Get the description based on current language
-  const currentDescription = locale === 'pt' ? item?.ptbr || item?.description : item?.description || item?.ptbr;
+  const currentDescription = locale === 'pt' ? item?.ptbr : item?.description;
 
   return (
     <main 
@@ -279,16 +319,12 @@ export default function ProjectPage({ params }: Props) {
       }}
     >
       <div 
-        className="border-b" 
-        style={{ 
-          backgroundColor: 'var(--project-accent, var(--muted))',
-          color: ensureTextContrast(colorPalette?.accent || '#000000', 'var(--project-text, var(--foreground))')
-        }}
+        className="border-b bg-background" 
       >
         <div className="max-w-7xl mx-auto py-3 sm:py-4 px-4 sm:px-6 lg:px-8">
           <Breadcrumb 
             items={breadcrumbItems} 
-            className="text-current opacity-90 hover:opacity-100 transition-opacity"
+            className="opacity-90 hover:opacity-100 transition-opacity"
           />
         </div>
       </div>
@@ -321,29 +357,47 @@ export default function ProjectPage({ params }: Props) {
               )}
             </div>
           </div>
-          <Button 
-            variant="outline" 
-            size={isMobile ? "default" : "sm"}
-            onClick={handleShare}
-            className={cn(
-              "transition-all duration-300 w-full sm:w-auto",
-              copied ? "bg-[var(--project-accent)] text-[var(--project-text)]" : ""
+          <div className="flex gap-2 sm:gap-3">
+            {item.model3d && (
+              <Button 
+                variant="outline" 
+                size={isMobile ? "default" : "sm"}
+                onClick={() => setShow3D(!show3D)}
+                className="transition-all duration-300 w-full sm:w-auto"
+              >
+                {show3D ? (
+                  <EyeOff className="h-4 w-4 mr-2" />
+                ) : (
+                  <Eye className="h-4 w-4 mr-2" />
+                )}
+                {show3D ? 
+                  t(messages, 'portfolio.hide3D', locale === 'pt' ? 'Ocultar 3D' : 'Hide 3D') : 
+                  t(messages, 'portfolio.view3D', locale === 'pt' ? 'Ver em 3D' : 'View 3D')
+                }
+              </Button>
             )}
-          >
-            <Share2 className="h-4 w-4 mr-2" />
-            {copied ? t(messages, 'common.copied', 'Copied!') : t(messages, 'common.share', 'Share')}
-          </Button>
+            <Button 
+              variant="outline" 
+              size={isMobile ? "default" : "sm"}
+              onClick={handleShare}
+              className={cn(
+                "transition-all duration-300 w-full sm:w-auto",
+                copied ? "bg-[var(--project-accent)] text-[var(--project-text)]" : ""
+              )}
+            >
+              <Share2 className="h-4 w-4 mr-2" />
+              {copied ? t(messages, 'common.copied', 'Copied!') : t(messages, 'common.share', 'Share')}
+            </Button>
+          </div>
         </div>
 
         {/* Project description */}
         {currentDescription && (
-          <div className="prose max-w-none mb-8 sm:mb-12" style={{ color: 'var(--project-text)' }}>
-            <div className="mb-8">
-              <h2 className="text-lg sm:text-xl font-semibold mb-2 sm:mb-3">
-                {t(messages, 'portfolio.description', locale === 'pt' ? 'Descrição' : 'Description')}
-              </h2>
-              <p className="text-base sm:text-lg opacity-80">{currentDescription}</p>
-            </div>
+          <div className="mb-8 sm:mb-12">
+            <h2 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6">
+              {t(messages, 'portfolio.description', locale === 'pt' ? 'Descrição' : 'Description')}
+            </h2>
+            <p className="text-base sm:text-lg text-muted-foreground">{currentDescription}</p>
           </div>
         )}
 
@@ -362,12 +416,16 @@ export default function ProjectPage({ params }: Props) {
         )}
 
         {/* Project 3D View */}
-        {item.model3d && (
+        {item.model3d && show3D && (
           <div className="mb-8 sm:mb-16">
-            <ProjectMedia3D 
-              modelUrl={item.model3d}
-              color={colorPalette?.accent || '#52ddeb'}
-            />
+            <div className="relative w-full overflow-hidden rounded-lg sm:rounded-xl">
+              <div className="h-[400px] sm:h-[500px]">
+                <ProjectMedia3D 
+                  modelUrl={item.model3d}
+                  color={colorPalette?.accent || '#52ddeb'}
+                />
+              </div>
+            </div>
           </div>
         )}
 
@@ -387,7 +445,8 @@ export default function ProjectPage({ params }: Props) {
                   className="w-full h-auto"
                   sizes="(max-width: 768px) 100vw, (max-width: 1280px) 100vw, 1280px"
                   priority={index === 0}
-                  quality={90}
+                  loading={index === 0 ? "eager" : "lazy"}
+                  quality={index === 0 ? 90 : 75}
                 />
               </div>
             ))}
@@ -400,11 +459,11 @@ export default function ProjectPage({ params }: Props) {
 
         {/* Project Credits */}
         {item.credits && (
-          <div className="mb-8 sm:mb-16 prose max-w-none">
-            <h2 className="text-lg sm:text-xl font-semibold mb-2 sm:mb-3">
+          <div className="mb-8 sm:mb-12">
+            <h2 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6">
               {t(messages, 'portfolio.credits', locale === 'pt' ? 'Créditos' : 'Credits')}
             </h2>
-            <div className="text-base sm:text-lg opacity-80 whitespace-pre-wrap">{item.credits}</div>
+            <div className="text-base sm:text-lg text-muted-foreground whitespace-pre-wrap">{item.credits}</div>
           </div>
         )}
 
@@ -428,12 +487,23 @@ export default function ProjectPage({ params }: Props) {
             </motion.h2>
             <Link href="/contact">
               <motion.button
-                whileHover={{ scale: isMobile ? 1 : 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 rounded-lg sm:rounded-xl text-base sm:text-lg font-bold transition-all duration-300 hover:shadow-[0_0_20px_rgba(0,0,0,0.3)]"
+                className="w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 rounded-lg sm:rounded-xl text-base sm:text-lg font-bold"
                 style={{ 
                   backgroundColor: colorPalette?.accent || 'var(--primary)',
-                  color: 'var(--project-text)'
+                  color: calculateTextColor(colorPalette?.accent || '#000000')
+                }}
+                animate={{ 
+                  boxShadow: '0 0 20px rgba(0,0,0,0.2)',
+                  filter: 'brightness(1)',
+                  scale: 1,
+                  transition: { duration: 0.3 }
+                }}
+                whileHover={{
+                  boxShadow: '0 0 30px rgba(0,0,0,0.3)',
+                  filter: 'brightness(1.1)',
+                  scale: isMobile ? 1 : 1.02,
+                  transition: { duration: 0.3 }
                 }}
               >
                 {t(messages, 'about.getInTouch', locale === 'pt' ? 'Entre em contato' : 'Get in touch')}

@@ -10,9 +10,38 @@ import { services, team, fadeInUp } from './constants';
 import { cn } from '@/lib/utils';
 import { useI18n } from '@/context/i18n-context';
 import { t } from '@/utils/translations';
+import { getStatistics } from '@/utils/coda';
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
 
 export default function About() {
   const { messages } = useI18n();
+  const [statistics, setStatistics] = useState({
+    totalProjects: 0,
+    totalClients: 0,
+    totalBrands: 0
+  });
+
+  useEffect(() => {
+    const fetchStatistics = async () => {
+      try {
+        const response = await fetch('/api/statistics');
+        const data = await response.json();
+        
+        if (data.success && data.statistics) {
+          setStatistics({
+            totalProjects: data.statistics.totalProjects,
+            totalClients: data.statistics.totalClients,
+            totalBrands: data.statistics.totalBrands
+          });
+        }
+      } catch (error) {
+        console.error('Error fetching statistics:', error);
+      }
+    };
+
+    fetchStatistics();
+  }, []);
   
   return (
     <div className="w-full -mt-20">
@@ -22,7 +51,7 @@ export default function About() {
           <TexturePattern className="w-full h-full opacity-30" />
           <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent dark:from-primary/10" />
         </div>
-        <div className="max-w-[1800px] w-full mx-auto grid grid-cols-1 gap-8 sm:gap-16 relative z-10 p-4 sm:p-5 md:px-12">
+        <div className="max-w-[1800px] w-[90%] mx-auto grid grid-cols-1 gap-8 sm:gap-16 relative z-10 p-4 sm:p-5 md:px-12">
           <motion.div
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
@@ -69,9 +98,9 @@ export default function About() {
       <section className="w-full py-16 sm:py-32">
         <div className="max-w-[1800px] mx-auto px-4 sm:px-5 md:px-12">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 sm:gap-12">
-            <Counter end={50} label={t(messages, 'about.projects', 'Projects')} />
-            <Counter end={30} label={t(messages, 'about.clients', 'Clients')} />
-            <Counter end={25} label={t(messages, 'about.brands', 'Brands')} />
+            <Counter end={statistics.totalProjects} label={t(messages, 'about.projects', 'Projects')} />
+            <Counter end={statistics.totalClients} label={t(messages, 'about.clients', 'Clients')} />
+            <Counter end={statistics.totalBrands} label={t(messages, 'about.brands', 'Brands')} />
           </div>
         </div>
       </section>
@@ -118,16 +147,22 @@ export default function About() {
           >
             {t(messages, 'about.cta', 'Looking for a bold visual identity?')}
           </motion.h2>
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className={cn(
-              "bg-primary text-primary-foreground px-6 sm:px-8 py-3 sm:py-4 rounded-xl text-base sm:text-lg font-bold",
-              "hover:shadow-[0_0_20px_rgba(var(--primary),0.3)] transition-all duration-300"
-            )}
+          <Link 
+            href="https://wa.me/5547988475891?text=Olá!%20Gostaria%20de%20saber%20mais%20sobre%20seus%20serviços%20de%20design."
+            target="_blank"
+            rel="noopener noreferrer"
           >
-            {t(messages, 'about.getInTouch', 'Get in touch')}
-          </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className={cn(
+                "bg-primary text-primary-foreground px-6 sm:px-8 py-3 sm:py-4 rounded-xl text-base sm:text-lg font-bold",
+                "hover:shadow-[0_0_20px_rgba(var(--primary),0.3)] transition-all duration-300"
+              )}
+            >
+              {t(messages, 'about.getInTouch', 'Get in touch')}
+            </motion.button>
+          </Link>
         </div>
       </section>
     </div>

@@ -254,8 +254,8 @@ export async function getPortfolioData(): Promise<PortfolioDataResponse> {
       client: row.values['c-lR6pD7jLuH'] || '',
       type: row.values['c-Rddnn9er3T'] || '',
       date: row.values['c-OHfxznTpkF'] || '',
-      description: row.values['c-V1pN1xw0YX'] || '',
-      ptbr: row.values['c-is7YUDQ1sQ'] || '',
+      description: row.values['c-is7YUDQ1sQ'] || '',
+      ptbr: row.values['c-V1pN1xw0YX'] || '',
       thumb: row.values['c-E8jRBgytkd'] || '',
       video: row.values['c-czpRT8O481'] || '',
       credits: row.values['c-IlJ9HvA1wE'] || '',
@@ -325,8 +325,8 @@ export async function getPortfolioItemById(id: string) {
       client: data.values['c-lR6pD7jLuH'] || '',
       type: data.values['c-Rddnn9er3T'] || '',
       date: data.values['c-OHfxznTpkF'] || '',
-      description: data.values['c-V1pN1xw0YX'] || '',
-      ptbr: data.values['c-is7YUDQ1sQ'] || '',
+      description: data.values['c-is7YUDQ1sQ'] || '',
+      ptbr: data.values['c-V1pN1xw0YX'] || '',
       thumb: data.values['c-E8jRBgytkd'] || '',
       video: data.values['c-czpRT8O481'] || '',
       credits: data.values['c-IlJ9HvA1wE'] || '',
@@ -401,6 +401,59 @@ export async function listCodaTableColumnIds(tableId: string): Promise<{ success
     return {
       success: false,
       error: error instanceof Error ? error.message : 'Erro desconhecido'
+    };
+  }
+}
+
+export async function getStatistics() {
+  try {
+    // Get total projects (all rows from grid-7B5GsoqgKn)
+    const projectsResponse = await fetch(`${CODA_API_BASE}/docs/${CODA_DOC_ID}/tables/grid-7B5GsoqgKn/rows`, {
+      headers: {
+        'Authorization': `Bearer ${CODA_API_TOKEN}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    // Get total clients (all rows from grid-emZAaCaN7j)
+    const clientsResponse = await fetch(`${CODA_API_BASE}/docs/${CODA_DOC_ID}/tables/grid-emZAaCaN7j/rows`, {
+      headers: {
+        'Authorization': `Bearer ${CODA_API_TOKEN}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    // Get branding projects (all rows from grid-7B5GsoqgKn that contain "branding" in the c-Rddnn9er3T column)
+    const brandingResponse = await fetch(`${CODA_API_BASE}/docs/${CODA_DOC_ID}/tables/grid-7B5GsoqgKn/rows?query=c-Rddnn9er3T:contains:"branding"`, {
+      headers: {
+        'Authorization': `Bearer ${CODA_API_TOKEN}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!projectsResponse.ok || !clientsResponse.ok || !brandingResponse.ok) {
+      throw new Error('Failed to fetch data from Coda');
+    }
+
+    const [projectsData, clientsData, brandingData] = await Promise.all([
+      projectsResponse.json(),
+      clientsResponse.json(),
+      brandingResponse.json()
+    ]);
+
+    return {
+      success: true,
+      statistics: {
+        totalProjects: projectsData.items?.length || 0,
+        totalClients: clientsData.items?.length || 0,
+        totalBrands: brandingData.items?.length || 0
+      }
+    };
+  } catch (error) {
+    console.error('Error fetching statistics:', error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error'
     };
   }
 } 

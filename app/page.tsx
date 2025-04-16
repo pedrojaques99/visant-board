@@ -12,6 +12,7 @@ import { useMediaQuery } from '@/hooks/use-media-query';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence, useMotionValue, useTransform } from 'framer-motion';
 import { Footer } from '@/components/footer';
+import About from '@/app/about/page';
 
 interface ProjectCardProps {
   project: PortfolioItem;
@@ -101,7 +102,7 @@ function ProjectCard({ project, index, activeIndex, totalProjects, setActiveInde
             </motion.div>
           )}
           <motion.div 
-            className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent flex flex-col justify-end p-6 backdrop-blur-[2px]"
+            className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent flex flex-col justify-end p-6"
           >
             <motion.h3 
               className="text-xl font-medium text-white mb-2"
@@ -125,7 +126,7 @@ export default function Home() {
   const [latestProjects, setLatestProjects] = useState<PortfolioItem[]>([]);
   const [activeProject, setActiveProject] = useState<PortfolioItem | null>(null);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
-  const isMobile = useMediaQuery('(max-width: 768px)');
+  const isMobileOrTablet = useMediaQuery('(max-width: 1024px)');
   const [activeIndex, setActiveIndex] = useState(0);
   const [dragConstraints, setDragConstraints] = useState({ left: 0, right: 0 });
   
@@ -166,11 +167,11 @@ export default function Home() {
     setTimeout(() => setActiveProject(null), 300);
   };
   
-  if (isMobile) {
+  if (isMobileOrTablet) {
     return (
       <div className="min-h-screen bg-background">
-        {/* Mobile Hero Section with 3D Logo */}
-        <section className="relative h-[70vh] flex items-center justify-center px-4">
+        {/* Mobile/Tablet Hero Section with 3D Logo */}
+        <section className="relative h-[80vh] md:h-[60vh] flex items-center justify-center px-4 overflow-hidden">
           {/* 3D Hero Component */}
           <div className="absolute inset-0 w-full h-full">
             <Hero />
@@ -182,13 +183,13 @@ export default function Home() {
             transition={{ duration: 0.6 }}
             className="relative text-center space-y-4 z-10"
           >
-            <h1 className="text-4xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70">
+            <h1 className="text-4xl md:text-5xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70">
               {t(messages, 'home.title', 'Welcome to Visant®')}
             </h1>
             <p className="text-lg text-muted-foreground max-w-sm mx-auto">
               {t(messages, 'home.subtitle', 'Where visionary brands are born.')}
             </p>
-            <div className="flex flex-col gap-3 mt-6">
+            <div className="flex flex-col md:flex-row gap-3 mt-4">
               <Link
                 href="/portfolio"
                 className="group relative inline-flex items-center justify-center rounded-lg bg-primary/90 px-6 py-3 text-sm font-medium text-primary-foreground transition-all hover:bg-primary hover:scale-105 active:scale-100"
@@ -206,34 +207,22 @@ export default function Home() {
             </div>
           </motion.div>
 
-          {/* Mobile Interaction Hint */}
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 0.6 }}
-            transition={{ delay: 1, duration: 0.6 }}
-            className="absolute -bottom-0 left-1/2 -translate-x-1/2 text-center"
-          >
-            <p className="text-xs text-muted-foreground animate-pulse">
-              {t(messages, 'home.swipeHint', 'Scroll or swipe to explore')}
-            </p>
-          </motion.div>
-
           <div className="absolute inset-0 bg-gradient-to-b from-background via-background/30 to-background pointer-events-none z-[1]" />
         </section>
 
-        {/* Mobile Latest Projects Stack */}
+        {/* Mobile/Tablet Latest Projects Stack */}
         <div className="relative z-10 bg-background">
           {latestProjects.length > 0 && (
-            <section className="py-16 px-4">
+            <section className="py-8 md:py-12 px-4 md:px-6">
               <motion.h2 
                 initial={{ opacity: 0 }}
                 whileInView={{ opacity: 1 }}
                 transition={{ duration: 0.6 }}
-                className="text-2xl font-bold text-center mb-12"
+                className="text-2xl md:text-3xl font-bold text-center mb-8 md:mb-12"
               >
                 {t(messages, 'home.latestProjects', 'Latest Branding Projects')}
               </motion.h2>
-              <div className="relative h-[500px] overflow-visible touch-none">
+              <div className="relative h-[400px] md:h-[500px] overflow-hidden">
                 <div className="absolute inset-0 flex items-center justify-center">
                   <AnimatePresence mode="popLayout">
                     {latestProjects.map((project, index) => (
@@ -254,7 +243,7 @@ export default function Home() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 0.6 }}
                   transition={{ delay: 1, duration: 0.6 }}
-                  className="absolute -bottom-0 left-1/2 -translate-x-1/2 text-center"
+                  className="absolute -bottom-8 left-1/2 -translate-x-1/2 text-center"
                 >
                   <p className="text-xs text-muted-foreground animate-pulse">
                     {t(messages, 'home.swipeHint', 'Scroll or swipe to explore')}
@@ -264,33 +253,10 @@ export default function Home() {
             </section>
           )}
 
-          {/* Mobile CTA Section */}
-          <section className="relative py-32 sm:py-16 px-4 bg-gradient-to-b from-background to-primary/10">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              className="max-w-sm mx-auto text-center space-y-6 sm:space-y-6"
-            >
-              <h2 className="text-xl sm:text-2xl font-bold leading-tight">
-                {t(messages, 'about.cta', 'Looking for a bold visual identity?')}
-              </h2>
-              <p className="text-sm sm:text-base text-muted-foreground">
-                {t(messages, 'about.ctaDescription', 'We are ready to create something amazing together.')}
-              </p>
-              <Link 
-                href="/contact"
-                className="block mt-2"
-              >
-                <motion.button
-                  whileTap={{ scale: 0.95 }}
-                  className="w-90 px-6 py-3 rounded-lg text-sm sm:text-base font-semibold bg-primary text-primary-foreground transition-all hover:bg-primary/90 active:bg-primary/95"
-                >
-                  {t(messages, 'about.getInTouch', 'Get in touch')}
-                </motion.button>
-              </Link>
-            </motion.div>
-          </section>
+          {/* Mobile/Tablet About Section */}
+          <div className="block lg:hidden">
+            <About />
+          </div>
 
           {/* Footer */}
           <Footer />
