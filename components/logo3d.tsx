@@ -68,7 +68,7 @@ function MobileModel() {
     <primitive
       ref={modelRef}
       object={gltf.scene}
-      scale={4}
+      scale={8}
       onPointerOver={() => setHovered(true)}
       onPointerOut={() => setHovered(false)}
       position={[0, 0, 0]}
@@ -117,16 +117,16 @@ function Model() {
   return (
     <Float
       speed={1}
-      rotationIntensity={0.6}
+      rotationIntensity={0.8}
       floatIntensity={0.6}
     >
       <primitive
         ref={modelRef}
         object={gltf.scene}
-        scale={4.5}
+        scale={10}
         onPointerOver={() => setHovered(true)}
         onPointerOut={() => setHovered(false)}
-        position={[0, 0, 0]}
+        position={[0, -2, 0]}
       />
     </Float>
   );
@@ -286,7 +286,7 @@ export function Logo3D() {
   return (
     <div className="absolute inset-0">
       <Canvas
-        camera={{ position: [0, 0, 15], fov: 50 }}
+        camera={{ position: [0, 0, 0], fov: 50 }}
         style={{ width: '100%', height: '100%' }}
       >
         <Suspense fallback={<Loader />}>

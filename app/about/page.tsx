@@ -51,7 +51,7 @@ export default function About() {
           <TexturePattern className="w-full h-full opacity-30" />
           <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent dark:from-primary/10" />
         </div>
-        <div className="max-w-[1800px] w-[90%] mx-auto grid grid-cols-1 gap-8 sm:gap-16 relative z-10 p-4 sm:p-5 md:px-12">
+        <div className="max-w-[1800px] w-[90%] mx-auto grid grid-cols-1 gap-8 relative z-10 p-4 sm:p-5 md:px-12">
           <motion.div
             initial={{ opacity: 0, x: 0 }}
             animate={{ opacity: 1, x: 0 }}
@@ -109,11 +109,13 @@ export default function About() {
       <section className="py-16 sm:py-32 px-4 sm:px-6 md:px-12 relative overflow-hidden">
         <motion.h2 
           {...fadeInUp}
-          className="text-3xl sm:text-4xl md:text-5xl font-bold mb-12 sm:mb-20 text-center bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/70"
+          className="text-3xl sm:text-4xl md:text-5xl font-bold mb-12 sm:mb-20 text-center bg-clip-text text-transparent bg-gradient-to-r from-primary/90 via-primary/80 to-primary/90 sm:from-primary sm:via-primary/85 sm:to-primary/70"
         >
           {t(messages, 'about.trustedBy', 'Trusted by')}
         </motion.h2>
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-7xl mx-auto relative">
+          <div className="absolute inset-y-0 left-0 w-[10%] sm:w-[30%] bg-gradient-to-r from-background to-transparent z-10" />
+          <div className="absolute inset-y-0 right-0 w-[10%] sm:w-[30%] bg-gradient-to-l from-background to-transparent z-10" />
           <BrandSlider />
         </div>
       </section>

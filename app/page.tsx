@@ -171,9 +171,9 @@ export default function Home() {
     return (
       <div className="min-h-screen bg-background">
         {/* Mobile/Tablet Hero Section with 3D Logo */}
-        <section className="relative h-[80vh] md:h-[60vh] flex items-center justify-center px-4 overflow-hidden">
+        <section className="relative h-[80vh] md:h-[80vh] flex items-center justify-center px-4 overflow-hidden">
           {/* 3D Hero Component */}
-          <div className="absolute inset-0 w-full h-full">
+          <div className="absolute inset-0 w-full h-full scale-100 md:scale-125 md:-translate-y-20">
             <Hero />
           </div>
 
@@ -181,7 +181,7 @@ export default function Home() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="relative text-center space-y-4 z-10"
+            className="relative text-center space-y-4 z-10 md:translate-y-12"
           >
             <h1 className="text-4xl md:text-5xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70">
               {t(messages, 'home.title', 'Welcome to Visant®')}
@@ -213,16 +213,16 @@ export default function Home() {
         {/* Mobile/Tablet Latest Projects Stack */}
         <div className="relative z-10 bg-background">
           {latestProjects.length > 0 && (
-            <section className="py-8 md:py-12 px-4 md:px-6">
+            <section className="py-24 md:py-24 px-4 md:px-6">
               <motion.h2 
                 initial={{ opacity: 0 }}
                 whileInView={{ opacity: 1 }}
                 transition={{ duration: 0.6 }}
-                className="text-2xl md:text-3xl font-bold text-center mb-8 md:mb-12"
+                className="text-2xl md:text-3xl font-bold text-center"
               >
-                {t(messages, 'home.latestProjects', 'Latest Branding Projects')}
+                {t(messages, 'home.latestProjects', 'Latest Projects')}
               </motion.h2>
-              <div className="relative h-[400px] md:h-[500px] overflow-hidden">
+              <div className="relative h-[400px] md:h-[600px] overflow-hidden">
                 <div className="absolute inset-0 flex items-center justify-center">
                   <AnimatePresence mode="popLayout">
                     {latestProjects.map((project, index) => (
@@ -237,18 +237,6 @@ export default function Home() {
                     ))}
                   </AnimatePresence>
                 </div>
-                
-                {/* Scroll/Swipe hint */}
-                <motion.div 
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 0.6 }}
-                  transition={{ delay: 1, duration: 0.6 }}
-                  className="absolute -bottom-8 left-1/2 -translate-x-1/2 text-center"
-                >
-                  <p className="text-xs text-muted-foreground animate-pulse">
-                    {t(messages, 'home.swipeHint', 'Scroll or swipe to explore')}
-                  </p>
-                </motion.div>
               </div>
             </section>
           )}
