@@ -13,6 +13,7 @@ import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import ColorThief from 'colorthief';
+import { useMediaQuery } from '@/hooks/use-media-query';
 
 interface Props {
   params: {
@@ -52,6 +53,7 @@ export default function ProjectPage({ params }: Props) {
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const [colorPalette, setColorPalette] = useState<ColorPalette | null>(null);
+  const isMobile = useMediaQuery('(max-width: 768px)');
 
   const analyzeImageColor = useCallback(async (imageUrl: string) => {
     try {
@@ -189,19 +191,19 @@ export default function ProjectPage({ params }: Props) {
       }}
     >
       <div className="border-b" style={{ backgroundColor: 'var(--project-accent, var(--muted))' }}>
-        <div className="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto py-3 sm:py-4 px-4 sm:px-6 lg:px-8">
           <Breadcrumb items={breadcrumbItems} />
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto pt-8 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto pt-4 sm:pt-8 px-4 sm:px-6 lg:px-8">
         {/* Project header with share button */}
-        <div className="mb-8 sm:mb-12 flex justify-between items-start">
+        <div className="mb-6 sm:mb-12 flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4 sm:gap-0">
           <div>
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight mb-4">
+            <h1 className="text-2xl sm:text-4xl lg:text-5xl font-bold tracking-tight mb-3 sm:mb-4">
               {item.title || t(messages, 'portfolio.untitledProject', 'Untitled Project')}
             </h1>
-            <div className="flex items-center gap-4 flex-wrap opacity-80">
+            <div className="flex flex-wrap items-center gap-2 sm:gap-4 opacity-80 text-sm sm:text-base">
               <span>{item.client || t(messages, 'portfolio.noClient', 'No client specified')}</span>
               {formattedDate && (
                 <>
@@ -212,7 +214,7 @@ export default function ProjectPage({ params }: Props) {
               {item.type && (
                 <>
                   <span className="opacity-60">•</span>
-                  <span className="px-3 py-1 text-xs font-medium rounded-full border opacity-80">
+                  <span className="px-2 sm:px-3 py-0.5 sm:py-1 text-xs font-medium rounded-full border opacity-80">
                     {item.type}
                   </span>
                 </>
@@ -221,10 +223,10 @@ export default function ProjectPage({ params }: Props) {
           </div>
           <Button 
             variant="outline" 
-            size="sm" 
+            size={isMobile ? "default" : "sm"}
             onClick={handleShare}
             className={cn(
-              "transition-all duration-300",
+              "transition-all duration-300 w-full sm:w-auto",
               copied ? "bg-[var(--project-accent)] text-[var(--project-text)]" : ""
             )}
           >
@@ -235,20 +237,20 @@ export default function ProjectPage({ params }: Props) {
 
         {/* Project description */}
         {currentDescription && (
-          <div className="prose max-w-none mb-12" style={{ color: 'var(--project-text)' }}>
+          <div className="prose max-w-none mb-8 sm:mb-12" style={{ color: 'var(--project-text)' }}>
             <div className="mb-8">
-              <h2 className="text-xl font-semibold mb-3">
+              <h2 className="text-lg sm:text-xl font-semibold mb-2 sm:mb-3">
                 {t(messages, 'portfolio.description', locale === 'pt' ? 'Descrição' : 'Description')}
               </h2>
-              <p className="text-lg opacity-80">{currentDescription}</p>
+              <p className="text-base sm:text-lg opacity-80">{currentDescription}</p>
             </div>
           </div>
         )}
 
         {/* Project Video - Show First */}
         {item.video && (
-          <div className="mb-16">
-            <div className="relative w-full overflow-hidden bg-muted aspect-video rounded-lg">
+          <div className="mb-8 sm:mb-16">
+            <div className="relative w-full overflow-hidden bg-muted aspect-video rounded-lg sm:rounded-xl shadow-lg">
               <iframe
                 src={item.video}
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -259,13 +261,13 @@ export default function ProjectPage({ params }: Props) {
           </div>
         )}
 
-        {/* Project images with 1 gap */}
+        {/* Project images with responsive gap */}
         {images.length > 0 ? (
-          <div className="grid gap-1 mb-16">
+          <div className="grid gap-2 sm:gap-1 mb-8 sm:mb-16">
             {images.map((imageUrl, index) => (
               <div 
                 key={imageUrl} 
-                className="relative w-full overflow-hidden bg-muted"
+                className="relative w-full overflow-hidden bg-muted rounded-lg sm:rounded-none"
               >
                 <Image
                   src={imageUrl}
@@ -273,7 +275,7 @@ export default function ProjectPage({ params }: Props) {
                   width={1920}
                   height={1080}
                   className="w-full h-auto"
-                  sizes="(max-width: 1280px) 100vw, 1280px"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1280px) 100vw, 1280px"
                   priority={index === 0}
                   quality={90}
                 />
@@ -281,23 +283,24 @@ export default function ProjectPage({ params }: Props) {
             ))}
           </div>
         ) : (
-          <div className="text-center py-12 rounded-lg border border-border bg-muted/40 mb-16">
+          <div className="text-center py-8 sm:py-12 rounded-lg border border-border bg-muted/40 mb-8 sm:mb-16">
             <p className="text-muted-foreground">{t(messages, 'portfolio.noImages', 'No images available for this project')}</p>
           </div>
         )}
 
         {/* Project Credits */}
         {item.credits && (
-          <div className="mb-16 prose prose-gray dark:prose-invert max-w-none">
-            <h2 className="text-xl font-semibold mb-3 text-foreground">
+          <div className="mb-8 sm:mb-16 prose max-w-none">
+            <h2 className="text-lg sm:text-xl font-semibold mb-2 sm:mb-3">
               {t(messages, 'portfolio.credits', locale === 'pt' ? 'Créditos' : 'Credits')}
             </h2>
-            <div className="text-muted-foreground text-lg whitespace-pre-wrap">{item.credits}</div>
+            <div className="text-base sm:text-lg opacity-80 whitespace-pre-wrap">{item.credits}</div>
           </div>
         )}
 
         {/* Call to Action */}
-        <section className="py-24 sm:py-32 px-4 sm:px-6 md:px-8 relative overflow-hidden rounded-2xl mt-8"
+        <section 
+          className="py-16 sm:py-24 px-4 sm:px-6 md:px-8 relative overflow-hidden rounded-xl sm:rounded-2xl mt-8"
           style={{ 
             background: `linear-gradient(to bottom, ${colorPalette?.accent || 'var(--primary)'}, var(--project-bg))`,
             color: 'var(--project-text)'
@@ -309,15 +312,15 @@ export default function ProjectPage({ params }: Props) {
               initial={{ opacity: 0, y: 20 }}     
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
-              className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 sm:mb-8"
+              className="text-xl sm:text-3xl md:text-4xl font-bold mb-4 sm:mb-8"
             >
               {t(messages, 'about.cta', locale === 'pt' ? 'Procurando uma identidade visual marcante?' : 'Looking for a bold visual identity?')}
             </motion.h2>
             <Link href="/contact">
               <motion.button
-                whileHover={{ scale: 1.05 }}
+                whileHover={{ scale: isMobile ? 1 : 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="px-6 sm:px-8 py-3 sm:py-4 rounded-xl text-base sm:text-lg font-bold transition-all duration-300 hover:shadow-[0_0_20px_rgba(0,0,0,0.3)]"
+                className="w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 rounded-lg sm:rounded-xl text-base sm:text-lg font-bold transition-all duration-300 hover:shadow-[0_0_20px_rgba(0,0,0,0.3)]"
                 style={{ 
                   backgroundColor: colorPalette?.accent || 'var(--primary)',
                   color: 'var(--project-text)'

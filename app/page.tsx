@@ -9,6 +9,8 @@ import { PortfolioItem } from '@/utils/coda';
 import Image from 'next/image';
 import { X } from 'lucide-react';
 import { useMediaQuery } from '@/hooks/use-media-query';
+import { cn } from '@/lib/utils';
+import { motion } from 'framer-motion';
 
 export default function Home() {
   const { messages } = useI18n();
@@ -64,38 +66,60 @@ export default function Home() {
       )}
 
       {/* Content Layer */}
-      <div className={`relative z-[4] flex flex-col items-center ${
+      <div className={cn(
+        "relative z-[4] flex flex-col items-center",
         isMobile 
-          ? 'min-h-[80vh] justify-start pt-32' 
-          : 'h-screen justify-center -translate-y-[10vh] sm:-translate-y-[15vh]'
-      } pointer-events-none`}>
-        <div className="max-w-[90%] sm:max-w-2xl w-full space-y-4 sm:space-y-5 text-center px-4">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70">
+          ? "min-h-screen justify-start pt-16 sm:pt-32 px-4" 
+          : "h-screen justify-center -translate-y-[10vh] sm:-translate-y-[15vh]",
+        "pointer-events-none"
+      )}>
+        <div className="w-full max-w-[90%] sm:max-w-2xl space-y-4 sm:space-y-5 text-center">
+          <motion.h1 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70"
+          >
             {t(messages, 'home.title', 'Welcome to Visant®')}
-          </h1>
-          <p className="text-base sm:text-lg md:text-xl text-muted-foreground">
+          </motion.h1>
+          <motion.p 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="text-base sm:text-lg md:text-xl text-muted-foreground"
+          >
             {t(messages, 'home.subtitle', 'Where visionary brands are born.')}
-          </p>
-          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center pt-2">
+          </motion.p>
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center pt-2"
+          >
             <Link
               href="/portfolio"
-              className="group relative inline-flex items-center justify-center rounded-md bg-primary/90 px-4 sm:px-6 py-2.5 sm:py-3 text-sm font-medium text-primary-foreground transition-all hover:bg-primary hover:scale-105 active:scale-100 pointer-events-auto"
+              className="group relative inline-flex items-center justify-center rounded-lg sm:rounded-md bg-primary/90 px-4 sm:px-6 py-2.5 sm:py-3 text-sm font-medium text-primary-foreground transition-all hover:bg-primary hover:scale-105 active:scale-100 pointer-events-auto"
             >
               <span className="relative z-10">{t(messages, 'portfolio.exploreOurWork', 'Explore o portfólio')}</span>
-              <div className="absolute inset-0 rounded-md bg-gradient-to-r from-primary to-primary-foreground/10 opacity-0 blur transition-opacity group-hover:opacity-40" />
+              <div className="absolute inset-0 rounded-lg sm:rounded-md bg-gradient-to-r from-primary to-primary-foreground/10 opacity-0 blur transition-opacity group-hover:opacity-40" />
             </Link>
             <Link
               href="/briefing"
-              className="group relative inline-flex items-center justify-center rounded-md border border-primary/30 bg-background/50 backdrop-blur-sm px-4 sm:px-6 py-2.5 sm:py-3 text-sm font-medium text-foreground transition-all hover:bg-primary/10 hover:scale-105 active:scale-100 pointer-events-auto"
+              className="group relative inline-flex items-center justify-center rounded-lg sm:rounded-md border border-primary/30 bg-background/50 backdrop-blur-sm px-4 sm:px-6 py-2.5 sm:py-3 text-sm font-medium text-foreground transition-all hover:bg-primary/10 hover:scale-105 active:scale-100 pointer-events-auto"
             >
               <span className="relative z-10">{t(messages, 'home.startProject', 'Começar um projeto')}</span>
-              <div className="absolute inset-0 rounded-md bg-gradient-to-r from-primary to-primary-foreground/10 opacity-0 blur transition-opacity group-hover:opacity-20" />
+              <div className="absolute inset-0 rounded-lg sm:rounded-md bg-gradient-to-r from-primary to-primary-foreground/10 opacity-0 blur transition-opacity group-hover:opacity-20" />
             </Link>
-          </div>
+          </motion.div>
 
           {/* Social Media Icons - Mobile Only */}
           {isMobile && (
-            <div className="absolute bottom-80 left-0 right-0 flex items-center justify-center gap-8 pointer-events-auto">
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.3 }}
+              className="fixed bottom-32 left-0 right-0 flex items-center justify-center gap-8 pointer-events-auto"
+            >
               <Link
                 href="https://wa.me/your_number_here"
                 target="_blank"
@@ -107,7 +131,7 @@ export default function Home() {
                   alt="WhatsApp"
                   width={24}
                   height={24}
-                  className="w-5 h-5"
+                  className="w-6 h-6"
                 />
               </Link>
               <Link
@@ -121,28 +145,37 @@ export default function Home() {
                   alt="Instagram"
                   width={24}
                   height={24}
-                  className="w-5 h-5"
+                  className="w-6 h-6"
                 />
               </Link>
-            </div>
+            </motion.div>
           )}
-
         </div>
 
         {/* Interactive Hint - Hidden on Mobile */}
         {!isMobile && (
-          <div className="absolute bottom-32 sm:bottom-36 left-1/2 -translate-x-1/2 text-center opacity-30">
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 0.3 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+            className="absolute bottom-32 sm:bottom-36 left-1/2 -translate-x-1/2 text-center"
+          >
             <p className="text-xs sm:text-sm text-muted-foreground animate-pulse">
               {t(messages, 'home.interactionHint', 'Click and drag to interact with the 3D logo')}
             </p>
-          </div>
+          </motion.div>
         )}
       </div>
 
       {/* Mobile Latest Projects as Cards */}
       {isMobile && latestProjects.length > 0 && (
-        <div className="fixed bottom-0 left-0 right-0 bg-background/80 backdrop-blur-sm border-t border-border/50 p-4 pointer-events-auto z-[2]">
-          <h3 className="text-sm text-muted-foreground mb-3 text-center">
+        <motion.div 
+          initial={{ opacity: 0, y: 100 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="fixed bottom-0 left-0 right-0 bg-background/80 backdrop-blur-sm border-t border-border/50 p-4 pointer-events-auto z-[2]"
+        >
+          <h3 className="text-sm font-medium text-muted-foreground mb-3 text-center">
             {t(messages, 'home.latestProjects', 'Latest Branding Projects')}
           </h3>
           <div className="flex overflow-x-auto gap-3 pb-2 scrollbar-none snap-x snap-mandatory">
@@ -150,46 +183,51 @@ export default function Home() {
               <Link
                 key={project.id}
                 href={`/portfolio/${project.id}`}
-                className="flex-none w-[280px] snap-start"
+                className="flex-none w-[280px] snap-start transform transition-transform active:scale-95"
               >
-                <div className="relative aspect-[4/3] rounded-lg overflow-hidden bg-muted">
+                <div className="relative aspect-[4/3] rounded-lg overflow-hidden bg-muted shadow-lg">
                   {project.thumb && (
                     <Image
                       src={project.thumb}
                       alt={project.title}
                       fill
-                      className="object-cover"
+                      className="object-cover transition-transform hover:scale-105"
                       sizes="280px"
                     />
                   )}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-6 gap-3">
-                    <span className="text-sm font-medium text-white line-clamp-2">
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-4">
+                    <span className="text-sm font-medium text-white line-clamp-2 mb-1">
                       {project.title}
                     </span>
-                    <span className="text-xs text-zinc-400">
-                      {t(messages, 'common.showDetails', 'Show details')}
+                    <span className="text-xs text-zinc-300">
+                      {t(messages, 'common.showDetails', 'Show details')} →
                     </span>
                   </div>
                 </div>
               </Link>
             ))}
           </div>
-        </div>
+        </motion.div>
       )}
 
       {/* Desktop Side Preview Modal */}
       {!isMobile && (
         <div 
-          className={`fixed right-4 top-16 bottom-20 w-[280px] transition-all duration-300 ease-in-out z-[2] ${
+          className={cn(
+            "fixed right-4 top-16 bottom-20 w-[280px] transition-all duration-300 ease-in-out z-[2]",
             activeProject 
-              ? 'opacity-100 translate-x-0' 
-              : 'opacity-0 translate-x-8 pointer-events-none'
-          }`}
+              ? "opacity-100 translate-x-0" 
+              : "opacity-0 translate-x-8 pointer-events-none"
+          )}
         >
           <div className="relative h-90 bg-background/95 backdrop-blur-md rounded-xl border border-border/50 overflow-hidden shadow-2xl">
             <div className="h-full p-2 space-y-2 overflow-y-auto scrollbar-none">
               {activeProject?.image02 && (
-                <div className="relative aspect-[5/3]">
+                <motion.div 
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="relative aspect-[5/3]"
+                >
                   <Image
                     src={activeProject.image02}
                     alt={`${activeProject.title} - Detail 1`}
@@ -197,10 +235,14 @@ export default function Home() {
                     className="object-cover rounded-lg"
                     priority
                   />
-                </div>
+                </motion.div>
               )}
               {activeProject?.image03 && (
-                <div className="relative aspect-[5/3]">
+                <motion.div 
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="relative aspect-[5/3]"
+                >
                   <Image
                     src={activeProject.image03}
                     alt={`${activeProject.title} - Detail 2`}
@@ -208,10 +250,14 @@ export default function Home() {
                     className="object-cover rounded-lg"
                     priority
                   />
-                </div>
+                </motion.div>
               )}
               {activeProject?.image04 && (
-                <div className="relative aspect-[5/3]">
+                <motion.div 
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="relative aspect-[5/3]"
+                >
                   <Image
                     src={activeProject.image04}
                     alt={`${activeProject.title} - Detail 3`}
@@ -219,10 +265,14 @@ export default function Home() {
                     className="object-cover rounded-lg"
                     priority
                   />
-                </div>
+                </motion.div>
               )}
               {activeProject?.image05 && (
-                <div className="relative aspect-[5/3]">
+                <motion.div 
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="relative aspect-[5/3]"
+                >
                   <Image
                     src={activeProject.image05}
                     alt={`${activeProject.title} - Detail 4`}
@@ -230,7 +280,7 @@ export default function Home() {
                     className="object-cover rounded-lg"
                     priority
                   />
-                </div>
+                </motion.div>
               )}
             </div>
           </div>
@@ -252,11 +302,12 @@ export default function Home() {
                       {index > 0 && <span className="hidden sm:block absolute -left-8 top-1/2 -translate-y-1/2 text-muted-foreground/30">•</span>}
                       <Link
                         href={`/portfolio/${project.id}`}
-                        className={`text-xs sm:text-sm transition-all px-3 sm:px-4 py-1 sm:py-1.5 rounded-full border hover:border-primary/50 hover:bg-primary/5 ${
+                        className={cn(
+                          "text-xs sm:text-sm transition-all px-3 sm:px-4 py-1 sm:py-1.5 rounded-full border hover:border-primary/50 hover:bg-primary/5",
                           activeProject?.id === project.id 
-                            ? 'border-primary text-primary bg-primary/5' 
-                            : 'border-border/50 text-foreground hover:text-primary'
-                        }`}
+                            ? "border-primary text-primary bg-primary/5" 
+                            : "border-border/50 text-foreground hover:text-primary"
+                        )}
                         onMouseEnter={() => {
                           if (project.image02 && project.image03 && project.image04) {
                             setActiveProject(project);
