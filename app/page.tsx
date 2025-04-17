@@ -13,6 +13,8 @@ import { cn } from '@/lib/utils';
 import { motion, AnimatePresence, useMotionValue, useTransform } from 'framer-motion';
 import { Footer } from '@/components/footer';
 import About from '@/app/about/page';
+import { ArrowRight } from 'lucide-react';
+import { buttonVariants } from '@/components/ui/button';
 
 interface ProjectCardProps {
   project: PortfolioItem;
@@ -24,9 +26,27 @@ interface ProjectCardProps {
 
 function ProjectCard({ project, index, activeIndex, totalProjects, setActiveIndex }: ProjectCardProps) {
   const x = useMotionValue(0);
-  const rotate = useTransform(x, [-200, 200], [-30, 30]);
-  const scale = useTransform(x, [-200, 0, 200], [0.8, 1, 0.8]);
+  const rotate = useTransform(x, [-200, 200], [-15, 15]);
+  const scale = useTransform(x, [-200, 0, 200], [0.9, 1, 0.9]);
   const isActive = index === activeIndex;
+
+  // Calculate the relative position for infinite loop
+  const getRelativePosition = () => {
+    const distance = index - activeIndex;
+    if (distance > totalProjects / 2) {
+      return distance - totalProjects;
+    } else if (distance < -totalProjects / 2) {
+      return distance + totalProjects;
+    }
+    return distance;
+  };
+
+  const relativePosition = getRelativePosition();
+  const blurAmount = useTransform(
+    x,
+    [-200, 0, 200],
+    [2, 0, 2]
+  );
 
   return (
     <motion.div
@@ -34,47 +54,51 @@ function ProjectCard({ project, index, activeIndex, totalProjects, setActiveInde
         position: 'absolute',
         width: '100%',
         maxWidth: '400px',
-        x,
+        x: x,
         rotate,
         scale,
-        zIndex: totalProjects - Math.abs(index - activeIndex)
+        zIndex: totalProjects - Math.abs(relativePosition),
+        filter: `blur(${isActive ? 0 : 2}px)`,
+        transition: 'all 0.1s cubic-bezier(0.1, 0, 0.1, 0.7)',
+        boxShadow: isActive ? '0 25px 50px -12px rgba(0, 0, 0, 0.9)' : 'none'
       }}
       initial={{ 
         opacity: 0,
-        scale: 0.8,
-        y: 50
+        scale: 1,
+        y: 20
       }}
       animate={{ 
-        opacity: 1,
-        scale: isActive ? 1 : 0.9,
+        opacity: isActive ? 1 : 0.95,
+        scale: isActive ? 1 : 0.95,
         y: 0,
-        x: (index - activeIndex) * 200,
+        x: relativePosition * 200,
         rotate: 0
       }}
       exit={{ 
         opacity: 0,
-        scale: 0.8,
-        transition: { duration: 0.2 }
+        scale: 0.9,
+        transition: { duration: 0.1 }
       }}
       transition={{ 
         type: "spring",
-        bounce: 0.2,
-        duration: 0.6
+        stiffness: 300,
+        damping: 25,
+        mass: 1.2
       }}
       drag="x"
       dragConstraints={{ left: -200, right: 200 }}
-      dragElastic={0.2}
+      dragElastic={0.05}
       onDragEnd={(e, { offset, velocity }) => {
         const swipe = Math.abs(offset.x) * velocity.x;
         
-        if (swipe < -100 && activeIndex < totalProjects - 1) {
-          setActiveIndex(activeIndex + 1);
-        } else if (swipe > 100 && activeIndex > 0) {
-          setActiveIndex(activeIndex - 1);
+        if (swipe < -100) {
+          setActiveIndex((activeIndex + 1) % totalProjects);
+        } else if (swipe > 100) {
+          setActiveIndex((activeIndex - 1 + totalProjects) % totalProjects);
         }
       }}
       className="relative touch-none cursor-grab active:cursor-grabbing"
-      whileHover={{ scale: 1.02 }}
+      whileHover={{ scale: 1.01 }}
     >
       <Link 
         href={`/portfolio/${project.id}`}
@@ -87,7 +111,7 @@ function ProjectCard({ project, index, activeIndex, totalProjects, setActiveInde
         <div className="relative aspect-[4/3] rounded-xl overflow-hidden bg-muted shadow-2xl">
           {project.thumb && (
             <motion.div
-              initial={{ scale: 1.1 }}
+              initial={{ scale: 1.05 }}
               animate={{ scale: 1 }}
               transition={{ duration: 1.2 }}
               className="absolute inset-0"
@@ -173,7 +197,7 @@ export default function Home() {
         {/* Mobile/Tablet Hero Section with 3D Logo */}
         <section className="relative h-[80vh] md:h-[80vh] flex items-center justify-center px-4 overflow-hidden">
           {/* 3D Hero Component */}
-          <div className="absolute inset-0 w-full h-full scale-100 md:scale-125 md:-translate-y-20">
+          <div className="absolute inset-0 w-full h-full scale-100 sm:scale-110 md:scale-125 md:-translate-y-20">
             <Hero />
           </div>
 
@@ -237,6 +261,49 @@ export default function Home() {
                     ))}
                   </AnimatePresence>
                 </div>
+
+                {/* Navigation Arrows */}
+                <div className="absolute inset-y-0 left-0 flex items-center justify-start px-4 z-20">
+                  <button
+                    onClick={() => setActiveIndex((activeIndex - 1 + latestProjects.length) % latestProjects.length)}
+                    className="p-2 rounded-full bg-background/50 backdrop-blur-sm border border-border/50 hover:bg-background/80 transition-colors"
+                  >
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="text-foreground/70"
+                    >
+                      <path d="m15 18-6-6 6-6" />
+                    </svg>
+                  </button>
+                </div>
+
+                <div className="absolute inset-y-0 right-0 flex items-center justify-end px-4 z-20">
+                  <button
+                    onClick={() => setActiveIndex((activeIndex + 1) % latestProjects.length)}
+                    className="p-2 rounded-full bg-background/50 backdrop-blur-sm border border-border/50 hover:bg-background/80 transition-colors"
+                  >
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="text-foreground/70"
+                    >
+                      <path d="m9 18 6-6-6-6" />
+                    </svg>
+                  </button>
+                </div>
               </div>
             </section>
           )}
@@ -245,82 +312,55 @@ export default function Home() {
           <div className="block lg:hidden">
             <About />
           </div>
-
-          {/* Footer */}
-          <Footer />
         </div>
       </div>
     );
   }
 
   return (
-    <main className="relative h-[90dvh] overflow-hidden">
+    <main className="min-h-screen bg-background">
       {/* Hero Section with 3D Logo */}
-      <div className="absolute inset-0 -translate-y-[13vh]">
-        <Hero />
-      </div>
+      <section className="relative h-[80vh] md:h-[80vh] flex items-center justify-center px-2 overflow-hidden">
+        {/* 3D Hero Component */}
+        <div className={cn(
+          "absolute inset-0 w-full h-full scale-110",
+          isMobileOrTablet ? "pointer-events-none" : ""
+        )}>
+          <Hero />
+        </div>
 
-      {/* Gradient Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-b from-background via-background/30 to-background pointer-events-none z-[2]" />
-
-      {/* Content Layer */}
-      <div 
-        className={cn(
-          "relative z-[4] flex flex-col items-center min-h-[100dvh] justify-center -translate-y-[13vh] pointer-events-none"
-        )}
-      >
-        <div className="w-full max-w-[90%] sm:max-w-2xl space-y-4 sm:space-y-5 text-center">
-          <motion.h1 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70"
-          >
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="relative text-center space-y-4 z-10 md:translate-y-12"
+        >
+          <h1 className="text-4xl md:text-5xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70">
             {t(messages, 'home.title', 'Welcome to Visant®')}
-          </motion.h1>
-          <motion.p 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-            className="text-base sm:text-lg md:text-xl text-muted-foreground"
-          >
+          </h1>
+          <p className="text-lg text-muted-foreground max-w-sm mx-auto">
             {t(messages, 'home.subtitle', 'Where visionary brands are born.')}
-          </motion.p>
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center pt-2"
-          >
+          </p>
+          <div className="flex flex-col md:flex-row gap-3 mt-4">
             <Link
               href="/portfolio"
-              className="group relative inline-flex items-center justify-center rounded-lg sm:rounded-md bg-primary/90 px-4 sm:px-6 py-2.5 sm:py-3 text-sm font-medium text-primary-foreground transition-all hover:bg-primary hover:scale-105 active:scale-100 pointer-events-auto"
+              className="group relative inline-flex items-center justify-center rounded-lg bg-primary/90 px-6 py-3 text-sm font-medium text-primary-foreground transition-all hover:bg-primary hover:scale-105 active:scale-100"
             >
-              <span className="relative z-10">{t(messages, 'portfolio.exploreOurWork', 'Explore our work')}</span>
-              <div className="absolute inset-0 rounded-lg sm:rounded-md bg-gradient-to-r from-primary to-primary-foreground/10 opacity-0 blur transition-opacity group-hover:opacity-40" />
+              <span className="relative z-10">{t(messages, 'portfolio.exploreOurWork', 'Explore o portfólio')}</span>
+              <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-primary to-primary-foreground/10 opacity-0 blur transition-opacity group-hover:opacity-40" />
             </Link>
             <Link
               href="/briefing"
-              className="group relative inline-flex items-center justify-center rounded-lg sm:rounded-md border border-primary/30 bg-background/50 backdrop-blur-sm px-4 sm:px-6 py-2.5 sm:py-3 text-sm font-medium text-foreground transition-all hover:bg-primary/10 hover:scale-105 active:scale-100 pointer-events-auto"
+              className="group relative inline-flex items-center justify-center rounded-lg border border-primary/30 bg-background/50 backdrop-blur-sm px-6 py-3 text-sm font-medium text-foreground transition-all hover:bg-primary/10 hover:scale-105 active:scale-100"
             >
-              <span className="relative z-10">{t(messages, 'home.startProject', 'Start a project')}</span>
-              <div className="absolute inset-0 rounded-lg sm:rounded-md bg-gradient-to-r from-primary to-primary-foreground/10 opacity-0 blur transition-opacity group-hover:opacity-20" />
+              <span className="relative z-10">{t(messages, 'home.startProject', 'Começar um projeto')}</span>
+              <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-primary to-primary-foreground/10 opacity-0 blur transition-opacity group-hover:opacity-20" />
             </Link>
-          </motion.div>
-        </div>
-
-        {/* Interactive Hint */}
-        <motion.div 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 0.3 }}
-          transition={{ duration: 0.6, delay: 0.4 }}
-          className="absolute bottom-32 left-1/2 -translate-x-1/2 text-center z-10"
-        >
-          <p className="text-xs text-muted-foreground animate-pulse">
-            {t(messages, 'home.interactionHint', 'Click and drag to interact with the 3D logo')}
-          </p>
+          </div>
         </motion.div>
-      </div>
+
+        <div className="absolute inset-0 bg-gradient-to-b from-background via-background/30 to-background pointer-events-none z-[1]" />
+      </section>
 
       {/* Desktop Side Preview Modal */}
       <div 

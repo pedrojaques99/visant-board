@@ -86,7 +86,7 @@ export default function PortfolioPage() {
   return (
     <div className="w-full">
       <section className="w-full py-20">
-        <div className="max-w-[1800px] mx-auto px-5 md:px-12">
+        <div className="max-w-[1800px] mx-auto px-2 sm:px-5 md:px-12">
           <div className="text-center space-y-4 mb-12">
             <h1 className="text-4xl sm:text-5xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/70">
               {t(messages, 'portfolio.title', 'Portfolio')}

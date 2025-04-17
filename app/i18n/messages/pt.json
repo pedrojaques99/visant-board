@@ -1,0 +1,58 @@
+{
+  "home": {
+    "title": "Bem-vindo à Visant®",
+    "subtitle": "Onde marcas visionárias nascem.",
+    "description": "Criamos experiências de marca únicas e impactantes através de design, estratégia e inovação.",
+    "cta": "Explore nosso trabalho",
+    "interactionHint": "Clique e arraste para interagir com o logo 3D",
+    "rotateHint": "Gire para ver detalhes",
+    "latestProjects": "Últimos Projetos",
+    "startProject": "Iniciar um projeto",
+    "swipeHint": "Deslize para explorar"
+  },
+  "navigation": {
+    "about": "Sobre",
+    "portfolio": "Portfólio",
+    "contact": "Contato"
+  },
+  "common": {
+    "backToHome": "Voltar para a Página Inicial",
+    "home": "Início",
+    "share": "Compartilhar",
+    "copied": "Copiado!",
+    "showDetails": "Ver detalhes",
+    "swipeHint": "Role ou arraste para explorar"
+  },
+  "portfolio": {
+    "title": "Portfólio",
+    "subtitle": "Explore nossa coleção de projetos e trabalhos para clientes",
+    "exploreOurWork": "Explore nosso trabalho",
+    "filter": {
+      "all": "Todos"
+    },
+    "projectDetails": "Detalhes do Projeto",
+    "untitledProject": "Projeto sem Título",
+    "noClient": "Cliente não especificado",
+    "description": "Descrição",
+    "portugueseDescription": "Descrição",
+    "project": "Projeto",
+    "noImages": "Não há imagens disponíveis para este projeto"
+  },
+  "about": {
+    "title": "Quem somos",
+    "description": "Visant® é um estúdio de design fundado por Pedro Xavier e Pedro Jaques. Baseados em Itajaí e Balneário Camboriú, ajudamos marcas a crescerem através de clareza, consistência e beleza.",
+    "descriptionMore": "Trabalhamos diretamente com fundadores, criativos e empresas que acreditam no poder do design.",
+    "whatWeDo": "O que fazemos",
+    "team": "Equipe",
+    "cta": "Procurando uma identidade visual marcante?",
+    "ctaDescription": "Estamos prontos para criar algo incrível juntos.",
+    "getInTouch": "Entre em contato",
+    "trustedBy": "Confiam em nós",
+    "projects": "Projetos",
+    "clients": "Clientes",
+    "brands": "Marcas"
+  },
+  "footer": {
+    "description": "Criando identidades de marca ousadas e visionárias que causam um impacto duradouro."
+  }
+} 

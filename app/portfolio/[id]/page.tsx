@@ -16,6 +16,7 @@ import ColorThief from 'colorthief';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { ProjectMedia3D } from '@/components/project-media-3d';
 import { PortfolioCard } from '@/components/PortfolioCard';
+import { CTASection } from '@/components/cta-section';
 
 interface Props {
   params: {
@@ -468,49 +469,15 @@ export default function ProjectPage({ params }: Props) {
         )}
 
         {/* Call to Action */}
-        <section 
-          className="py-16 sm:py-24 px-4 sm:px-6 md:px-8 relative overflow-hidden rounded-xl sm:rounded-2xl mt-8"
-          style={{ 
-            background: `linear-gradient(to bottom, ${colorPalette?.accent || 'var(--primary)'}, var(--project-bg))`,
-            color: 'var(--project-text)'
-          }}
-        >
-          <div className="absolute inset-0 pointer-events-none" />
-          <div className="max-w-4xl mx-auto text-center relative">
-            <motion.h2
-              initial={{ opacity: 0, y: 20 }}     
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              className="text-xl sm:text-3xl md:text-4xl font-bold mb-4 sm:mb-8"
-            >
-              {t(messages, 'about.cta', locale === 'pt' ? 'Procurando uma identidade visual marcante?' : 'Looking for a bold visual identity?')}
-            </motion.h2>
-            <Link href="/contact">
-              <motion.button
-                whileTap={{ scale: 0.95 }}
-                className="w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 rounded-lg sm:rounded-xl text-base sm:text-lg font-bold"
-                style={{ 
-                  backgroundColor: colorPalette?.accent || 'var(--primary)',
-                  color: calculateTextColor(colorPalette?.accent || '#000000')
-                }}
-                animate={{ 
-                  boxShadow: '0 0 20px rgba(0,0,0,0.2)',
-                  filter: 'brightness(1)',
-                  scale: 1,
-                  transition: { duration: 0.3 }
-                }}
-                whileHover={{
-                  boxShadow: '0 0 30px rgba(0,0,0,0.3)',
-                  filter: 'brightness(1.1)',
-                  scale: isMobile ? 1 : 1.02,
-                  transition: { duration: 0.3 }
-                }}
-              >
-                {t(messages, 'about.getInTouch', locale === 'pt' ? 'Entre em contato' : 'Get in touch')}
-              </motion.button>
-            </Link>
-          </div>
-        </section>
+        <CTASection 
+          variant="dynamic"
+          gradientFrom={colorPalette?.accent || 'var(--primary)'}
+          gradientTo="var(--project-bg)"
+          textColor="var(--project-text)"
+          buttonColor={colorPalette?.accent || 'var(--primary)'}
+          buttonTextColor="var(--project-text)"
+          className="mt-8"
+        />
 
         {/* Related Projects */}
         {relatedProjects.length > 0 && (

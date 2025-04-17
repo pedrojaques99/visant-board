@@ -68,10 +68,10 @@ function MobileModel() {
     <primitive
       ref={modelRef}
       object={gltf.scene}
-      scale={8}
+      scale={12}
+      position={[0, 0, 0]}
       onPointerOver={() => setHovered(true)}
       onPointerOut={() => setHovered(false)}
-      position={[0, 0, 0]}
     />
   );
 }
@@ -123,10 +123,10 @@ function Model() {
       <primitive
         ref={modelRef}
         object={gltf.scene}
-        scale={10}
+        scale={13.5}
+        position={[0, 0, 0]}
         onPointerOver={() => setHovered(true)}
         onPointerOut={() => setHovered(false)}
-        position={[0, -2, 0]}
       />
     </Float>
   );
@@ -284,7 +284,7 @@ export function Logo3D() {
   };
 
   return (
-    <div className="absolute inset-0">
+    <div className="absolute inset-0 flex items-center justify-center">
       <Canvas
         camera={{ position: [0, 0, 0], fov: 50 }}
         style={{ width: '100%', height: '100%' }}
@@ -305,6 +305,7 @@ export function Logo3D() {
               TWO: isMobile ? THREE.TOUCH.ROTATE : THREE.TOUCH.DOLLY_ROTATE
             }}
           />
+          <PerspectiveCamera makeDefault position={[0, 0, 20]} />
           {isPerformant ? (
             <>
               {isMobile ? <MobileModel /> : <Model />}

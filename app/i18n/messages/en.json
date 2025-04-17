@@ -1,0 +1,58 @@
+{
+  "home": {
+    "title": "Welcome to Visant®",
+    "subtitle": "Where visionary brands are born.",
+    "description": "We create unique and impactful brand experiences through design, strategy, and innovation.",
+    "cta": "Explore our work",
+    "interactionHint": "Click and drag to interact with 3D logo",
+    "rotateHint": "Rotate to see details",
+    "latestProjects": "Latest Projects",
+    "startProject": "Start a project",
+    "swipeHint": "Swipe to explore"
+  },
+  "navigation": {
+    "about": "About",
+    "portfolio": "Portfolio",
+    "contact": "Contact"
+  },
+  "common": {
+    "backToHome": "Back to Home",
+    "home": "Home",
+    "share": "Share",
+    "copied": "Copied!",
+    "showDetails": "Show details",
+    "swipeHint": "Scroll or drag to explore"
+  },
+  "portfolio": {
+    "title": "Portfolio",
+    "subtitle": "Explore our collection of projects and client work",
+    "exploreOurWork": "Explore our work",
+    "filter": {
+      "all": "All"
+    },
+    "projectDetails": "Project Details",
+    "untitledProject": "Untitled Project",
+    "noClient": "No Client Specified",
+    "description": "Description",
+    "portugueseDescription": "Portuguese Description",
+    "project": "Project",
+    "noImages": "No images available for this project"
+  },
+  "about": {
+    "title": "Who we are",
+    "description": "Visant® is a design studio founded by Pedro Xavier and Pedro Jaques. Based in Itajaí and Balneário Camboriú, we help brands grow through clarity, consistency, and beauty.",
+    "descriptionMore": "We work directly with founders, creatives, and companies who believe in the power of design.",
+    "whatWeDo": "What we do",
+    "team": "Team",
+    "cta": "Looking for a striking visual identity?",
+    "ctaDescription": "We're ready to create something amazing together.",
+    "getInTouch": "Get in touch",
+    "trustedBy": "Trusted by",
+    "projects": "Projects",
+    "clients": "Clients",
+    "brands": "Brands"
+  },
+  "footer": {
+    "description": "Creating bold and visionary brand identities that make a lasting impact."
+  }
+} 

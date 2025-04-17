@@ -13,6 +13,7 @@ import { t } from '@/utils/translations';
 import { getStatistics } from '@/utils/coda';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { CTASection } from '@/components/cta-section';
 
 export default function About() {
   const { messages } = useI18n();
@@ -138,35 +139,11 @@ export default function About() {
       </section>
 
       {/* Call to Action */}
-      <section className="py-24 sm:py-48 px-4 sm:px-6 md:px-12 bg-gradient-to-b from-accent/20 to-background relative overflow-hidden rounded-2xl">
-        <div className="absolute inset-0 pointer-events-none" />
-        <div className="max-w-8xl mx-auto text-center relative">
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}     
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-3xl sm:text-4xl md:text-5xl font-bold mb-8 sm:mb-12 text-foreground"
-          >
-            {t(messages, 'about.cta', 'Looking for a bold visual identity?')}
-          </motion.h2>
-          <Link 
-            href="https://wa.me/5547988475891?text=Olá!%20Gostaria%20de%20saber%20mais%20sobre%20seus%20serviços%20de%20design."
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className={cn(
-                "bg-primary text-primary-foreground px-6 sm:px-8 py-3 sm:py-4 rounded-xl text-base sm:text-lg font-bold",
-                "hover:shadow-[0_0_20px_rgba(var(--primary),0.3)] transition-all duration-300"
-              )}
-            >
-              {t(messages, 'about.getInTouch', 'Get in touch')}
-            </motion.button>
-          </Link>
-        </div>
-      </section>
+      <CTASection 
+        variant="default"
+        isWhatsApp={true}
+        className="w-[95%] mx-auto px-12"
+      />
     </div>
   );
 } 

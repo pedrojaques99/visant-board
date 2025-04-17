@@ -9,8 +9,11 @@ const BRANDS_ROW = [...brands, ...brands];
 
 export const BrandSlider = () => (
   <div className="relative overflow-hidden py-4">
-    <div className="absolute left-0 top-0 w-32 h-full bg-gradient-to-r from-background via-background/80 to-transparent z-10 pointer-events-none" />
-    <div className="absolute right-0 top-0 w-32 h-full bg-gradient-to-l from-background via-background/80 to-transparent z-10 pointer-events-none" />
+    {/* Fade esquerdo - mais compacto no mobile */}
+    <div className="absolute left-0 top-0 w-[10%] sm:w-[20%] h-full bg-gradient-to-r from-background via-background/50 to-transparent z-10 pointer-events-none" />
+    
+    {/* Fade direito - mais compacto no mobile */}
+    <div className="absolute right-0 top-0 w-[10%] sm:w-[20%] h-full bg-gradient-to-l from-background via-background/50 to-transparent z-10 pointer-events-none" />
     
     {/* Primeira linha - movimento para a esquerda */}
     <motion.div
@@ -41,7 +44,7 @@ export const BrandSlider = () => (
       ))}
     </motion.div>
 
-    {/* Segunda linha - movimento para a direita, começando de um ponto diferente */}
+    {/* Segunda linha - movimento para a direita */}
     <motion.div
       animate={{ x: [-2000, 0] }}
       transition={{

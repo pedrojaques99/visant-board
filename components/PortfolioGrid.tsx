@@ -24,6 +24,9 @@ export function PortfolioGrid({ items, tipos, initialType }: PortfolioGridProps)
   const [isMobile, setIsMobile] = useState(false);
   const [isInitialLoading, setIsInitialLoading] = useState(true);
 
+  // Gap responsivo: 8px no mobile, 24px no desktop
+  const GAP = isMobile ? 8 : 24;
+
   const displayToActualSize = (display: number) => Math.min(display, 0.99);
   const actualToDisplaySize = (actual: number) => Math.min(actual, 1);
 
@@ -70,15 +73,16 @@ export function PortfolioGrid({ items, tipos, initialType }: PortfolioGridProps)
     return columns;
   };
 
-  const GAP = 24; // 1.5rem in pixels
-
   return (
-    <div className="space-y-6 relative">
+    <div className="space-y-2 sm:space-y-6 relative">
       {/* Layout controls toggle */}
       <div className="absolute top-0 right-4 z-10">
         <button
           onClick={() => setShowControls(!showControls)}
-          className="p-2 rounded-full border border-muted-foreground/20 hover:border-muted-foreground/40 transition-colors bg-background/80 backdrop-blur-sm"
+          className={cn(
+            "p-2 rounded-full border border-muted-foreground/20 hover:border-muted-foreground/40 transition-colors bg-background/80 backdrop-blur-sm",
+            isMobile && "hidden"
+          )}
           aria-label="Toggle layout controls"
         >
           <LayoutGrid className="w-4 h-4 text-muted-foreground" />
@@ -112,34 +116,36 @@ export function PortfolioGrid({ items, tipos, initialType }: PortfolioGridProps)
               </div>
             )}
 
-            {/* Size slider */}
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">Size</span>
-                <span className="text-sm text-muted-foreground">{Math.round(actualToDisplaySize(cardSize) * 100)}%</span>
+            {/* Size slider - hidden on mobile */}
+            {!isMobile && (
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-muted-foreground">Size</span>
+                  <span className="text-sm text-muted-foreground">{Math.round(actualToDisplaySize(cardSize) * 100)}%</span>
+                </div>
+                <input
+                  type="range"
+                  min="0.7"
+                  max="1"
+                  step="0.01"
+                  value={actualToDisplaySize(cardSize)}
+                  onChange={(e) => setCardSize(displayToActualSize(parseFloat(e.target.value)))}
+                  className="w-full h-1 bg-muted rounded-lg appearance-none cursor-pointer accent-primary"
+                />
               </div>
-              <input
-                type="range"
-                min="0.7"
-                max="1"
-                step="0.01"
-                value={actualToDisplaySize(cardSize)}
-                onChange={(e) => setCardSize(displayToActualSize(parseFloat(e.target.value)))}
-                className="w-full h-1 bg-muted rounded-lg appearance-none cursor-pointer accent-primary"
-              />
-            </div>
+            )}
           </div>
         )}
       </div>
 
       {/* Controls */}
-      <div className="flex flex-col gap-4 px-4 sm:px-6">
+      <div className="flex flex-col gap-2 px-2 sm:px-6">
         {/* Filter buttons */}
         {tipos.length > 0 && (
           <div className="flex flex-wrap gap-2 justify-center">
             <button
               onClick={() => setSelectedTipo(null)}
-              className={`px-8 py-3 rounded-full text-xs font-medium transition-colors border ${
+              className={`px-4 sm:px-8 py-3 rounded-full text-xs font-medium transition-colors border ${
                 !selectedTipo 
                   ? 'border-primary text-primary hover:bg-primary/5' 
                   : 'border-muted-foreground/20 text-muted-foreground hover:border-muted-foreground/40'
@@ -151,7 +157,7 @@ export function PortfolioGrid({ items, tipos, initialType }: PortfolioGridProps)
               <button
                 key={tipo}
                 onClick={() => setSelectedTipo(tipo)}
-                className={`px-8 py-3 rounded-full text-xs font-medium transition-colors border ${
+                className={`px-6 sm:px-8 py-3 rounded-full text-xs font-medium transition-colors border ${
                   selectedTipo === tipo 
                     ? 'border-primary text-primary hover:bg-primary/5' 
                     : 'border-muted-foreground/20 text-muted-foreground hover:border-muted-foreground/40'
@@ -164,9 +170,9 @@ export function PortfolioGrid({ items, tipos, initialType }: PortfolioGridProps)
         )}
       </div>
 
-      {/* Grid container with consistent gap */}
+      {/* Grid container with responsive gap */}
       <div 
-        className="px-6"
+        className="sm:px-6"
         style={{
           columnCount: getResponsiveColumns(),
           columnGap: `${GAP}px`,
@@ -174,17 +180,17 @@ export function PortfolioGrid({ items, tipos, initialType }: PortfolioGridProps)
       >
         <AnimatePresence mode="popLayout">
           {isInitialLoading ? (
-            // Skeleton loading state - only shown on initial load
+            // Skeleton loading state
             Array.from({ length: 6 }).map((_, index) => (
               <div 
                 key={`skeleton-${index}`} 
-                className="inline-block w-full break-inside-avoid mb-6"
+                className="inline-block w-full break-inside-avoid mb-2 sm:mb-6"
               >
                 <SkeletonCard />
               </div>
             ))
           ) : (
-            // Actual content with smooth filtering transitions
+            // Actual content
             filteredItems.map((item) => (
               <motion.div 
                 key={item.id} 
