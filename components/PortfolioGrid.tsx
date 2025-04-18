@@ -63,7 +63,7 @@ export function PortfolioGrid({ items, tipos, initialType }: PortfolioGridProps)
   if (!items?.length) {
     return (
       <div className="text-center py-12">
-        <p className="text-muted-foreground">No portfolio items found.</p>
+        <p className="text-muted-foreground">{t(messages, 'portfolio.noItems', 'No portfolio items found.')}</p>
       </div>
     );
   }
@@ -94,7 +94,7 @@ export function PortfolioGrid({ items, tipos, initialType }: PortfolioGridProps)
             {!isMobile && (
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">Columns</span>
+                  <span className="text-sm text-muted-foreground">{t(messages, 'portfolio.columns', 'Columns')}</span>
                   <span className="text-sm text-muted-foreground">{columns}</span>
                 </div>
                 <div className="flex gap-2">
@@ -120,7 +120,7 @@ export function PortfolioGrid({ items, tipos, initialType }: PortfolioGridProps)
             {!isMobile && (
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">Size</span>
+                  <span className="text-sm text-muted-foreground">{t(messages, 'portfolio.size', 'Size')}</span>
                   <span className="text-sm text-muted-foreground">{Math.round(actualToDisplaySize(cardSize) * 100)}%</span>
                 </div>
                 <input

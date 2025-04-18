@@ -5,6 +5,8 @@ import { Canvas, useFrame } from '@react-three/fiber';
 import { Html, useGLTF, OrbitControls } from '@react-three/drei';
 import * as THREE from 'three';
 import { useMediaQuery } from '@/hooks/use-media-query';
+import { useI18n } from '@/context/i18n-context';
+import { t } from '@/utils/translations';
 
 interface ProjectMedia3DProps {
   modelUrl: string;
@@ -12,10 +14,11 @@ interface ProjectMedia3DProps {
 }
 
 function Loader() {
+  const { messages } = useI18n();
   return (
     <Html center>
       <div className="px-4 py-2 rounded-md bg-background/80 backdrop-blur-sm">
-        <span className="text-sm text-foreground">Loading...</span>
+        <span className="text-sm text-foreground">{t(messages, 'common.loading', 'Loading...')}</span>
       </div>
     </Html>
   );

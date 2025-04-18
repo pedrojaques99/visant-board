@@ -14,7 +14,7 @@ export function Footer() {
           <div className="space-y-6">
             <Image
               src="/assets/brand/icon visant.svg" 
-              alt="Visant"
+              alt={t(messages, 'footer.visantIcon', 'Visant')}
               width={20}
               height={20}
               className="h-6 w-auto"
@@ -26,7 +26,6 @@ export function Footer() {
 
           {/* Quick Links */}
           <div className="space-y-6">
-            <h3 className="text-sm font-medium text-foreground/80">{t(messages, 'footer.quickLinks', 'Quick Links')}</h3>
             <ul className="space-y-3">
               <li>
                 <Link href="/portfolio" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
@@ -45,7 +44,6 @@ export function Footer() {
               </li>
               <li>
                 <Link href="/contact" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                  {t(messages, 'footer.contact', 'Contact')}
                 </Link>
               </li>
             </ul>
@@ -63,7 +61,7 @@ export function Footer() {
               >
                 <Image
                   src="/assets/icons/instagram.svg"
-                  alt="Instagram"
+                  alt={t(messages, 'footer.instagram', 'Instagram')}
                   width={20}
                   height={20}
                   className="w-5 h-5"
@@ -77,7 +75,7 @@ export function Footer() {
               >
                 <Image
                   src="/assets/icons/whatsapp.svg"
-                  alt="WhatsApp"
+                  alt={t(messages, 'footer.whatsapp', 'WhatsApp')}
                   width={20}
                   height={20}
                   className="w-5 h-5"
@@ -92,12 +90,12 @@ export function Footer() {
             <ul className="space-y-3">
               <li className="text-sm text-muted-foreground">
                 <a href="mailto:contact@visant.design" className="hover:text-foreground transition-colors">
-                  contato@visant.design
+                  {t(messages, 'footer.email', 'contact@visant.design')}
                 </a>
               </li>
               <li className="text-sm text-muted-foreground">
                 <a href="https://wa.me/554788475891" className="hover:text-foreground transition-colors">
-                  +55 (47) 88475-891
+                  {t(messages, 'footer.phone', '+55 (47) 88475-891')}
                 </a>
               </li>
             </ul>

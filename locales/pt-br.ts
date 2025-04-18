@@ -51,4 +51,21 @@ export const messages = {
     clients: "Clientes",
     brands: "Marcas",
   },
+  footer: {
+    description: "Criando identidades de marca ousadas e visionárias que causam um impacto duradouro.",
+    quickLinks: "Links Rápidos",
+    portfolio: "Portfólio",
+    startProject: "Iniciar um Projeto",
+    about: "Sobre",
+    contact: "Contato",
+    followUs: "Siga-nos",
+    instagram: "Instagram",
+    whatsapp: "WhatsApp",
+    email: "contato@visant.design",
+    phone: "+55 (47) 88475-891",
+    rights: "Todos os direitos reservados.",
+    privacy: "Política de Privacidade",
+    terms: "Termos de Serviço",
+    visantIcon: "Visant"
+  }
 }; 

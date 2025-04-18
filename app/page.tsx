@@ -1,19 +1,18 @@
 'use client';
 
-import Hero from '@/components/hero';
+import { Hero3D } from '@/components/hero3d';
 import { useI18n } from '@/context/i18n-context';
 import { t } from '@/utils/translations';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { PortfolioItem } from '@/utils/coda';
 import Image from 'next/image';
-import { X } from 'lucide-react';
+import { X, ArrowRight, Search, ArrowUpRight, Info } from 'lucide-react';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence, useMotionValue, useTransform } from 'framer-motion';
 import { Footer } from '@/components/footer';
 import About from '@/app/about/page';
-import { ArrowRight } from 'lucide-react';
 import { buttonVariants } from '@/components/ui/button';
 
 interface ProjectCardProps {
@@ -198,7 +197,7 @@ export default function Home() {
         <section className="relative h-[80vh] md:h-[80vh] flex items-center justify-center px-4 overflow-hidden">
           {/* 3D Hero Component */}
           <div className="absolute inset-0 w-full h-full scale-100 sm:scale-110 md:scale-125 md:-translate-y-20">
-            <Hero />
+            <Hero3D />
           </div>
 
           <motion.div 
@@ -225,7 +224,10 @@ export default function Home() {
                 href="/briefing"
                 className="group relative inline-flex items-center justify-center rounded-lg border border-primary/30 bg-background/50 backdrop-blur-sm px-6 py-3 text-sm font-medium text-foreground transition-all hover:bg-primary/10 hover:scale-105 active:scale-100"
               >
-                <span className="relative z-10">{t(messages, 'home.startProject', 'Começar um projeto')}</span>
+                <span className="relative z-10 flex items-center gap-2">
+                  {t(messages, 'home.startProject', 'Começar um projeto')}
+                  <ArrowRight className="w-4 h-4" />
+                </span>
                 <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-primary to-primary-foreground/10 opacity-0 blur transition-opacity group-hover:opacity-20" />
               </Link>
             </div>
@@ -326,14 +328,14 @@ export default function Home() {
           "absolute inset-0 w-full h-full scale-110",
           isMobileOrTablet ? "pointer-events-none" : ""
         )}>
-          <Hero />
+          <Hero3D />
         </div>
 
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="relative text-center space-y-4 z-10 md:translate-y-12"
+          className="relative text-center space-y-6 z-10 md:translate-y-16"
         >
           <h1 className="text-4xl md:text-5xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70">
             {t(messages, 'home.title', 'Welcome to Visant®')}
@@ -341,7 +343,7 @@ export default function Home() {
           <p className="text-lg text-muted-foreground max-w-sm mx-auto">
             {t(messages, 'home.subtitle', 'Where visionary brands are born.')}
           </p>
-          <div className="flex flex-col md:flex-row gap-3 mt-4">
+          <div className="flex flex-col md:flex-row gap-3 mt-6">
             <Link
               href="/portfolio"
               className="group relative inline-flex items-center justify-center rounded-lg bg-primary/90 px-6 py-3 text-sm font-medium text-primary-foreground transition-all hover:bg-primary hover:scale-105 active:scale-100"
@@ -353,7 +355,10 @@ export default function Home() {
               href="/briefing"
               className="group relative inline-flex items-center justify-center rounded-lg border border-primary/30 bg-background/50 backdrop-blur-sm px-6 py-3 text-sm font-medium text-foreground transition-all hover:bg-primary/10 hover:scale-105 active:scale-100"
             >
-              <span className="relative z-10">{t(messages, 'home.startProject', 'Começar um projeto')}</span>
+              <span className="relative z-10 flex items-center gap-2">
+                {t(messages, 'home.startProject', 'Começar um projeto')}
+                <ArrowRight className="w-4 h-4" />
+              </span>
               <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-primary to-primary-foreground/10 opacity-0 blur transition-opacity group-hover:opacity-20" />
             </Link>
           </div>
@@ -440,6 +445,42 @@ export default function Home() {
       {/* Desktop Fixed Footer with Latest Projects */}
       <div className="fixed bottom-0 left-0 right-0 pointer-events-auto z-[2]">
         <div className="bg-background/80 backdrop-blur-sm border-t border-border/50">
+          {/* Desktop Hint */}
+          <div className="hidden md:block absolute bottom-full right-1/2 -translate-x-2 mb-10">
+            <motion.button
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 0.6, y: 0 }}
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => {
+                const projects = document.querySelector('.container');
+                if (projects) {
+                  projects.scrollIntoView({ behavior: 'smooth' });
+                }
+              }}
+              className="group relative focus:outline-none"
+            >
+              <motion.div
+                animate={{
+                  scale: [1, 1.1, 1],
+                  opacity: [0.6, 0.8, 0.6],
+                }}
+                transition={{
+                  duration: 3,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
+              >
+                <Info className="w-5 h-5 text-foreground/60 group-hover:text-foreground/80 transition-colors" />
+              </motion.div>
+              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1.5 rounded-md bg-background/50 backdrop-blur-sm border border-primary/10 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                <span className="text-sm text-foreground/80">
+                  {t(messages, 'home.footerHint', 'Click on the projects below to see more details')}
+                </span>
+              </div>
+            </motion.button>
+          </div>
+
           <div className="container mx-auto px-4 py-3 sm:py-4">
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-16">
               <span className="text-xs text-muted-foreground font-medium">
@@ -452,7 +493,7 @@ export default function Home() {
                     <Link
                       href={`/portfolio/${project.id}`}
                       className={cn(
-                        "text-xs sm:text-sm transition-all px-3 sm:px-4 py-1 sm:py-1.5 rounded-full border hover:border-primary/50 hover:bg-primary/5",
+                        "text-xs sm:text-sm transition-all px-3 sm:px-4 py-1 sm:py-1.5 rounded-full border hover:border-primary/50 hover:bg-primary/5 flex items-center gap-1.5",
                         activeProject?.id === project.id 
                           ? "border-primary text-primary bg-primary/5" 
                           : "border-border/50 text-foreground hover:text-primary"
@@ -465,6 +506,7 @@ export default function Home() {
                       onMouseLeave={() => setActiveProject(null)}
                     >
                       {project.title}
+                      <ArrowUpRight className="w-3 h-3 opacity-60 group-hover:opacity-100 transition-opacity" />
                     </Link>
                   </div>
                 ))}

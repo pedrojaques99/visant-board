@@ -4,6 +4,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { PortfolioItem } from '@/utils/coda';
+import { useI18n } from '@/context/i18n-context';
+import { t } from '@/utils/translations';
 
 interface PortfolioCardProps {
   item: PortfolioItem;
@@ -15,6 +17,7 @@ export function PortfolioCard({ item }: PortfolioCardProps) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isHovering, setIsHovering] = useState(false);
   const [showDebug, setShowDebug] = useState(false);
+  const { messages } = useI18n();
   
   // Validate thumb image URL
   const thumbUrl = typeof item.thumb === 'string' 
@@ -34,7 +37,7 @@ export function PortfolioCard({ item }: PortfolioCardProps) {
     console.error('Invalid portfolio item (missing required fields):', item);
     return (
       <div className="bg-card text-card-foreground rounded-lg overflow-hidden shadow-sm p-4">
-        <p className="text-destructive text-sm">Invalid portfolio item</p>
+        <p className="text-destructive text-sm">{t(messages, 'portfolio.invalidItem', 'Invalid portfolio item')}</p>
         {process.env.NODE_ENV === 'development' && (
           <pre className="mt-2 text-xs overflow-auto">
             {JSON.stringify(item, null, 2)}
@@ -111,7 +114,7 @@ export function PortfolioCard({ item }: PortfolioCardProps) {
             <div className="aspect-[16/9] w-full bg-muted flex items-center justify-center">
               <div className="text-center p-4">
                 <div className="text-4xl mb-2">🎨</div>
-                <span className="text-muted-foreground text-sm">Coming soon</span>
+                <span className="text-muted-foreground text-sm">{t(messages, 'portfolio.comingSoon', 'Coming soon')}</span>
               </div>
             </div>
           )}

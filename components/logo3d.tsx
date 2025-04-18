@@ -305,7 +305,7 @@ export function Logo3D() {
               TWO: isMobile ? THREE.TOUCH.ROTATE : THREE.TOUCH.DOLLY_ROTATE
             }}
           />
-          <PerspectiveCamera makeDefault position={[0, 0, 20]} />
+          <PerspectiveCamera makeDefault position={[0, 0, 25]} />
           {isPerformant ? (
             <>
               {isMobile ? <MobileModel /> : <Model />}

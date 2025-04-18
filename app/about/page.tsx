@@ -49,8 +49,18 @@ export default function About() {
       {/* Who we are */}
       <section className="min-h-[80vh] sm:min-h-screen relative flex items-center justify-center w-full">
         <div className="absolute inset-0">
-          <TexturePattern className="w-full h-full opacity-30" />
-          <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent dark:from-primary/10" />
+          <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            preload="auto"
+            className="w-full h-full object-cover scale-150 opacity-15"
+            poster="/assets/videos/0001-0250-poster.jpg"
+          >
+            <source src="/assets/videos/0001-0250.mp4" type="video/mp4" />
+          </video>
+          <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/60 to-black/90" />
         </div>
         <div className="max-w-[1800px] w-[90%] mx-auto grid grid-cols-1 gap-8 relative z-10 p-4 sm:p-5 md:px-12">
           <motion.div

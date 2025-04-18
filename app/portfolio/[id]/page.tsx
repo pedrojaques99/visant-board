@@ -17,6 +17,7 @@ import { useMediaQuery } from '@/hooks/use-media-query';
 import { ProjectMedia3D } from '@/components/project-media-3d';
 import { PortfolioCard } from '@/components/PortfolioCard';
 import { CTASection } from '@/components/cta-section';
+import { useTheme } from 'next-themes';
 
 interface Props {
   params: {
@@ -101,8 +102,28 @@ function ensureTextContrast(bgColor: string, textColor: string): string {
   return contrast < 128 ? (bgBrightness > 128 ? '#000000' : '#ffffff') : textColor;
 }
 
+// Add new helper function for color mixing
+function mixColors(color1: string, color2: string, weight: number): string {
+  const c1 = color1.match(/\w\w/g)?.map(x => parseInt(x, 16)) || [0, 0, 0];
+  const c2 = color2.match(/\w\w/g)?.map(x => parseInt(x, 16)) || [0, 0, 0];
+  
+  const mixed = c1.map((channel, i) => {
+    const mix = Math.round(channel * weight + c2[i] * (1 - weight));
+    return Math.min(255, Math.max(0, mix));
+  });
+  
+  return rgbToHex(mixed[0], mixed[1], mixed[2]);
+}
+
+// Add new helper for alpha colors
+function addAlpha(color: string, alpha: number): string {
+  const rgb = color.match(/\w\w/g)?.map(x => parseInt(x, 16)) || [0, 0, 0];
+  return `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, ${alpha})`;
+}
+
 export default function ProjectPage({ params }: Props) {
   const { messages, locale } = useI18n();
+  const { theme } = useTheme();
   const [item, setItem] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -125,9 +146,9 @@ export default function ProjectPage({ params }: Props) {
       });
 
       const [r, g, b] = colorThief.getColor(img);
-      const palette = colorThief.getPalette(img, 5); // Aumentado para 5 cores para mais opções
+      const palette = colorThief.getPalette(img, 5);
       
-      // Encontrar a cor mais vibrante do palette para usar como accent
+      // Find the most vibrant color from the palette
       const vibrantColor = palette.reduce((most, current) => {
         const [r, g, b] = current;
         const saturation = Math.max(r, g, b) - Math.min(r, g, b);
@@ -145,17 +166,31 @@ export default function ProjectPage({ params }: Props) {
       const dominant = rgbToHex(r, g, b);
       const accent = rgbToHex(r3, g3, b3);
 
-      // Calculate background color with proper contrast
-      const bgColor = adjustColorBrightness(dominant, 0.15);
-      const textColor = adjustColorForContrast(bgColor, '#ffffff');
+      // Calculate theme-aware base colors
+      const baseBackground = theme === 'dark' ? '#000000' : '#ffffff';
+      const baseText = theme === 'dark' ? '#ffffff' : '#000000';
       
-      // Ensure accent color has good contrast with background
-      const accentWithContrast = adjustColorForContrast(bgColor, accent, 4.5);
+      // Mix the dominant color with the theme base color for better integration
+      const bgColor = theme === 'dark'
+        ? mixColors(dominant, baseBackground, 0.85) // More dominant color influence in dark mode
+        : mixColors(dominant, baseBackground, 0.15); // Less dominant color influence in light mode
       
-      // Create a lighter/darker version of accent for hover states
-      const accentHover = calculateTextColor(accentWithContrast) === '#ffffff' 
-        ? adjustColorBrightness(accentWithContrast, 1.2)
-        : adjustColorBrightness(accentWithContrast, 0.8);
+      // Ensure high contrast text color
+      const textColor = theme === 'dark'
+        ? adjustColorForContrast(bgColor, baseText, 7) // Higher contrast in dark mode
+        : adjustColorForContrast(bgColor, baseText, 5); // Slightly lower contrast in light mode
+      
+      // Create a more harmonious accent color
+      const baseAccent = theme === 'dark'
+        ? mixColors(accent, '#ffffff', 0.8)
+        : mixColors(accent, '#000000', 0.2);
+      
+      const accentWithContrast = adjustColorForContrast(bgColor, baseAccent, 4.5);
+      
+      // Enhanced hover states
+      const accentHover = theme === 'dark'
+        ? adjustColorBrightness(accentWithContrast, 1.3)
+        : adjustColorBrightness(accentWithContrast, 0.7);
 
       setColorPalette({
         dominant: bgColor,
@@ -163,30 +198,58 @@ export default function ProjectPage({ params }: Props) {
         accent: accentWithContrast
       });
 
-      // Apply color scheme to CSS variables with guaranteed contrast
+      // Apply enhanced color scheme with transitions
       document.documentElement.style.setProperty('--project-bg', bgColor);
+      document.documentElement.style.setProperty('--project-bg-alpha', addAlpha(bgColor, 0.97));
       document.documentElement.style.setProperty('--project-text', textColor);
+      document.documentElement.style.setProperty('--project-text-alpha', addAlpha(textColor, 0.85));
       document.documentElement.style.setProperty('--project-accent', accentWithContrast);
       document.documentElement.style.setProperty('--project-accent-hover', accentHover);
+      document.documentElement.style.setProperty('--project-accent-alpha', addAlpha(accentWithContrast, 0.15));
+      
+      // Add complementary colors for UI elements
+      const mutedText = theme === 'dark'
+        ? adjustColorBrightness(textColor, 0.7)
+        : adjustColorBrightness(textColor, 1.3);
+      document.documentElement.style.setProperty('--project-muted', mutedText);
+      
     } catch (error) {
       console.error('Error analyzing image color:', error);
-      // Fallback to safe, high-contrast colors
-      const fallbackColors = {
-        bg: '#1a1a1a',
-        text: '#ffffff',
-        accent: '#52ddeb'
-      };
+      // Enhanced fallback colors
+      const fallbackColors = theme === 'dark'
+        ? {
+            bg: '#121212',
+            bgAlpha: 'rgba(18, 18, 18, 0.97)',
+            text: '#ffffff',
+            textAlpha: 'rgba(255, 255, 255, 0.85)',
+            accent: '#52ddeb',
+            accentHover: '#3ac8d6',
+            accentAlpha: 'rgba(82, 221, 235, 0.15)',
+            muted: 'rgba(255, 255, 255, 0.7)'
+          }
+        : {
+            bg: '#ffffff',
+            bgAlpha: 'rgba(255, 255, 255, 0.97)',
+            text: '#000000',
+            textAlpha: 'rgba(0, 0, 0, 0.85)',
+            accent: '#0070f3',
+            accentHover: '#0060c0',
+            accentAlpha: 'rgba(0, 112, 243, 0.15)',
+            muted: 'rgba(0, 0, 0, 0.7)'
+          };
+      
       setColorPalette({
         dominant: fallbackColors.bg,
         secondary: fallbackColors.text,
         accent: fallbackColors.accent
       });
-      document.documentElement.style.setProperty('--project-bg', fallbackColors.bg);
-      document.documentElement.style.setProperty('--project-text', fallbackColors.text);
-      document.documentElement.style.setProperty('--project-accent', fallbackColors.accent);
-      document.documentElement.style.setProperty('--project-accent-hover', '#3ac8d6');
+      
+      // Apply enhanced fallback colors
+      Object.entries(fallbackColors).forEach(([key, value]) => {
+        document.documentElement.style.setProperty(`--project-${key}`, value);
+      });
     }
-  }, []);
+  }, [theme]);
 
   useEffect(() => {
     let mounted = true;
@@ -254,9 +317,13 @@ export default function ProjectPage({ params }: Props) {
     return () => {
       mounted = false;
       document.documentElement.style.removeProperty('--project-bg');
+      document.documentElement.style.removeProperty('--project-bg-alpha');
       document.documentElement.style.removeProperty('--project-text');
+      document.documentElement.style.removeProperty('--project-text-alpha');
       document.documentElement.style.removeProperty('--project-accent');
       document.documentElement.style.removeProperty('--project-accent-hover');
+      document.documentElement.style.removeProperty('--project-accent-alpha');
+      document.documentElement.style.removeProperty('--project-muted');
     };
   }, [params.id, analyzeImageColor]);
 
@@ -312,16 +379,8 @@ export default function ProjectPage({ params }: Props) {
   const currentDescription = locale === 'pt' ? item?.ptbr : item?.description;
 
   return (
-    <main 
-      className="min-h-screen antialiased pb-12 transition-colors duration-1000"
-      style={{
-        backgroundColor: 'var(--project-bg, var(--background))',
-        color: 'var(--project-text, var(--foreground))'
-      }}
-    >
-      <div 
-        className="border-b bg-background" 
-      >
+    <main className="min-h-screen antialiased pb-12 transition-colors duration-1000 bg-[var(--project-bg)] text-[var(--project-text)]">
+      <div className="border-b border-[var(--project-accent-alpha)] bg-[var(--project-bg-alpha)]">
         <div className="max-w-7xl mx-auto py-3 sm:py-4 px-4 sm:px-6 lg:px-8">
           <Breadcrumb 
             items={breadcrumbItems} 
@@ -337,20 +396,25 @@ export default function ProjectPage({ params }: Props) {
             <h1 className="text-2xl sm:text-4xl lg:text-5xl font-bold tracking-tight mb-3 sm:mb-4">
               {item.title || t(messages, 'portfolio.untitledProject', 'Untitled Project')}
             </h1>
-            <div className="flex flex-wrap items-center gap-2 sm:gap-4 opacity-80 text-sm sm:text-base">
+            <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-sm sm:text-base" style={{ color: 'var(--project-text-alpha)' }}>
               <span>{item.client || t(messages, 'portfolio.noClient', 'No client specified')}</span>
               {formattedDate && (
                 <>
-                  <span className="opacity-60">•</span>
+                  <span style={{ color: 'var(--project-accent-alpha)' }}>•</span>
                   <span>{formattedDate}</span>
                 </>
               )}
               {item.type && (
                 <>
-                  <span className="opacity-60">•</span>
+                  <span style={{ color: 'var(--project-accent-alpha)' }}>•</span>
                   <Link 
                     href={`/portfolio?type=${encodeURIComponent(item.type)}`}
-                    className="px-2 sm:px-3 py-0.5 sm:py-1 text-xs font-medium rounded-full border opacity-80 hover:opacity-100 transition-all"
+                    className="px-2 sm:px-3 py-0.5 sm:py-1 text-xs font-medium rounded-full border transition-all hover:border-accent/50 hover:bg-accent/5"
+                    style={{
+                      borderColor: 'var(--project-accent-alpha)',
+                      color: 'var(--project-accent)',
+                      backgroundColor: 'var(--project-accent-alpha)'
+                    }}
                   >
                     {item.type}
                   </Link>
@@ -364,7 +428,7 @@ export default function ProjectPage({ params }: Props) {
                 variant="outline" 
                 size={isMobile ? "default" : "sm"}
                 onClick={() => setShow3D(!show3D)}
-                className="transition-all duration-300 w-full sm:w-auto"
+                className="transition-all duration-300 w-full sm:w-auto border-[var(--project-accent-alpha)] hover:border-[var(--project-accent)] hover:bg-[var(--project-accent-alpha)]"
               >
                 {show3D ? (
                   <EyeOff className="h-4 w-4 mr-2" />
@@ -372,8 +436,8 @@ export default function ProjectPage({ params }: Props) {
                   <Eye className="h-4 w-4 mr-2" />
                 )}
                 {show3D ? 
-                  t(messages, 'portfolio.hide3D', locale === 'pt' ? 'Ocultar 3D' : 'Hide 3D') : 
-                  t(messages, 'portfolio.view3D', locale === 'pt' ? 'Ver em 3D' : 'View 3D')
+                  t(messages, 'portfolio.hide3D', 'Ocultar 3D') : 
+                  t(messages, 'portfolio.show3D', 'Ver em 3D')
                 }
               </Button>
             )}
@@ -382,12 +446,15 @@ export default function ProjectPage({ params }: Props) {
               size={isMobile ? "default" : "sm"}
               onClick={handleShare}
               className={cn(
-                "transition-all duration-300 w-full sm:w-auto",
-                copied ? "bg-[var(--project-accent)] text-[var(--project-text)]" : ""
+                "transition-all duration-300 w-full sm:w-auto border-[var(--project-accent-alpha)] hover:border-[var(--project-accent)] hover:bg-[var(--project-accent-alpha)]",
+                copied ? "bg-[var(--project-accent)] text-[var(--project-bg)]" : ""
               )}
             >
               <Share2 className="h-4 w-4 mr-2" />
-              {copied ? t(messages, 'common.copied', 'Copied!') : t(messages, 'common.share', 'Share')}
+              {copied ? 
+                t(messages, 'common.copied', 'Copiado!') : 
+                t(messages, 'common.share', 'Compartilhar')
+              }
             </Button>
           </div>
         </div>
@@ -398,7 +465,11 @@ export default function ProjectPage({ params }: Props) {
             <h2 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6">
               {t(messages, 'portfolio.description', locale === 'pt' ? 'Descrição' : 'Description')}
             </h2>
-            <p className="text-base sm:text-lg text-muted-foreground">{currentDescription}</p>
+            <div 
+              className="text-base sm:text-lg whitespace-pre-wrap" 
+              style={{ color: 'var(--project-text-alpha)' }}
+              dangerouslySetInnerHTML={{ __html: currentDescription }}
+            />
           </div>
         )}
 
@@ -453,8 +524,8 @@ export default function ProjectPage({ params }: Props) {
             ))}
           </div>
         ) : (
-          <div className="text-center py-8 sm:py-12 rounded-lg border border-border bg-muted/40 mb-8 sm:mb-16">
-            <p className="text-muted-foreground">{t(messages, 'portfolio.noImages', 'No images available for this project')}</p>
+          <div className="text-center py-8 sm:py-12 rounded-lg border border-[var(--project-accent-alpha)] bg-[var(--project-bg-alpha)] mb-8 sm:mb-16">
+            <p style={{ color: 'var(--project-text-alpha)' }}>{t(messages, 'portfolio.noImages', 'No images available for this project')}</p>
           </div>
         )}
 
@@ -464,19 +535,22 @@ export default function ProjectPage({ params }: Props) {
             <h2 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6">
               {t(messages, 'portfolio.credits', locale === 'pt' ? 'Créditos' : 'Credits')}
             </h2>
-            <div className="text-base sm:text-lg text-muted-foreground whitespace-pre-wrap">{item.credits}</div>
+            <div className="text-base sm:text-lg" style={{ color: 'var(--project-text-alpha)' }} dangerouslySetInnerHTML={{ __html: item.credits }}></div>
           </div>
         )}
 
         {/* Call to Action */}
         <CTASection 
           variant="dynamic"
-          gradientFrom={colorPalette?.accent || 'var(--primary)'}
+          gradientFrom={`${colorPalette?.accent}15` || 'var(--primary)15'}
           gradientTo="var(--project-bg)"
           textColor="var(--project-text)"
-          buttonColor={colorPalette?.accent || 'var(--primary)'}
-          buttonTextColor="var(--project-text)"
-          className="mt-8"
+          buttonColor="var(--project-accent)"
+          buttonTextColor={theme === 'dark' ? 'var(--project-bg)' : 'var(--project-text)'}
+          className="mt-8 rounded-xl overflow-hidden border border-[var(--project-accent-alpha)] bg-[var(--project-bg-alpha)]"
+          title={locale === 'pt' ? 'Procurando uma identidade visual marcante?' : 'Looking for a bold visual identity?'}
+          buttonText={locale === 'pt' ? 'Entre em contato' : 'Get in touch'}
+          isWhatsApp={true}
         />
 
         {/* Related Projects */}
