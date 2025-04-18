@@ -21,6 +21,7 @@ export const messages = {
     latestProjects: "Últimos Projetos",
     startProject: "Começar um projeto",
     swipeHint: "Role ou arraste para explorar",
+    footerHint: "Clique nos projetos abaixo para ver mais detalhes"
   },
   portfolio: {
     title: "Portfólio",
@@ -36,6 +37,10 @@ export const messages = {
     portugueseDescription: "Descrição",
     project: "Projeto",
     noImages: "Não há imagens disponíveis para este projeto",
+    show3D: "Ver em 3D",
+    hide3D: "Ocultar 3D",
+    relatedProjects: "Projetos Relacionados",
+    credits: "Créditos"
   },
   about: {
     title: "Quem somos",

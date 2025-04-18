@@ -48,14 +48,14 @@ export default function About() {
     <div className="w-full -mt-20">
       {/* Who we are */}
       <section className="min-h-[80vh] sm:min-h-screen relative flex items-center justify-center w-full">
-        <div className="absolute inset-0">
+        <div className="absolute inset-0 overflow-hidden">
           <video
             autoPlay
             loop
             muted
             playsInline
             preload="auto"
-            className="w-full h-full object-cover scale-150 opacity-15"
+            className="w-full h-full object-cover scale-110 opacity-15"
             poster="/assets/videos/0001-0250-poster.jpg"
           >
             <source src="/assets/videos/0001-0250.mp4" type="video/mp4" />

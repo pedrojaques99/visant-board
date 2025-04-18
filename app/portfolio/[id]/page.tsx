@@ -6,7 +6,7 @@ import { notFound } from 'next/navigation';
 import { Breadcrumb } from '@/components/ui/breadcrumb';
 import { useI18n } from '@/context/i18n-context';
 import { t } from '@/utils/translations';
-import { Share2, Eye, EyeOff } from 'lucide-react';
+import { Share2, Eye, EyeOff, X } from 'lucide-react';
 import { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -18,6 +18,12 @@ import { ProjectMedia3D } from '@/components/project-media-3d';
 import { PortfolioCard } from '@/components/PortfolioCard';
 import { CTASection } from '@/components/cta-section';
 import { useTheme } from 'next-themes';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 interface Props {
   params: {
@@ -131,7 +137,8 @@ export default function ProjectPage({ params }: Props) {
   const [colorPalette, setColorPalette] = useState<ColorPalette | null>(null);
   const [relatedProjects, setRelatedProjects] = useState<any[]>([]);
   const isMobile = useMediaQuery('(max-width: 768px)');
-  const [show3D, setShow3D] = useState(false);
+  const [show3DModal, setShow3DModal] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   const analyzeImageColor = useCallback(async (imageUrl: string) => {
     try {
@@ -327,6 +334,17 @@ export default function ProjectPage({ params }: Props) {
     };
   }, [params.id, analyzeImageColor]);
 
+  // Add ESC key handler for fullscreen image
+  useEffect(() => {
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setSelectedImage(null);
+      }
+    };
+    window.addEventListener('keydown', handleEsc);
+    return () => window.removeEventListener('keydown', handleEsc);
+  }, []);
+
   const handleShare = () => {
     if (navigator.share) {
       navigator.share({
@@ -427,18 +445,11 @@ export default function ProjectPage({ params }: Props) {
               <Button 
                 variant="outline" 
                 size={isMobile ? "default" : "sm"}
-                onClick={() => setShow3D(!show3D)}
+                onClick={() => setShow3DModal(true)}
                 className="transition-all duration-300 w-full sm:w-auto border-[var(--project-accent-alpha)] hover:border-[var(--project-accent)] hover:bg-[var(--project-accent-alpha)]"
               >
-                {show3D ? (
-                  <EyeOff className="h-4 w-4 mr-2" />
-                ) : (
-                  <Eye className="h-4 w-4 mr-2" />
-                )}
-                {show3D ? 
-                  t(messages, 'portfolio.hide3D', 'Ocultar 3D') : 
-                  t(messages, 'portfolio.show3D', 'Ver em 3D')
-                }
+                <Eye className="h-4 w-4 mr-2" />
+                {t(messages, 'portfolio.show3D', 'Ver em 3D')}
               </Button>
             )}
             <Button 
@@ -473,7 +484,29 @@ export default function ProjectPage({ params }: Props) {
           </div>
         )}
 
-        {/* Project Video - Show First */}
+        {/* Project 3D View Dialog */}
+        <Dialog open={show3DModal} onOpenChange={setShow3DModal}>
+          <DialogContent className="max-w-4xl h-[80vh] p-0 bg-[var(--project-bg)] border-[var(--project-accent-alpha)]">
+            <DialogHeader className="absolute top-2 right-2 z-10">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setShow3DModal(false)}
+                className="p-2 h-8 w-8 rounded-full border-[var(--project-accent-alpha)] hover:border-[var(--project-accent)] hover:bg-[var(--project-accent-alpha)]"
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            </DialogHeader>
+            <div className="w-full h-full">
+              <ProjectMedia3D 
+                modelUrl={item.model3d || ''}
+                color={colorPalette?.accent || '#52ddeb'}
+              />
+            </div>
+          </DialogContent>
+        </Dialog>
+
+        {/* Project Video */}
         {item.video && (
           <div className="mb-8 sm:mb-16">
             <div className="relative w-full overflow-hidden bg-muted aspect-video rounded-lg sm:rounded-xl shadow-lg">
@@ -487,34 +520,21 @@ export default function ProjectPage({ params }: Props) {
           </div>
         )}
 
-        {/* Project 3D View */}
-        {item.model3d && show3D && (
-          <div className="mb-8 sm:mb-16">
-            <div className="relative w-full overflow-hidden rounded-lg sm:rounded-xl">
-              <div className="h-[400px] sm:h-[500px]">
-                <ProjectMedia3D 
-                  modelUrl={item.model3d}
-                  color={colorPalette?.accent || '#52ddeb'}
-                />
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Project images with responsive gap */}
+        {/* Project images with fullscreen capability */}
         {images.length > 0 ? (
           <div className="grid gap-2 sm:gap-1 mb-8 sm:mb-16">
             {images.map((imageUrl, index) => (
               <div 
                 key={imageUrl} 
-                className="relative w-full overflow-hidden bg-muted rounded-lg sm:rounded-lg"
+                className="relative w-full overflow-hidden bg-muted rounded-lg sm:rounded-lg cursor-pointer"
+                onClick={() => setSelectedImage(imageUrl)}
               >
                 <Image
                   src={imageUrl}
                   alt={`${item.title || t(messages, 'portfolio.project', 'Project')} - Image ${index + 1}`}
                   width={1920}
                   height={1080}
-                  className="w-full h-auto"
+                  className="w-full h-auto transition-transform duration-300 hover:scale-[1.02]"
                   sizes="(max-width: 768px) 100vw, (max-width: 1280px) 100vw, 1280px"
                   priority={index === 0}
                   loading={index === 0 ? "eager" : "lazy"}
@@ -526,6 +546,32 @@ export default function ProjectPage({ params }: Props) {
         ) : (
           <div className="text-center py-8 sm:py-12 rounded-lg border border-[var(--project-accent-alpha)] bg-[var(--project-bg-alpha)] mb-8 sm:mb-16">
             <p style={{ color: 'var(--project-text-alpha)' }}>{t(messages, 'portfolio.noImages', 'No images available for this project')}</p>
+          </div>
+        )}
+
+        {/* Fullscreen Image Modal */}
+        {selectedImage && (
+          <div 
+            className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4"
+            onClick={() => setSelectedImage(null)}
+          >
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setSelectedImage(null)}
+              className="absolute top-4 right-4 p-2 h-8 w-8 rounded-full bg-black/50 hover:bg-black/70 border-white/20 hover:border-white/40"
+            >
+              <X className="h-4 w-4 text-white" />
+            </Button>
+            <Image
+              src={selectedImage}
+              alt={item.title || t(messages, 'portfolio.project', 'Project')}
+              width={1920}
+              height={1080}
+              className="max-h-[90vh] w-auto object-contain"
+              onClick={(e) => e.stopPropagation()}
+              quality={100}
+            />
           </div>
         )}
 

@@ -1,3 +1,6 @@
+import fs from 'fs';
+import path from 'path';
+
 // Add region configuration for Vercel deployment
 export const runtime = 'nodejs';
 export const preferredRegion = 'iad1'; // US East (N. Virginia)
@@ -452,5 +455,72 @@ export async function getStatistics() {
       success: false,
       error: error instanceof Error ? error.message : 'Unknown error'
     };
+  }
+}
+
+export async function updatePortfolioCache() {
+  const TABLE_ID = 'grid-7B5GsoqgKn';
+  console.log(`[Cache Update] Buscando dados da tabela ${TABLE_ID}...`);
+
+  try {
+    const response = await fetch(`${CODA_API_BASE}/docs/${CODA_DOC_ID}/tables/${TABLE_ID}/rows?limit=1000&useColumnNames=true`, {
+      headers: {
+        'Authorization': `Bearer ${CODA_API_TOKEN}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Falha ao buscar dados: ${response.status} ${response.statusText}\n${errorText}`);
+    }
+
+    const data = await response.json();
+    console.log(`[Cache Update] ${data.items.length} itens encontrados`);
+
+    const items = data.items.map((row: any) => {
+      try {
+        return {
+          id: row.id,
+          title: row.values['c-iiN3n6MEYb'] || '',
+          job: row.values['c-XO-i1nglc5'] || '',
+          client: row.values['c-lR6pD7jLuH'] || '',
+          type: row.values['c-Rddnn9er3T'] || '',
+          date: row.values['c-OHfxznTpkF'] || '',
+          description: row.values['c-is7YUDQ1sQ'] || '',
+          ptbr: row.values['c-V1pN1xw0YX'] || '',
+          thumb: row.values['c-E8jRBgytkd'] || '',
+          video: row.values['c-czpRT8O481'] || '',
+          credits: row.values['c-IlJ9HvA1wE'] || '',
+          model3d: row.values['c-oQXi3wWbeZ'] || '',
+          logo2d: row.values['c-logo2d'] || '',
+          ...Array.from({ length: 25 }, (_, i) => {
+            const key = `image${String(i + 1).padStart(2, '0')}`;
+            const columnId = `c-image${i + 1}`;
+            return { [key]: row.values[columnId] || '' };
+          }).reduce((acc, curr) => ({ ...acc, ...curr }), {})
+        };
+      } catch (err) {
+        console.error(`[Cache Update] Erro ao processar item ${row.id}:`, err);
+        return null;
+      }
+    }).filter(Boolean);
+
+    console.log(`[Cache Update] ${items.length} itens processados com sucesso`);
+
+    // Salva os dados em cache
+    const cacheDir = path.join(process.cwd(), '.cache');
+    if (!fs.existsSync(cacheDir)) {
+      fs.mkdirSync(cacheDir, { recursive: true });
+    }
+
+    const cachePath = path.join(cacheDir, 'portfolio.json');
+    fs.writeFileSync(cachePath, JSON.stringify(items, null, 2));
+    console.log(`[Cache Update] Cache salvo em ${cachePath}`);
+
+    return true;
+  } catch (error) {
+    console.error('[Cache Update] Erro ao atualizar cache:', error);
+    throw error;
   }
 } 
