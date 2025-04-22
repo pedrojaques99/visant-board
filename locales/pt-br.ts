@@ -16,17 +16,45 @@ export const messages = {
     contact: "Contato",
   },
   services: {
-    branding: {
-      title: "Branding",
-      description: "Desenvolvemos identidades de marca memoráveis que capturam a essência do seu negócio e criam conexões duradouras com seu público."
+    badge: "Serviços",
+    title: "Projeto de Branding & Identidade Visual",
+    subtitle: "O serviço de criação de um Branding Completo que vai transformar a identidade da sua marca",
+    cta: "Começar Projeto",
+    timelineTitle: "Timeline do Projeto",
+    methodologyTitle: "Nossa Metodologia",
+    methodologyDescription: "Todo projeto demanda pesquisa de mercado, de concorrência, público alvo e atualidades, isso é feito para que o resultado esteja coerente e embasado, evitando clichês e ideias irrelevantes.",
+    methodologyExtra: "Nossa metodologia é própria, evoluída durante nossa trajetória para entregar um resultado altamente personalizado, que se comunique com a essência de cada marca.",
+    differenceTitle: "Entenda a Diferença",
+    differenceDescription: "O logotipo é o \"ícone\" que representa um negócio, já a identidade visual é todo universo que compõe a marca, como paleta de cores, tipografias (fontes) e elementos visuais.",
+    features: {
+      optimizedTime: "Prazo Otimizado",
+      optimizedTimeDescription: "Entrega em 5-15 dias úteis com qualidade e dedicação",
+      focusedGoal: "Foco no Objetivo",
+      focusedGoalDescription: "Pesquisa aprofundada e estratégia personalizada",
+      uniqueResult: "Resultado Único",
+      uniqueResultDescription: "Design exclusivo alinhado com sua marca"
     },
-    visualidentity: {
-      title: "Identidade Visual",
-      description: "Criamos sistemas visuais únicos e coerentes que comunicam os valores da sua marca em todos os pontos de contato."
-    },
-    artdirection: {
-      title: "Direção de Arte",
-      description: "Guiamos a visão criativa do seu projeto, garantindo que cada elemento visual trabalhe em harmonia para contar sua história."
+    timeline: {
+      closing: {
+        title: "Fechamento",
+        description: "do projeto e reserva da agenda de entrega"
+      },
+      alignment: {
+        title: "Primeira call de alinhamento",
+        description: "pesquisa de referências"
+      },
+      strategy: {
+        title: "Estratégia",
+        description: "da marca (posicionamento, público-alvo, arquétipo e mais)"
+      },
+      refinement: {
+        title: "Refinamento final",
+        description: "criação da apresentação"
+      },
+      delivery: {
+        title: "Apresentação e Entrega",
+        description: "entrega dos arquivos finais"
+      }
     }
   },
   home: {

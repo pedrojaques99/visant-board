@@ -4,7 +4,7 @@ import { createContext, useContext, useState, useEffect, ReactNode } from "react
 import { messages as enMessages } from "../locales/en";
 import { messages as ptBrMessages } from "../locales/pt-br";
 
-type Messages = typeof enMessages;
+type Messages = typeof ptBrMessages;
 
 interface I18nContextType {
   locale: string;
@@ -21,7 +21,7 @@ const locales: Record<string, Messages> = {
 
 export function I18nProvider({ children }: { children: ReactNode }) {
   const [locale, setLocale] = useState("en");
-  const [messages, setMessages] = useState<Messages>(enMessages);
+  const [messages, setMessages] = useState<Messages>(ptBrMessages);
 
   useEffect(() => {
     // Initialize with saved preference or browser language

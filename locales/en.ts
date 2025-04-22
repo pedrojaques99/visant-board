@@ -60,4 +60,63 @@ export const messages = {
       'artDirection.description': 'Guiding creative vision and execution',
     },
   },
+  footer: {
+    description: "Creating bold and visionary brand identities that make a lasting impact.",
+    quickLinks: "Quick Links",
+    portfolio: "Portfolio",
+    startProject: "Start a Project",
+    about: "About",
+    contact: "Contact",
+    followUs: "Follow Us",
+    instagram: "Instagram",
+    whatsapp: "WhatsApp",
+    email: "contact@visant.design",
+    phone: "+55 (47) 88475-891",
+    rights: "All rights reserved.",
+    privacy: "Privacy Policy",
+    terms: "Terms of Service",
+    visantIcon: "Visant"
+  },
+  services: {
+    badge: "Services",
+    title: "Branding & Visual Identity Project",
+    subtitle: "A Complete Branding service that will transform your brand's identity",
+    cta: "Start Project",
+    timelineTitle: "Project Timeline",
+    methodologyTitle: "Our Methodology",
+    methodologyDescription: "Every project requires market research, competitor analysis, target audience study, and current trends, ensuring coherent and well-founded results while avoiding clichés and irrelevant ideas.",
+    methodologyExtra: "Our methodology is proprietary, evolved throughout our journey to deliver highly personalized results that communicate your brand's essence.",
+    differenceTitle: "Understand the Difference",
+    differenceDescription: "The logo is the \"icon\" that represents a business, while visual identity is the entire universe that makes up the brand, such as color palette, typography (fonts), and visual elements.",
+    features: {
+      optimizedTime: "Optimized Timeline",
+      optimizedTimeDescription: "Delivery in 5-15 business days with quality and dedication",
+      focusedGoal: "Goal-Focused",
+      focusedGoalDescription: "In-depth research and personalized strategy",
+      uniqueResult: "Unique Result",
+      uniqueResultDescription: "Exclusive design aligned with your brand"
+    },
+    timeline: {
+      closing: {
+        title: "Closing",
+        description: "project and delivery schedule reservation"
+      },
+      alignment: {
+        title: "First alignment call",
+        description: "reference research"
+      },
+      strategy: {
+        title: "Strategy",
+        description: "brand (positioning, target audience, archetype and more)"
+      },
+      refinement: {
+        title: "Final refinement",
+        description: "presentation creation"
+      },
+      delivery: {
+        title: "Presentation and Delivery",
+        description: "final files delivery"
+      }
+    }
+  },
 }; 
