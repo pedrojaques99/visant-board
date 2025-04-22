@@ -1,6 +1,6 @@
 'use client';
 
-import { Hero3D } from '@/components/hero3d';
+import Hero3D from '@/components/hero3d';
 import { useI18n } from '@/context/i18n-context';
 import { t } from '@/utils/translations';
 import { useEffect, useState } from 'react';
@@ -28,6 +28,7 @@ function ProjectCard({ project, index, activeIndex, totalProjects, setActiveInde
   const rotate = useTransform(x, [-200, 200], [-15, 15]);
   const scale = useTransform(x, [-200, 0, 200], [0.9, 1, 0.9]);
   const isActive = index === activeIndex;
+  const isMobileOrTablet = useMediaQuery('(max-width: 1024px)');
 
   // Calculate the relative position for infinite loop
   const getRelativePosition = () => {
@@ -52,7 +53,7 @@ function ProjectCard({ project, index, activeIndex, totalProjects, setActiveInde
       style={{
         position: 'absolute',
         width: '100%',
-        maxWidth: '400px',
+        maxWidth: isMobileOrTablet ? '280px' : '400px',
         x: x,
         rotate,
         scale,
@@ -70,7 +71,7 @@ function ProjectCard({ project, index, activeIndex, totalProjects, setActiveInde
         opacity: isActive ? 1 : 0.95,
         scale: isActive ? 1 : 0.95,
         y: 0,
-        x: relativePosition * 200,
+        x: relativePosition * (isMobileOrTablet ? 150 : 200),
         rotate: 0
       }}
       exit={{ 
@@ -99,47 +100,44 @@ function ProjectCard({ project, index, activeIndex, totalProjects, setActiveInde
       className="relative touch-none cursor-grab active:cursor-grabbing"
       whileHover={{ scale: 1.01 }}
     >
-      <Link 
-        href={`/portfolio/${project.id}`}
-        onClick={(e) => {
-          if (Math.abs(x.get()) > 10) {
-            e.preventDefault();
-          }
-        }}
+      <div 
+        className={cn(
+          "relative rounded-xl overflow-hidden bg-muted shadow-2xl pointer-events-none",
+          isMobileOrTablet ? "aspect-[3/4]" : "aspect-[4/3]"
+        )}
+        onClick={(e) => e.stopPropagation()}
       >
-        <div className="relative aspect-[4/3] rounded-xl overflow-hidden bg-muted shadow-2xl">
-          {project.thumb && (
-            <motion.div
-              initial={{ scale: 1.05 }}
-              animate={{ scale: 1 }}
-              transition={{ duration: 1.2 }}
-              className="absolute inset-0"
-            >
-              <Image
-                src={project.thumb}
-                alt={project.title}
-                fill
-                className="object-cover"
-                sizes="(max-width: 768px) 100vw"
-              />
-            </motion.div>
-          )}
-          <motion.div 
-            className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent flex flex-col justify-end p-6"
+        {project.thumb && (
+          <motion.div
+            initial={{ scale: 1.05 }}
+            animate={{ scale: 1 }}
+            transition={{ duration: 1.2 }}
+            className="absolute inset-0"
           >
-            <motion.h3 
-              className="text-xl font-medium text-white mb-2"
-            >
-              {project.title}
-            </motion.h3>
-            <motion.p 
-              className="text-sm text-zinc-300"
-            >
-              {project.client}
-            </motion.p>
+            <Image
+              src={project.thumb}
+              alt={project.title}
+              fill
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw"
+            />
           </motion.div>
-        </div>
-      </Link>
+        )}
+        <motion.div 
+          className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent flex flex-col justify-end p-6"
+        >
+          <motion.h3 
+            className="text-xl font-medium text-white mb-2"
+          >
+            {project.title}
+          </motion.h3>
+          <motion.p 
+            className="text-sm text-zinc-300"
+          >
+            {project.client}
+          </motion.p>
+        </motion.div>
+      </div>
     </motion.div>
   );
 }
@@ -231,15 +229,55 @@ export default function Home() {
                 <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-primary to-primary-foreground/10 opacity-0 blur transition-opacity group-hover:opacity-20" />
               </Link>
             </div>
+
+            {/* Scroll Down Arrow */}
+            <motion.button
+              onClick={() => {
+                const projects = document.querySelector('.container');
+                if (projects) {
+                  projects.scrollIntoView({ behavior: 'smooth' });
+                }
+              }}
+              className="mt-32 flex items-center justify-center w-full"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5 }}
+            >
+              <motion.div
+                animate={{
+                  y: [0, 5, 0],
+                }}
+                transition={{
+                  duration: 1.5,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
+                className="p-2 rounded-full bg-background/50 backdrop-blur-sm border border-border/50"
+              >
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="text-foreground/70"
+                >
+                  <path d="m7 6 5 5 5-5" />
+                </svg>
+              </motion.div>
+            </motion.button>
           </motion.div>
 
           <div className="absolute inset-0 bg-gradient-to-b from-background via-background/30 to-background pointer-events-none z-[1]" />
         </section>
 
         {/* Mobile/Tablet Latest Projects Stack */}
-        <div className="relative z-10 bg-background">
+        <div className="relative z-10 bg-background -mt-20">
           {latestProjects.length > 0 && (
-            <section className="py-24 md:py-24 px-4 md:px-6">
+            <section className="pt-24 pb-12 md:py-12 px-8">
               <motion.h2 
                 initial={{ opacity: 0 }}
                 whileInView={{ opacity: 1 }}
@@ -248,7 +286,7 @@ export default function Home() {
               >
                 {t(messages, 'home.latestProjects', 'Latest Projects')}
               </motion.h2>
-              <div className="relative h-[400px] md:h-[600px] overflow-hidden">
+              <div className="relative h-[600px] md:h-[600px] overflow-visible -mt-10">
                 <div className="absolute inset-0 flex items-center justify-center">
                   <AnimatePresence mode="popLayout">
                     {latestProjects.map((project, index) => (
@@ -264,15 +302,64 @@ export default function Home() {
                   </AnimatePresence>
                 </div>
 
-                {/* Navigation Arrows */}
-                <div className="absolute inset-y-0 left-0 flex items-center justify-start px-4 z-20">
+                {/* Navigation Arrows - Mobile */}
+                <div className="md:hidden absolute -bottom-5 left-0 right-0 flex items-center justify-center gap-8 p-4 z-50">
                   <button
-                    onClick={() => setActiveIndex((activeIndex - 1 + latestProjects.length) % latestProjects.length)}
-                    className="p-2 rounded-full bg-background/50 backdrop-blur-sm border border-border/50 hover:bg-background/80 transition-colors"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setActiveIndex((activeIndex - 1 + latestProjects.length) % latestProjects.length);
+                    }}
+                    className="p-4 rounded-full bg-background/90 backdrop-blur-sm border border-border/50 hover:bg-background transition-colors shadow-lg active:scale-95 transform"
                   >
                     <svg
-                      width="16"
-                      height="16"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="text-foreground/80"
+                    >
+                      <path d="m15 18-6-6 6-6" />
+                    </svg>
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setActiveIndex((activeIndex + 1) % latestProjects.length);
+                    }}
+                    className="p-4 rounded-full bg-background/90 backdrop-blur-sm border border-border/50 hover:bg-background transition-colors shadow-lg active:scale-95 transform"
+                  >
+                    <svg
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="text-foreground/80"
+                    >
+                      <path d="m9 18 6-6-6-6" />
+                    </svg>
+                  </button>
+                </div>
+
+                {/* Navigation Arrows - Desktop */}
+                <div className="hidden md:flex absolute inset-y-0 left-0 items-center justify-start px-4 z-50">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setActiveIndex((activeIndex - 1 + latestProjects.length) % latestProjects.length);
+                    }}
+                    className="p-3 rounded-full bg-background/50 backdrop-blur-sm border border-border/50 hover:bg-background/80 transition-colors active:scale-95 transform"
+                  >
+                    <svg
+                      width="20"
+                      height="20"
                       viewBox="0 0 24 24"
                       fill="none"
                       stroke="currentColor"
@@ -286,14 +373,17 @@ export default function Home() {
                   </button>
                 </div>
 
-                <div className="absolute inset-y-0 right-0 flex items-center justify-end px-4 z-20">
+                <div className="hidden md:flex absolute inset-y-0 right-0 items-center justify-end px-4 z-50">
                   <button
-                    onClick={() => setActiveIndex((activeIndex + 1) % latestProjects.length)}
-                    className="p-2 rounded-full bg-background/50 backdrop-blur-sm border border-border/50 hover:bg-background/80 transition-colors"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setActiveIndex((activeIndex + 1) % latestProjects.length);
+                    }}
+                    className="p-3 rounded-full bg-background/50 backdrop-blur-sm border border-border/50 hover:bg-background/80 transition-colors active:scale-95 transform"
                   >
                     <svg
-                      width="16"
-                      height="16"
+                      width="20"
+                      height="20"
                       viewBox="0 0 24 24"
                       fill="none"
                       stroke="currentColor"
@@ -311,7 +401,7 @@ export default function Home() {
           )}
 
           {/* Mobile/Tablet About Section */}
-          <div className="block lg:hidden">
+          <div className="block lg:hidden mt-32 md:mt-40">
             <About />
           </div>
         </div>

@@ -59,6 +59,7 @@ export interface PortfolioItem {
   image23: string;
   image24: string;
   image25: string;
+  active: boolean;
 }
 
 interface PortfolioDataResponse {
@@ -250,44 +251,47 @@ export async function getPortfolioData(): Promise<PortfolioDataResponse> {
     }
 
     const data = await response.json();
-    const items = data.items.map((row: any) => ({
-      id: row.id,
-      title: row.values['c-iiN3n6MEYb'] || '',
-      job: row.values['c-XO-i1nglc5'] || '',
-      client: row.values['c-lR6pD7jLuH'] || '',
-      type: row.values['c-Rddnn9er3T'] || '',
-      date: row.values['c-OHfxznTpkF'] || '',
-      description: row.values['c-is7YUDQ1sQ'] || '',
-      ptbr: row.values['c-V1pN1xw0YX'] || '',
-      thumb: row.values['c-E8jRBgytkd'] || '',
-      video: row.values['c-czpRT8O481'] || '',
-      credits: row.values['c-IlJ9HvA1wE'] || '',
-      model3d: row.values['c-oQXi3wWbeZ'] || '',
-      logo2d: row.values['c-logo2d'] || '',
-      image02: row.values['c-z1ZQeSebCy'] || '',
-      image03: row.values['c-pGUgOu2reI'] || '',
-      image04: row.values['c-W6-LDMJSKa'] || '',
-      image05: row.values['c-rxIfH1hRP3'] || '',
-      image06: row.values['c-s6fyHmse58'] || '',
-      image07: row.values['c-LOa8e4nCkq'] || '',
-      image08: row.values['c-0ghK6_C4j8'] || '',
-      image09: row.values['c-jIynrl7RUZ'] || '',
-      image10: row.values['c-04IvmYEhd2'] || '',
-      image11: row.values['c-6NAP6bmBqv'] || '',
-      image12: row.values['c-tAutX-ZqxJ'] || '',
-      image13: row.values['c-vk39cR8F71'] || '',
-      image15: row.values['c-sZWSNgNW3s'] || '',
-      image16: row.values['c-NewBGsNkZS'] || '',
-      image17: row.values['c-4I8UEY1Yz8'] || '',
-      image18: row.values['c-Ht50OlmCEA'] || '',
-      image19: row.values['c-uV1eotAzGV'] || '',
-      image20: row.values['c-n_OqSyAAs7'] || '',
-      image21: row.values['c-AHA9kFeaAJ'] || '',
-      image22: row.values['c-pugBX7ZtIL'] || '',
-      image23: row.values['c-Hp5XCZvrC_'] || '',
-      image24: row.values['c-d6AT3-x9cv'] || '',
-      image25: row.values['c-GOgBFSGEFK'] || ''
-    }));
+    const items = data.items
+      .map((row: any) => ({
+        id: row.id,
+        title: row.values['c-iiN3n6MEYb'] || '',
+        job: row.values['c-XO-i1nglc5'] || '',
+        client: row.values['c-lR6pD7jLuH'] || '',
+        type: row.values['c-Rddnn9er3T'] || '',
+        date: row.values['c-OHfxznTpkF'] || '',
+        description: row.values['c-is7YUDQ1sQ'] || '',
+        ptbr: row.values['c-V1pN1xw0YX'] || '',
+        thumb: row.values['c-E8jRBgytkd'] || '',
+        video: row.values['c-czpRT8O481'] || '',
+        credits: row.values['c-IlJ9HvA1wE'] || '',
+        model3d: row.values['c-oQXi3wWbeZ'] || '',
+        logo2d: row.values['c-logo2d'] || '',
+        image02: row.values['c-z1ZQeSebCy'] || '',
+        image03: row.values['c-pGUgOu2reI'] || '',
+        image04: row.values['c-W6-LDMJSKa'] || '',
+        image05: row.values['c-rxIfH1hRP3'] || '',
+        image06: row.values['c-s6fyHmse58'] || '',
+        image07: row.values['c-LOa8e4nCkq'] || '',
+        image08: row.values['c-0ghK6_C4j8'] || '',
+        image09: row.values['c-jIynrl7RUZ'] || '',
+        image10: row.values['c-04IvmYEhd2'] || '',
+        image11: row.values['c-6NAP6bmBqv'] || '',
+        image12: row.values['c-tAutX-ZqxJ'] || '',
+        image13: row.values['c-vk39cR8F71'] || '',
+        image15: row.values['c-sZWSNgNW3s'] || '',
+        image16: row.values['c-NewBGsNkZS'] || '',
+        image17: row.values['c-4I8UEY1Yz8'] || '',
+        image18: row.values['c-Ht50OlmCEA'] || '',
+        image19: row.values['c-uV1eotAzGV'] || '',
+        image20: row.values['c-n_OqSyAAs7'] || '',
+        image21: row.values['c-AHA9kFeaAJ'] || '',
+        image22: row.values['c-pugBX7ZtIL'] || '',
+        image23: row.values['c-Hp5XCZvrC_'] || '',
+        image24: row.values['c-d6AT3-x9cv'] || '',
+        image25: row.values['c-GOgBFSGEFK'] || '',
+        active: Boolean(row.values['c-OkPYI21-mR'])
+      }))
+      .filter((item: any) => item.active); // Filter only active items
 
     // Extract unique types for filtering
     const uniqueTypes = Array.from(new Set(items.map((item: PortfolioItem) => item.type))).filter(Boolean) as string[];
@@ -357,7 +361,8 @@ export async function getPortfolioItemById(id: string) {
       image22: data.values['c-pugBX7ZtIL'] || '',
       image23: data.values['c-Hp5XCZvrC_'] || '',
       image24: data.values['c-d6AT3-x9cv'] || '',
-      image25: data.values['c-GOgBFSGEFK'] || ''
+      image25: data.values['c-GOgBFSGEFK'] || '',
+      active: Boolean(data.values['c-OkPYI21-mR'])
     };
 
     return {
@@ -523,4 +528,9 @@ export async function updatePortfolioCache() {
     console.error('[Cache Update] Erro ao atualizar cache:', error);
     throw error;
   }
+}
+
+export async function getPortfolioItems() {
+  const response = await getPortfolioData();
+  return response;
 } 

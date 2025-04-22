@@ -38,21 +38,21 @@ export const brands = [
 ];
 
 export const services = [
-  { 
-    title: 'Branding',
-    description: 'Creating memorable brand experiences',
-    icon: '✦'
+  {
+    title: 'branding',
+    description: 'branding.description',
+    icon: '🎨',
   },
-  { 
-    title: 'Visual Identity',
-    description: 'Crafting unique visual languages',
-    icon: '◈'
+  {
+    title: 'visualIdentity',
+    description: 'visualIdentity.description',
+    icon: '✨',
   },
-  { 
-    title: 'Art Direction',
-    description: 'Guiding creative vision and execution',
-    icon: '❖'
-  }
+  {
+    title: 'artDirection',
+    description: 'artDirection.description',
+    icon: '🎬',
+  },
 ];
 
 export const team = [

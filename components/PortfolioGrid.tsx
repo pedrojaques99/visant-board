@@ -60,6 +60,14 @@ export function PortfolioGrid({ items, tipos, initialType }: PortfolioGridProps)
     />
   );
 
+  // Add effect to ensure videos play on loop
+  useEffect(() => {
+    const videos = document.querySelectorAll('video');
+    videos.forEach(video => {
+      video.play().catch(console.error);
+    });
+  }, [filteredItems]);
+
   if (!items?.length) {
     return (
       <div className="text-center py-12">

@@ -1,94 +1,85 @@
 'use client';
 
-import { Suspense, useRef, useState, useEffect } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
-import { Html, useGLTF, OrbitControls } from '@react-three/drei';
-import * as THREE from 'three';
-import { useMediaQuery } from '@/hooks/use-media-query';
-import { useI18n } from '@/context/i18n-context';
-import { t } from '@/utils/translations';
+import { useRef, useState, useEffect } from 'react';
+import { useFrame, useThree, OrbitControls, useGLTF, THREE, ensureComponent, isThreeAvailable } from '@/lib/three-imports';
+import type { RootState } from '@/lib/three-imports';
 
 interface ProjectMedia3DProps {
   modelUrl: string;
-  color?: string;
+  color: string;
 }
 
-function Loader() {
-  const { messages } = useI18n();
-  return (
-    <Html center>
-      <div className="px-4 py-2 rounded-md bg-background/80 backdrop-blur-sm">
-        <span className="text-sm text-foreground">{t(messages, 'common.loading', 'Loading...')}</span>
-      </div>
-    </Html>
-  );
+// Type guard for THREE.Mesh
+function isMesh(obj: any): obj is THREE.Mesh {
+  return THREE && obj instanceof THREE.Mesh;
 }
 
-function GLBModel({ url, color = '#52ddeb' }: { url: string; color?: string }) {
-  const meshRef = useRef<THREE.Group>(null);
+export function ProjectMedia3D({ modelUrl, color }: ProjectMedia3DProps) {
+  const [mounted, setMounted] = useState(false);
+  
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+  
+  // Don't render on server or if THREE is not available
+  if (!mounted || !isThreeAvailable() || !useGLTF || !useThree || !useFrame || !ensureComponent(OrbitControls)) {
+    return null;
+  }
+  
+  // Now we know THREE is available, so render the component
+  return <ProjectMedia3DInner modelUrl={modelUrl} color={color} />;
+}
+
+function ProjectMedia3DInner({ modelUrl, color }: ProjectMedia3DProps) {
+  const { scene } = useGLTF(modelUrl);
+  const { gl } = useThree();
+  const modelRef = useRef<THREE.Group>();
   const [hovered, setHovered] = useState(false);
-  const { scene } = useGLTF(url);
-  const isMobile = useMediaQuery('(max-width: 768px)');
 
   useEffect(() => {
-    if (scene) {
-      scene.traverse((child) => {
-        if (child instanceof THREE.Mesh) {
+    if (modelRef.current) {
+      // Center the model
+      const box = new THREE.Box3().setFromObject(modelRef.current);
+      const center = box.getCenter(new THREE.Vector3());
+      modelRef.current.position.sub(center);
+      
+      // Apply minimal wireframe only to main meshes
+      modelRef.current.traverse((child: any) => {
+        if (isMesh(child)) {
           child.material = new THREE.MeshBasicMaterial({
             color: color,
+            wireframe: true,
+            opacity: 0.5,
             transparent: true,
-            opacity: 0.9,
           });
         }
       });
     }
   }, [scene, color]);
 
-  useFrame((state, delta) => {
-    if (meshRef.current && !hovered) {
-      meshRef.current.rotation.y += delta * (isMobile ? 0.2 : 0.3);
+  useEffect(() => {
+    if (gl) {
+      gl.outputColorSpace = THREE.SRGBColorSpace;
+    }
+  }, [gl]);
+
+  useFrame((state: RootState, delta: number) => {
+    if (modelRef.current && !hovered) {
+      modelRef.current.rotation.y += delta * 0.15;
     }
   });
 
   return (
-    <primitive
-      ref={meshRef}
-      object={scene}
-      scale={isMobile ? 10 : 6}
-      position={[0, 1, 0]}
-      onPointerOver={() => setHovered(true)}
-      onPointerOut={() => setHovered(false)}
-    />
-  );
-}
-
-export function ProjectMedia3D({ modelUrl, color }: ProjectMedia3DProps) {
-  if (!modelUrl) return null;
-
-  // Simple check to prevent loading non-GLB files
-  if (!modelUrl.toLowerCase().endsWith('.glb')) {
-    console.warn('Invalid model URL. Only GLB files are supported.');
-    return null;
-  }
-
-  return (
-    <div className="w-full max-w-4xl mx-auto aspect-[4/3] rounded-lg overflow-hidden bg-background/5 backdrop-blur-sm">
-      <Canvas
-        camera={{ position: [0, 0, 25], fov: 45 }}
-        style={{ width: '100%', height: '100%' }}
-      >
-        <Suspense fallback={<Loader />}>
-          <ambientLight intensity={0.8} />
-          <pointLight position={[15, 15, 15]} intensity={1.5} />
-          <OrbitControls 
-            enableZoom={false}
-            enablePan={false}
-            minPolarAngle={Math.PI / 3}
-            maxPolarAngle={Math.PI / 2}
-          />
-          <GLBModel url={modelUrl} color={color} />
-        </Suspense>
-      </Canvas>
-    </div>
+    <>
+      <OrbitControls enableZoom={false} />
+      <primitive
+        ref={modelRef}
+        object={scene}
+        scale={13.5}
+        position={[0, 0, 0]}
+        onPointerOver={() => setHovered(true)}
+        onPointerOut={() => setHovered(false)}
+      />
+    </>
   );
 } 

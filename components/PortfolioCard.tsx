@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { PortfolioItem } from '@/utils/coda';
 import { useI18n } from '@/context/i18n-context';
 import { t } from '@/utils/translations';
@@ -17,6 +17,7 @@ export function PortfolioCard({ item }: PortfolioCardProps) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isHovering, setIsHovering] = useState(false);
   const [showDebug, setShowDebug] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
   const { messages } = useI18n();
   
   // Validate thumb image URL
@@ -24,6 +25,9 @@ export function PortfolioCard({ item }: PortfolioCardProps) {
     ? item.thumb.trim() 
     : '';
   const hasValidThumb = thumbUrl.length > 0 && thumbUrl.startsWith('http');
+
+  // Check if thumb is a video
+  const isVideo = thumbUrl.toLowerCase().endsWith('.mp4');
 
   // Get all valid hover images (02 to 10)
   const hoverImages = Array.from({ length: 9 }, (_, i) => {
@@ -46,6 +50,14 @@ export function PortfolioCard({ item }: PortfolioCardProps) {
       </div>
     );
   }
+
+  // Handle video play/pause on hover
+  useEffect(() => {
+    if (!videoRef.current || !isVideo) return;
+
+    // Always play the video on loop
+    videoRef.current.play().catch(console.error);
+  }, [isVideo]);
 
   // Cycle through images only when hovering and if we have hover images
   useEffect(() => {
@@ -72,23 +84,38 @@ export function PortfolioCard({ item }: PortfolioCardProps) {
         <div className="relative w-full">
           {hasValidThumb && !imageError ? (
             <>
-              {/* Main image - only hide if we have hover images */}
-              <Image
-                src={thumbUrl}
-                alt={item.title || 'Portfolio item'}
-                width={3840}
-                height={2160}
-                className={`w-full object-cover transition-all duration-300 ${
-                  hoverImages.length > 0 ? 'group-hover:opacity-0' : ''
-                }`}
-                sizes="(max-width: 768px) 95vw, (max-width: 1280px) 45vw, 45vw"
-                onError={() => {
-                  console.error('Image failed to load:', thumbUrl);
-                  setImageError(true);
-                }}
-                priority={false}
-                quality={90}
-              />
+              {/* Main image/video - only hide if we have hover images */}
+              {isVideo ? (
+                <video
+                  ref={videoRef}
+                  src={thumbUrl}
+                  className={`w-full object-cover transition-all duration-300 ${
+                    hoverImages.length > 0 ? 'group-hover:opacity-0' : ''
+                  }`}
+                  muted
+                  loop
+                  playsInline
+                  autoPlay
+                  preload="auto"
+                />
+              ) : (
+                <Image
+                  src={thumbUrl}
+                  alt={item.title || 'Portfolio item'}
+                  width={3840}
+                  height={2160}
+                  className={`w-full object-cover transition-all duration-300 ${
+                    hoverImages.length > 0 ? 'group-hover:opacity-0' : ''
+                  }`}
+                  sizes="(max-width: 768px) 95vw, (max-width: 1280px) 45vw, 45vw"
+                  onError={() => {
+                    console.error('Image failed to load:', thumbUrl);
+                    setImageError(true);
+                  }}
+                  priority={false}
+                  quality={90}
+                />
+              )}
               {/* Hover images - only show if we have them */}
               {hoverImages.length > 0 && hoverImages.map((url, index) => (
                 <Image

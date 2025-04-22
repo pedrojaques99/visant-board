@@ -1,24 +1,48 @@
 'use client';
 
-import { Logo3D } from '@/components/logo3d';
+import { useEffect, useState } from 'react';
+import dynamic from 'next/dynamic';
 import { useMediaQuery } from '@/hooks/use-media-query';
-import { cn } from '@/lib/utils';
 
-export function Hero3D() {
-  const isMobileOrTablet = useMediaQuery('(max-width: 1024px)');
+// Dynamic import with proper error handling
+const Logo3D = dynamic(
+  () => import('./logo3d').then(mod => mod.default),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="absolute inset-0 flex items-center justify-center">
+        <div className="px-4 py-2 rounded-md bg-background/80 backdrop-blur-sm border border-border/50">
+          <span className="text-sm text-foreground">Loading 3D viewer...</span>
+        </div>
+      </div>
+    ),
+  }
+);
+
+// This component will work by loading 3D components dynamically only on the client side
+export default function Hero3D() {
+  const [mounted, setMounted] = useState(false);
+  const isMobile = useMediaQuery('(max-width: 768px)');
+  
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+  
+  if (!mounted) {
+    return (
+      <div className="absolute inset-0 flex items-center justify-center">
+        <div className="w-full h-full bg-background" />
+      </div>
+    );
+  }
   
   return (
-    <div className="relative w-full h-full">
-      {/* Background gradient for depth */}
-      <div className="absolute inset-0 bg-gradient-to-b from-background/20 via-background/50 to-background pointer-events-none" />
-      
-      {/* 3D Logo container */}
-      <div className={cn(
-        "absolute inset-0 w-full h-full flex items-center justify-center",
-        isMobileOrTablet ? "pointer-events-none" : "cursor-grab active:cursor-grabbing [&:hover]:cursor-[url('data:image/svg+xml;utf8,<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;32&quot; height=&quot;32&quot; viewport=&quot;0 0 32 32&quot; style=&quot;fill:black;font-size:24px&quot;><circle cx=&quot;16&quot; cy=&quot;16&quot; r=&quot;8&quot; fill=&quot;%2352ddeb&quot; filter=&quot;url(%23glow)&quot;/><defs><filter id=&quot;glow&quot;><feGaussianBlur stdDeviation=&quot;2&quot; result=&quot;coloredBlur&quot;/><feMerge><feMergeNode in=&quot;coloredBlur&quot;/><feMergeNode in=&quot;SourceGraphic&quot;/></feMerge></filter></defs></svg>')_16_16,_grab]"
-      )}>
-        <Logo3D />
+    <div className="relative w-full h-[400px] sm:h-[500px] md:h-[600px] lg:h-[700px]">
+      <div className="absolute inset-0">
+        <Logo3D isMobile={isMobile} />
       </div>
+      <div className="absolute inset-0 bg-gradient-to-b from-background via-background/30 to-background pointer-events-none z-[1]" />
     </div>
   );
-} 
+}
+

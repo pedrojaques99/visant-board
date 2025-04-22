@@ -1,6 +1,5 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  optimizeFonts: true,
   typescript: {
     ignoreBuildErrors: true, // Temporarily ignore TS errors during build
   },
@@ -36,12 +35,22 @@ const nextConfig = {
     // Disable webpack caching in development to prevent ENOENT errors
     if (dev) {
       config.cache = false;
+      // Add additional optimization disabling for development
+      config.optimization = {
+        ...config.optimization,
+        minimize: false
+      };
     }
     
     return config;
   },
-  // Removed the i18n config as we're handling language switching with context 
-  // instead of URL-based routing
+  // Next.js 15 doesn't use devIndicators anymore
+  
+  transpilePackages: ['three', '@react-three/fiber', '@react-three/drei'],
+  
+  experimental: {
+    // Updated property for Next.js 15
+  },
 };
 
 module.exports = nextConfig; 

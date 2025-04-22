@@ -39,7 +39,8 @@ export const messages = {
   },
   about: {
     title: "Who we are",
-    description: "Visant® is a design studio founded by Pedro Xavier and Pedro Jaques. Based in Itajaí and Balneário Camboriú, we help brands grow through clarity, consistency, and beauty.",
+    subtitle: "Our Story",
+    description: "We are a design agency specialized in creating brand identities that tell stories and inspire connections.",
     descriptionMore: "We work closely with founders, creatives, and companies that believe in the power of design.",
     whatWeDo: "What we do",
     team: "Team",
@@ -50,5 +51,13 @@ export const messages = {
     projects: "Projects",
     clients: "Clients",
     brands: "Brands",
+    services: {
+      branding: 'Branding',
+      'branding.description': 'Creating memorable brands',
+      visualIdentity: 'Visual Identity',
+      'visualIdentity.description': 'Crafting unique visual languages',
+      artDirection: 'Art Direction',
+      'artDirection.description': 'Guiding creative vision and execution',
+    },
   },
 }; 

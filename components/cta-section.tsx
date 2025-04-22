@@ -38,10 +38,8 @@ export function CTASection({
   const isMobile = useMediaQuery('(max-width: 768px)');
 
   // Default texts
-  const defaultTitle = locale === 'pt' 
-    ? 'Procurando uma identidade visual marcante?' 
-    : 'Looking for a bold visual identity?';
-  const defaultButtonText = locale === 'pt' ? 'Entre em contato' : 'Get in touch';
+  const defaultTitle = t(messages, 'about.cta', 'Looking for a bold visual identity?');
+  const defaultButtonText = t(messages, 'about.getInTouch', 'Get in touch');
 
   // WhatsApp link with default message
   const whatsAppLink = "https://wa.me/5547988475891?text=Olá!%20Gostaria%20de%20saber%20mais%20sobre%20seus%20serviços%20de%20design.";
@@ -87,7 +85,7 @@ export function CTASection({
           )}
           style={variant === 'dynamic' ? { color: textColor } : undefined}
         >
-          {title || t(messages, 'about.cta', defaultTitle)}
+          {title || defaultTitle}
         </motion.h2>
         <Link 
           href={isWhatsApp ? whatsAppLink : buttonLink}
@@ -111,7 +109,7 @@ export function CTASection({
               color: buttonTextColor,
             } : undefined}
           >
-            {buttonText || t(messages, 'about.getInTouch', defaultButtonText)}
+            {buttonText || defaultButtonText}
           </motion.button>
         </Link>
       </div>

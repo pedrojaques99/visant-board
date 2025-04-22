@@ -2,7 +2,6 @@
 
 import { motion } from 'framer-motion';
 import { Counter } from '../../components/Counter';
-import { TexturePattern } from '../../components/TexturePattern';
 import { ServiceCard } from '../../components/ServiceCard';
 import { TeamMember } from '../../components/TeamMember';
 import { BrandSlider } from '../../components/BrandSlider';
@@ -153,6 +152,8 @@ export default function About() {
         variant="default"
         isWhatsApp={true}
         className="w-[95%] mx-auto px-12"
+        title={t(messages, 'about.cta', 'Looking for a bold visual identity?')}
+        buttonText={t(messages, 'about.getInTouch', 'Get in touch')}
       />
     </div>
   );

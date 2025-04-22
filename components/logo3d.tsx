@@ -1,319 +1,184 @@
 'use client';
 
-import { Suspense, useRef, useState, useEffect } from 'react';
-import { Canvas, useFrame, useLoader, useThree } from '@react-three/fiber';
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
-import { Environment, OrbitControls, Float, useProgress, Html, PerspectiveCamera, Points, Point } from '@react-three/drei';
+import { Suspense, useRef, useMemo, useEffect } from 'react';
+import { Canvas, useFrame } from '@react-three/fiber';
+import { useGLTF, OrbitControls } from '@react-three/drei';
+import { useI18n } from '@/context/i18n-context';
+import { t } from '@/utils/translations';
 import * as THREE from 'three';
-import { useMediaQuery } from '@/hooks/use-media-query';
 
-function Loader() {
-  const { progress } = useProgress();
-  return (
-    <Html center>
-      <div className="px-4 py-2 rounded-md bg-background/80 backdrop-blur-sm border border-border/50">
-        <span className="text-sm text-foreground">Loading {progress.toFixed(0)}%</span>
-      </div>
-    </Html>
-  );
+interface Logo3DProps {
+  isMobile: boolean;
 }
 
-function MobileModel() {
-  const gltf = useLoader(GLTFLoader, '/models/visant-3d-simple-2.glb');
-  const modelRef = useRef<THREE.Group>();
-  const [hovered, setHovered] = useState(false);
-
-  useEffect(() => {
-    if (modelRef.current) {
-      // Center the model
-      const box = new THREE.Box3().setFromObject(modelRef.current);
-      const center = box.getCenter(new THREE.Vector3());
-      modelRef.current.position.sub(center);
-      // Apply minimal wireframe only to main meshes with reduced complexity
-      modelRef.current.traverse((child) => {
-        if (child instanceof THREE.Mesh) {
-          // Reduce geometry complexity for mobile
-          const geometry = child.geometry;
-          if (geometry.attributes.position.count > 100) {
-            const decimatedGeometry = geometry.clone();
-            // Reduce vertex count by ~50%
-            const positions = geometry.attributes.position.array;
-            const newPositions = new Float32Array(positions.length / 2);
-            for (let i = 0; i < positions.length; i += 6) {
-              newPositions[i/2] = positions[i];
-              newPositions[i/2 + 1] = positions[i + 1];
-              newPositions[i/2 + 2] = positions[i + 2];
-            }
-            decimatedGeometry.setAttribute('position', new THREE.BufferAttribute(newPositions, 3));
-            child.geometry = decimatedGeometry;
-          }
-          child.material = new THREE.MeshBasicMaterial({
-            color: '#52ddeb',
-            wireframe: true,
-            opacity: 0.5,
-            transparent: true,
-          });
-        }
-      });
-    }
-  }, [gltf]);
-
-  useFrame((state, delta) => {
-    if (modelRef.current && !hovered) {
-      modelRef.current.rotation.y += delta * 0.1; // Reduced rotation speed
-    }
-  });
-
-  return (
-    <primitive
-      ref={modelRef}
-      object={gltf.scene}
-      scale={12}
-      position={[0, 0, 0]}
-      onPointerOver={() => setHovered(true)}
-      onPointerOut={() => setHovered(false)}
-    />
-  );
-}
-
-function Model() {
-  const gltf = useLoader(GLTFLoader, '/models/visant-3d-simple-2.glb');
-  const { gl } = useThree();
-  const modelRef = useRef<THREE.Group>();
-  const [hovered, setHovered] = useState(false);
-
-  useEffect(() => {
-    if (modelRef.current) {
-      // Center the model
-      const box = new THREE.Box3().setFromObject(modelRef.current);
-      const center = box.getCenter(new THREE.Vector3());
-      modelRef.current.position.sub(center);
-      // Apply minimal wireframe only to main meshes
-      modelRef.current.traverse((child) => {
-        if (child instanceof THREE.Mesh) {
-          child.material = new THREE.MeshBasicMaterial({
-            color: '#52ddeb',
-            wireframe: true,
-            opacity: 0.5,
-            transparent: true,
-          });
-        }
-      });
-    }
-  }, [gltf]);
-
-  useEffect(() => {
-    if (gl) {
-      gl.outputColorSpace = THREE.SRGBColorSpace;
-    }
-  }, [gl]);
-
-  useFrame((state, delta) => {
-    if (modelRef.current && !hovered) {
-      modelRef.current.rotation.y += delta * 0.15;
-    }
-  });
-
-  return (
-    <Float
-      speed={1}
-      rotationIntensity={0.8}
-      floatIntensity={0.6}
-    >
-      <primitive
-        ref={modelRef}
-        object={gltf.scene}
-        scale={13.5}
-        position={[0, 0, 0]}
-        onPointerOver={() => setHovered(true)}
-        onPointerOut={() => setHovered(false)}
-      />
-    </Float>
-  );
-}
-
-function MobileParticles() {
-  const count = 20; // Reduced number of particles for mobile
-  const positions = useRef<number[]>([]);
-
-  useEffect(() => {
-    positions.current = [];
+function Stars() {
+  const count = 200;
+  const mesh = useRef<THREE.Points>(null);
+  const mousePosition = useRef({ x: 0, y: 0 });
+  const sizes = useRef(new Float32Array(count));
+  
+  // Generate random positions for stars
+  const positions = useMemo(() => {
+    const positions = new Float32Array(count * 3);
     for (let i = 0; i < count; i++) {
-      const radius = 8;
-      const theta = Math.random() * 2 * Math.PI;
+      const radius = 15 + Math.random() * 5; // Stars between 15-20 units away
+      const theta = Math.random() * Math.PI * 2;
       const phi = Math.acos(2 * Math.random() - 1);
       
-      positions.current.push(
-        radius * Math.sin(phi) * Math.cos(theta),
-        radius * Math.sin(phi) * Math.sin(theta),
-        radius * Math.cos(phi)
-      );
+      const x = radius * Math.sin(phi) * Math.cos(theta);
+      const y = radius * Math.sin(phi) * Math.sin(theta);
+      const z = radius * Math.cos(phi);
+      
+      positions[i * 3] = x;
+      positions[i * 3 + 1] = y;
+      positions[i * 3 + 2] = z;
+      
+      // Initialize sizes
+      sizes.current[i] = 0.2;
     }
+    return positions;
   }, []);
 
-  useFrame((state) => {
-    if (state.clock) {
-      const time = state.clock.getElapsedTime() * 0.05; // Reduced animation speed
-      state.scene.traverse((child) => {
-        if (child instanceof THREE.Points) {
-          child.rotation.y = time * 0.05;
-        }
-      });
+  useEffect(() => {
+    const handleMouseMove = (event: MouseEvent) => {
+      // Convert mouse position to normalized device coordinates
+      mousePosition.current = {
+        x: (event.clientX / window.innerWidth) * 2 - 1,
+        y: -(event.clientY / window.innerHeight) * 2 + 1
+      };
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
+
+  useFrame((state, delta) => {
+    if (mesh.current) {
+      mesh.current.rotation.y += delta * 0.05;
+      
+      // Update particle sizes based on distance from cursor
+      const positions = mesh.current.geometry.attributes.position.array as Float32Array;
+      for (let i = 0; i < count; i++) {
+        const x = positions[i * 3];
+        const y = positions[i * 3 + 1];
+        
+        // Calculate distance from cursor in normalized device coordinates
+        const dx = x - mousePosition.current.x;
+        const dy = y - mousePosition.current.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        
+        // Smoothly transition size based on distance
+        const targetSize = distance < 0.3 ? 0.4 : 0.2;
+        sizes.current[i] += (targetSize - sizes.current[i]) * 0.1;
+      }
+      
+      // Update the geometry
+      mesh.current.geometry.attributes.size.needsUpdate = true;
     }
   });
 
   return (
-    <Points limit={count}>
+    <points ref={mesh}>
+      <bufferGeometry>
+        <bufferAttribute
+          attach="attributes-position"
+          count={count}
+          array={positions}
+          itemSize={3}
+          args={[positions, 3]}
+        />
+        <bufferAttribute
+          attach="attributes-size"
+          count={count}
+          array={sizes.current}
+          itemSize={1}
+          args={[sizes.current, 1]}
+        />
+      </bufferGeometry>
       <pointsMaterial
-        size={0.15}
+        size={0.2}
+        color="#52ddeb"
         transparent
-        opacity={0.3}
-        color="#666666"
+        opacity={0.8}
         sizeAttenuation
         depthWrite={false}
+        vertexColors={false}
+        blending={THREE.AdditiveBlending}
       />
-      {positions.current.map((_, i) => (
-        i % 3 === 0 && (
-          <Point
-            key={i}
-            position={[
-              positions.current[i],
-              positions.current[i + 1],
-              positions.current[i + 2]
-            ]}
-          />
-        )
-      ))}
-    </Points>
+    </points>
   );
 }
 
-function Particles() {
-  const count = 50;
-  const positions = useRef<number[]>([]);
+function Model({ url }: { url: string }) {
+  const { scene } = useGLTF(url);
+  const modelRef = useRef<THREE.Group>();
 
-  useEffect(() => {
-    positions.current = [];
-    for (let i = 0; i < count; i++) {
-      const radius = 8;
-      const theta = Math.random() * 2 * Math.PI;
-      const phi = Math.acos(2 * Math.random() - 1);
-      
-      positions.current.push(
-        radius * Math.sin(phi) * Math.cos(theta),
-        radius * Math.sin(phi) * Math.sin(theta),
-        radius * Math.cos(phi)
-      );
-    }
-  }, []);
+  // Apply wireframe material to all meshes
+  if (scene) {
+    scene.traverse((child) => {
+      if (child instanceof THREE.Mesh) {
+        child.material = new THREE.MeshBasicMaterial({
+          color: '#52ddeb',
+          wireframe: true,
+          opacity: 0.5,
+          transparent: true,
+        });
+      }
+    });
+  }
 
-  useFrame((state) => {
-    if (state.clock) {
-      const time = state.clock.getElapsedTime() * 0.1;
-      state.scene.traverse((child) => {
-        if (child instanceof THREE.Points) {
-          child.rotation.y = time * 0.05;
-        }
-      });
-    }
-  });
-
-  return (
-    <Points limit={count}>
-      <pointsMaterial
-        size={0.15}
-        transparent
-        opacity={0.4}
-        color="#666666"
-        sizeAttenuation
-        depthWrite={false}
-      />
-      {positions.current.map((_, i) => (
-        i % 3 === 0 && (
-          <Point
-            key={i}
-            position={[
-              positions.current[i],
-              positions.current[i + 1],
-              positions.current[i + 2]
-            ]}
-          />
-        )
-      ))}
-    </Points>
-  );
+  return <primitive ref={modelRef} object={scene} scale={12} />;
 }
 
-export function Logo3D() {
-  const isMobile = useMediaQuery('(max-width: 768px)');
-  const [isPerformant, setIsPerformant] = useState(true);
-
-  useEffect(() => {
-    checkPerformance();
-  }, []);
-
-  const checkPerformance = () => {
-    // Check if device can handle 3D well
-    if (isMobile) {
-      // Check if device has enough memory and cores
-      if (
-        // @ts-ignore - navigator.deviceMemory is not in TypeScript types
-        (navigator.deviceMemory && navigator.deviceMemory < 4) ||
-        // @ts-ignore - navigator.hardwareConcurrency is not in TypeScript types
-        (navigator.hardwareConcurrency && navigator.hardwareConcurrency < 4)
-      ) {
-        setIsPerformant(false);
-        return;
-      }
-      
-      // Test WebGL capabilities
-      const canvas = document.createElement('canvas');
-      const gl = canvas.getContext('webgl');
-      if (!gl) {
-        setIsPerformant(false);
-        return;
-      }
-      
-      // Check if device supports enough texture units
-      const maxTextureUnits = gl.getParameter(gl.MAX_TEXTURE_IMAGE_UNITS);
-      if (maxTextureUnits < 8) {
-        setIsPerformant(false);
-        return;
-      }
-    }
-  };
+export default function Logo3D({ isMobile }: Logo3DProps) {
+  const modelUrl = '/models/visant-3d-simple-2.glb';
+  const { messages } = useI18n();
 
   return (
-    <div className="absolute inset-0 flex items-center justify-center">
+    <div className="w-full h-full">
       <Canvas
-        camera={{ position: [0, 0, 0], fov: 50 }}
-        style={{ width: '100%', height: '100%' }}
+        camera={{
+          position: [0, 0, 20],
+          fov: 45,
+          near: 0.1,
+          far: 200
+        }}
+        style={{
+          cursor: isMobile ? 'default' : 'grab',
+          touchAction: isMobile ? 'none' : 'auto'
+        }}
+        onPointerDown={() => {
+          if (!isMobile) {
+            document.body.style.cursor = 'grabbing';
+          }
+        }}
+        onPointerUp={() => {
+          if (!isMobile) {
+            document.body.style.cursor = 'grab';
+          }
+        }}
+        onPointerLeave={() => {
+          if (!isMobile) {
+            document.body.style.cursor = 'default';
+          }
+        }}
       >
-        <Suspense fallback={<Loader />}>
+        <Suspense fallback={null}>
+          <ambientLight intensity={0.5} />
+          <pointLight position={[10, 10, 10]} />
+          <Stars />
+          <Model url={modelUrl} />
           <OrbitControls
-            enablePan={false}
             enableZoom={!isMobile}
-            minPolarAngle={Math.PI / 2.5}
-            maxPolarAngle={Math.PI / 1.5}
-            rotateSpeed={0.5}
-            enableDamping
-            dampingFactor={0.05}
-            minDistance={0.5}
+            enablePan={!isMobile}
+            enableRotate={!isMobile}
+            autoRotate
+            autoRotateSpeed={0.5}
+            minDistance={5}
             maxDistance={20}
-            touches={{
-              ONE: isMobile ? undefined : THREE.TOUCH.ROTATE,
-              TWO: isMobile ? THREE.TOUCH.ROTATE : THREE.TOUCH.DOLLY_ROTATE
-            }}
+            minPolarAngle={Math.PI / 3}
+            maxPolarAngle={Math.PI / 2}
           />
-          <PerspectiveCamera makeDefault position={[0, 0, 25]} />
-          {isPerformant ? (
-            <>
-              {isMobile ? <MobileModel /> : <Model />}
-              {isMobile ? <MobileParticles /> : <Particles />}
-            </>
-          ) : (
-            <MobileModel />
-          )}
         </Suspense>
       </Canvas>
     </div>
