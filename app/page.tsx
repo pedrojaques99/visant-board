@@ -21,16 +21,16 @@ interface ProjectCardProps {
   activeIndex: number;
   totalProjects: number;
   setActiveIndex: (index: number) => void;
+  onProjectClick: (project: PortfolioItem) => void;
 }
 
-function ProjectCard({ project, index, activeIndex, totalProjects, setActiveIndex }: ProjectCardProps) {
+function ProjectCard({ project, index, activeIndex, totalProjects, setActiveIndex, onProjectClick }: ProjectCardProps) {
   const x = useMotionValue(0);
   const rotate = useTransform(x, [-200, 200], [-15, 15]);
   const scale = useTransform(x, [-200, 0, 200], [0.9, 1, 0.9]);
   const isActive = index === activeIndex;
   const isMobileOrTablet = useMediaQuery('(max-width: 1024px)');
 
-  // Calculate the relative position for infinite loop
   const getRelativePosition = () => {
     const distance = index - activeIndex;
     if (distance > totalProjects / 2) {
@@ -42,11 +42,22 @@ function ProjectCard({ project, index, activeIndex, totalProjects, setActiveInde
   };
 
   const relativePosition = getRelativePosition();
-  const blurAmount = useTransform(
-    x,
-    [-200, 0, 200],
-    [2, 0, 2]
-  );
+
+  const handleDragEnd = (e: any, info: any) => {
+    const swipe = Math.abs(info.offset.x) * info.velocity.x;
+    
+    if (swipe < -100) {
+      setActiveIndex((activeIndex + 1) % totalProjects);
+    } else if (swipe > 100) {
+      setActiveIndex((activeIndex - 1 + totalProjects) % totalProjects);
+    }
+  };
+
+  const handleClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    onProjectClick(project);
+  };
 
   return (
     <motion.div
@@ -88,56 +99,50 @@ function ProjectCard({ project, index, activeIndex, totalProjects, setActiveInde
       drag="x"
       dragConstraints={{ left: -200, right: 200 }}
       dragElastic={0.05}
-      onDragEnd={(e, { offset, velocity }) => {
-        const swipe = Math.abs(offset.x) * velocity.x;
-        
-        if (swipe < -100) {
-          setActiveIndex((activeIndex + 1) % totalProjects);
-        } else if (swipe > 100) {
-          setActiveIndex((activeIndex - 1 + totalProjects) % totalProjects);
-        }
-      }}
+      onDragEnd={handleDragEnd}
       className="relative touch-none cursor-grab active:cursor-grabbing"
       whileHover={{ scale: 1.01 }}
     >
-      <div 
-        className={cn(
-          "relative rounded-xl overflow-hidden bg-muted shadow-2xl pointer-events-none",
-          isMobileOrTablet ? "aspect-[3/4]" : "aspect-[4/3]"
-        )}
-        onClick={(e) => e.stopPropagation()}
-      >
-        {project.thumb && (
-          <motion.div
-            initial={{ scale: 1.05 }}
-            animate={{ scale: 1 }}
-            transition={{ duration: 1.2 }}
-            className="absolute inset-0"
-          >
-            <Image
-              src={project.thumb}
-              alt={project.title}
-              fill
-              className="object-cover"
-              sizes="(max-width: 768px) 100vw"
-            />
-          </motion.div>
-        )}
-        <motion.div 
-          className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent flex flex-col justify-end p-6"
+      <Link href={`/portfolio/${project.id}`}>
+        <div 
+          className={cn(
+            "relative rounded-xl overflow-hidden bg-muted shadow-2xl",
+            isMobileOrTablet ? "aspect-[3/4]" : "aspect-[4/3]"
+          )}
+          onClick={handleClick}
         >
-          <motion.h3 
-            className="text-xl font-medium text-white mb-2"
+          {project.thumb && (
+            <motion.div
+              initial={{ scale: 1.05 }}
+              animate={{ scale: 1 }}
+              transition={{ duration: 1.2 }}
+              className="absolute inset-0"
+            >
+              <Image
+                src={project.thumb}
+                alt={project.title}
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw"
+              />
+            </motion.div>
+          )}
+          <motion.div 
+            className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent flex flex-col justify-end p-6"
           >
-            {project.title}
-          </motion.h3>
-          <motion.p 
-            className="text-sm text-zinc-300"
-          >
-            {project.client}
-          </motion.p>
-        </motion.div>
-      </div>
+            <motion.h3 
+              className="text-xl font-medium text-white mb-2"
+            >
+              {project.title}
+            </motion.h3>
+            <motion.p 
+              className="text-sm text-zinc-300"
+            >
+              {project.client}
+            </motion.p>
+          </motion.div>
+        </div>
+      </Link>
     </motion.div>
   );
 }
@@ -149,7 +154,6 @@ export default function Home() {
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const isMobileOrTablet = useMediaQuery('(max-width: 1024px)');
   const [activeIndex, setActiveIndex] = useState(0);
-  const [dragConstraints, setDragConstraints] = useState({ left: 0, right: 0 });
   
   useEffect(() => {
     const fetchLatestProjects = async () => {
@@ -186,6 +190,20 @@ export default function Home() {
   const handleClosePreview = () => {
     setIsPreviewOpen(false);
     setTimeout(() => setActiveProject(null), 300);
+  };
+
+  const handleNavigation = (direction: 'next' | 'prev') => {
+    if (direction === 'next') {
+      setActiveIndex((activeIndex + 1) % latestProjects.length);
+    } else {
+      setActiveIndex((activeIndex - 1 + latestProjects.length) % latestProjects.length);
+    }
+  };
+
+  const handleNavigationClick = (e: React.MouseEvent, direction: 'next' | 'prev') => {
+    e.preventDefault();
+    e.stopPropagation();
+    handleNavigation(direction);
   };
   
   if (isMobileOrTablet) {
@@ -233,9 +251,15 @@ export default function Home() {
             {/* Scroll Down Arrow */}
             <motion.button
               onClick={() => {
-                const projects = document.querySelector('.container');
-                if (projects) {
-                  projects.scrollIntoView({ behavior: 'smooth' });
+                const projectsSection = document.querySelector('.projects-section');
+                if (projectsSection) {
+                  const projectsSectionTop = projectsSection.getBoundingClientRect().top + window.scrollY;
+                  const windowHeight = window.innerHeight;
+                  const scrollTo = projectsSectionTop - (windowHeight / 2) + (projectsSection.clientHeight / 2);
+                  window.scrollTo({
+                    top: scrollTo,
+                    behavior: 'smooth'
+                  });
                 }
               }}
               className="mt-32 flex items-center justify-center w-full"
@@ -275,7 +299,7 @@ export default function Home() {
         </section>
 
         {/* Mobile/Tablet Latest Projects Stack */}
-        <div className="relative z-10 bg-background -mt-20">
+        <div className="relative z-10 bg-background -mt-20 projects-section">
           {latestProjects.length > 0 && (
             <section className="pt-24 pb-12 md:py-12 px-8">
               <motion.h2 
@@ -297,6 +321,7 @@ export default function Home() {
                         activeIndex={activeIndex}
                         totalProjects={latestProjects.length}
                         setActiveIndex={setActiveIndex}
+                        onProjectClick={handleProjectClick}
                       />
                     ))}
                   </AnimatePresence>
@@ -307,7 +332,7 @@ export default function Home() {
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      setActiveIndex((activeIndex - 1 + latestProjects.length) % latestProjects.length);
+                      handleNavigationClick(e, 'prev');
                     }}
                     className="p-4 rounded-full bg-background/90 backdrop-blur-sm border border-border/50 hover:bg-background transition-colors shadow-lg active:scale-95 transform"
                   >
@@ -328,7 +353,7 @@ export default function Home() {
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      setActiveIndex((activeIndex + 1) % latestProjects.length);
+                      handleNavigationClick(e, 'next');
                     }}
                     className="p-4 rounded-full bg-background/90 backdrop-blur-sm border border-border/50 hover:bg-background transition-colors shadow-lg active:scale-95 transform"
                   >
@@ -353,7 +378,7 @@ export default function Home() {
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      setActiveIndex((activeIndex - 1 + latestProjects.length) % latestProjects.length);
+                      handleNavigationClick(e, 'prev');
                     }}
                     className="p-3 rounded-full bg-background/50 backdrop-blur-sm border border-border/50 hover:bg-background/80 transition-colors active:scale-95 transform"
                   >
@@ -377,7 +402,7 @@ export default function Home() {
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      setActiveIndex((activeIndex + 1) % latestProjects.length);
+                      handleNavigationClick(e, 'next');
                     }}
                     className="p-3 rounded-full bg-background/50 backdrop-blur-sm border border-border/50 hover:bg-background/80 transition-colors active:scale-95 transform"
                   >

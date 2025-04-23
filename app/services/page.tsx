@@ -5,8 +5,10 @@ import { TimelineItem } from '@/components/TimelineItem';
 import { useI18n } from '@/context/i18n-context';
 import { t } from '@/utils/translations';
 import { useRef } from 'react';
-import { Clock, Sparkles, Target, ArrowRight, Calendar } from 'lucide-react';
+import { Clock, Sparkles, Target, ArrowRight, Calendar, Layers, Palette, Layout } from 'lucide-react';
 import Link from 'next/link';
+import { Iceberg } from '@/components/Iceberg';
+import { CTASection } from '@/components/cta-section';
 
 type FeatureKey = 'optimizedTime' | 'focusedGoal' | 'uniqueResult';
 
@@ -15,7 +17,24 @@ interface Feature {
   titleKey: FeatureKey;
 }
 
-const timelineItems = [
+type TimelineKey = 'closing' | 'alignment' | 'strategy' | 'refinement' | 'delivery';
+
+interface TimelineItem {
+  day: string;
+  titleKey: TimelineKey;
+  descriptionKey: TimelineKey;
+  isHighlighted: boolean;
+}
+
+interface TimelineItemProps {
+  day: string;
+  titleKey: TimelineKey;
+  descriptionKey: TimelineKey;
+  index: number;
+  totalItems: number;
+}
+
+const timelineItems: TimelineItem[] = [
   {
     day: "01",
     titleKey: "closing",
@@ -60,6 +79,27 @@ const features: Feature[] = [
   {
     icon: <Sparkles className="w-5 h-5" />,
     titleKey: "uniqueResult",
+  }
+];
+
+const services = [
+  {
+    title: "Branding",
+    description: "Creating memorable brands that tell stories and inspire connections.",
+    icon: <Layers className="w-5 h-5" />,
+    href: "/services/branding"
+  },
+  {
+    title: "Visual Identity",
+    description: "Crafting unique visual languages that communicate your brand's essence.",
+    icon: <Palette className="w-5 h-5" />,
+    href: "/services/visual-identity"
+  },
+  {
+    title: "Art Direction",
+    description: "Guiding creative vision and execution for impactful results.",
+    icon: <Layout className="w-5 h-5" />,
+    href: "/services/art-direction"
   }
 ];
 
@@ -110,15 +150,14 @@ export default function ServicesPage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
               {features.map((feature, index) => (
                 <motion.div
-                  key={feature.titleKey}
                   initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: index * 0.1 + 0.5 }}
-                  className="group relative p-6 rounded-2xl bg-[#52ddeb]/5 border border-[#52ddeb]/10 hover:bg-[#52ddeb]/10 transition-all duration-300"
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  className="group relative px-6 py-8 rounded-2xl border border-border/90 bg-background/10 backdrop-blur-sm hover:border-[#52ddeb]/50 hover:bg-[#52ddeb]/5 transition-all duration-300"
                 >
                   <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[#52ddeb]/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
-                  <div className="relative space-y-4">
-                    <div className="w-10 h-10 rounded-full bg-[#52ddeb]/10 flex items-center justify-center text-[#52ddeb]">
+                  <div className="flex flex-col items-center space-y-4">
+                    <div className="w-10 h-10 rounded-full bg-[#52ddeb]/5 flex items-center justify-center text-[#52ddeb]">
                       {feature.icon}
                     </div>
                     <h3 className="text-lg font-semibold">
@@ -152,10 +191,10 @@ export default function ServicesPage() {
       </section>
 
       {/* Timeline Section */}
-      <section ref={containerRef} className="py-32 md:py-40">
+      <section ref={containerRef} className="py-12 md:py-20">
         <motion.div 
           style={{ opacity, scale }}
-          className="container px-4 md:px-6"
+          className="container px-6 md:px-6"
         >
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -163,7 +202,7 @@ export default function ServicesPage() {
             transition={{ duration: 0.5 }}
             className="max-w-3xl mx-auto"
           >
-            <div className="flex items-center gap-4 mb-16">
+            <div className="flex items-center gap-4 mb-10">
               <Calendar className="w-8 h-8 text-[#52ddeb]" />
               <h2 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70">
                 {messages.services.timelineTitle}
@@ -177,8 +216,8 @@ export default function ServicesPage() {
                   day={item.day}
                   titleKey={item.titleKey}
                   descriptionKey={item.descriptionKey}
-                  isHighlighted={item.isHighlighted}
                   index={index}
+                  totalItems={timelineItems.length}
                 />
               ))}
             </div>
@@ -187,7 +226,7 @@ export default function ServicesPage() {
       </section>
 
       {/* Methodology Section */}
-      <section className="py-32 md:py-40 relative overflow-hidden">
+      <section className="py-32 md:py-40 relative overflow-hidden -mt-20">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-[#52ddeb]/5 via-background to-background" />
         <div className="container px-4 md:px-6 relative">
           <motion.div
@@ -234,12 +273,12 @@ export default function ServicesPage() {
               viewport={{ once: true }}
               className="relative group"
             >
-              <div className="absolute inset-0 bg-gradient-to-r from-[#52ddeb]/20 to-transparent blur-3xl group-hover:opacity-75 transition-opacity" />
-              <div className="relative bg-[#52ddeb]/5 border border-[#52ddeb]/10 rounded-2xl p-8 md:p-10">
-                <h3 className="text-xl font-medium mb-4 bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70">
+              <div className="absolute inset-0 bg-gradient-to-r from-[#2D393AFF]/10 to-transparent blur-7xl group-hover:opacity-20 transition-opacity" />
+              <div className="relative bg-[#52ddeb]/5 border border-[#92D7DDFF]/10 rounded-2xl p-8 md:p-10">
+                <h3 className="text-xl font-semibold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/50">
                   {messages.services.differenceTitle}
                 </h3>
-                <p className="text-muted-foreground leading-relaxed">
+                <p className="text-muted-foreground leading-relaxed italic">
                   {messages.services.differenceDescription}
                 </p>
               </div>
@@ -247,6 +286,20 @@ export default function ServicesPage() {
           </motion.div>
         </div>
       </section>
+
+      {/* Iceberg Section */}
+      <section className="flex justify-center w-full -mt-40">
+        <Iceberg />
+      </section>
+
+      {/* CTA Section */}
+      <CTASection 
+        variant="default"
+        isWhatsApp={true}
+        className="w-[100%] mx-auto px-12"
+        title={t(messages, 'about.cta', 'Looking for a bold visual identity?')}
+        buttonText={t(messages, 'about.getInTouch', 'Get in touch')}
+      />
     </main>
   );
 } 

@@ -1,5 +1,5 @@
 import { Layers, Palette, Layout } from 'lucide-react';
-import { ReactElement, createElement } from 'react';
+import { ReactElement } from 'react';
 
 interface Service {
   title: string;
@@ -51,19 +51,19 @@ export const services: Service[] = [
   {
     title: 'branding',
     description: 'branding.description',
-    icon: createElement(Layers, { className: "w-5 h-5" }),
+    icon: <Layers className="w-5 h-5" />,
     href: '/services'
   },
   {
     title: 'visualIdentity',
     description: 'visualIdentity.description',
-    icon: createElement(Palette, { className: "w-5 h-5" }),
+    icon: <Palette className="w-5 h-5" />,
     href: '/services'
   },
   {
     title: 'artDirection',
     description: 'artDirection.description',
-    icon: createElement(Layout, { className: "w-5 h-5" }),
+    icon: <Layout className="w-5 h-5" />,
     href: '/services'
   },
 ];

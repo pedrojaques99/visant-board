@@ -15,18 +15,18 @@ interface I18nContextType {
 const I18nContext = createContext<I18nContextType | null>(null);
 
 const locales: Record<string, Messages> = {
-  en: enMessages,
+  "en": enMessages,
   "pt-br": ptBrMessages,
 };
 
 export function I18nProvider({ children }: { children: ReactNode }) {
   const [locale, setLocale] = useState("en");
-  const [messages, setMessages] = useState<Messages>(ptBrMessages);
+  const [messages, setMessages] = useState<Messages>(enMessages);
 
   useEffect(() => {
     // Initialize with saved preference or browser language
     const savedLocale = localStorage.getItem("language");
-    const browserLocale = navigator.language.startsWith("pt") ? "pt-br" : "en";
+    const browserLocale = navigator.language.toLowerCase().startsWith("pt") ? "pt-br" : "en";
     const initialLocale = savedLocale || browserLocale;
     
     setLocale(initialLocale);

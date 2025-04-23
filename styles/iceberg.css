@@ -1,0 +1,28 @@
+@layer components {
+  .iceberg-gradient {
+    background: linear-gradient(
+      180deg,
+      rgba(82, 221, 235, 0.8) 0%,
+      rgba(82, 221, 235, 0.4) 40%,
+      rgba(82, 221, 235, 0.2) 60%,
+      rgba(82, 221, 235, 0.05) 100%
+    );
+  }
+
+  .iceberg-path {
+    fill: rgba(82, 221, 235, 0.4);
+    stroke: rgba(82, 221, 235, 0.8);
+    stroke-width: 2;
+    filter: drop-shadow(0 0 10px rgba(82, 221, 235, 0.2));
+  }
+
+  .water-surface {
+    background: linear-gradient(
+      180deg,
+      transparent 0%,
+      rgba(70, 246, 255, 0.4) 20%,
+      rgba(39, 103, 114, 0.6) 100%
+    );
+    backdrop-filter: blur(2px);
+  }
+} 

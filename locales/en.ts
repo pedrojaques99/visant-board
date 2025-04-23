@@ -7,6 +7,8 @@ export const messages = {
     copied: "Copied!",
     showDetails: "Show details",
     swipeHint: "Scroll or swipe to explore",
+    notFound: "Page not found",
+    notFoundDescription: "Sorry, we couldn't find the page you're looking for."
   },
   navigation: {
     about: "About",
@@ -21,6 +23,7 @@ export const messages = {
     latestProjects: "Latest Projects",
     startProject: "Start a project",
     swipeHint: "Scroll or swipe to explore",
+    footerHint: "Click on the projects below to see more details"
   },
   portfolio: {
     title: "Portfolio",
@@ -36,6 +39,10 @@ export const messages = {
     portugueseDescription: "Description",
     project: "Project",
     noImages: "No images available for this project",
+    show3D: "View in 3D",
+    hide3D: "Hide 3D",
+    relatedProjects: "Related Projects",
+    credits: "Credits"
   },
   about: {
     title: "Who we are",

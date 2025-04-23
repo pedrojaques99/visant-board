@@ -2,7 +2,6 @@
 
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { cn } from '@/lib/utils';
-import { Calendar } from 'lucide-react';
 import { useRef } from 'react';
 import { useI18n } from '@/context/i18n-context';
 
@@ -11,12 +10,12 @@ type TimelineKey = 'closing' | 'alignment' | 'strategy' | 'refinement' | 'delive
 interface TimelineItemProps {
   day: string;
   titleKey: TimelineKey;
-  descriptionKey?: string;
-  isHighlighted?: boolean;
+  descriptionKey: TimelineKey;
   index: number;
+  totalItems: number;
 }
 
-export const TimelineItem = ({ day, titleKey, descriptionKey, isHighlighted, index }: TimelineItemProps) => {
+export const TimelineItem = ({ day, titleKey, descriptionKey, index, totalItems }: TimelineItemProps) => {
   const { messages } = useI18n();
   const itemRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
@@ -24,103 +23,142 @@ export const TimelineItem = ({ day, titleKey, descriptionKey, isHighlighted, ind
     offset: ["start end", "center center"]
   });
 
-  const lineVariants = {
-    initial: { 
-      height: 0,
-      opacity: 0,
-    },
-    animate: {
-      height: "calc(100% + 40px)",
-      opacity: 1,
-      transition: {
-        height: { 
-          duration: 0.8,
-          ease: "circOut"
-        },
-        opacity: { 
-          duration: 0.3,
-          ease: "easeOut"
-        }
-      }
-    }
-  };
+  const isHighlighted = day === "1" || day === "15";
+  const isLastDay = day === "15";
+  const opacity = useTransform(scrollYProgress, [0, 0.3], [0.2, 1]);
+  const scale = useTransform(scrollYProgress, [0, 1], [0.95, 1]);
+  const translateY = useTransform(scrollYProgress, [0, 1], [20, 0]);
 
-  const opacity = useTransform(scrollYProgress, [0, 0.5], [0, 1]);
-  const scale = useTransform(scrollYProgress, [0, 1], [0.8, 1]);
+  // Sequential animation delay based on reverse index for falling effect
+  const reverseIndex = totalItems - index - 1;
+  const initialDelay = reverseIndex * 0.15;
 
   return (
     <motion.div
       ref={itemRef}
-      initial={{ opacity: 0, x: -20 }}
-      whileInView={{ opacity: 1, x: 0 }}
-      transition={{ 
-        duration: 0.6,
-        delay: index * 0.15,
-        ease: [0.21, 0.45, 0.32, 0.9]
+      style={{ opacity, scale, y: translateY }}
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ 
+        opacity: 1, 
+        y: 0,
+        transition: {
+          duration: 0.5,
+          delay: initialDelay,
+          ease: "easeOut"
+        }
       }}
       viewport={{ once: true, margin: "-100px" }}
-      className="relative flex flex-col md:flex-row items-center justify-center w-full max-w-3xl mx-auto px-4 md:px-0"
+      className="relative flex items-start gap-8 w-full max-w-3xl mx-auto py-6 group"
     >
-      {/* Left Content */}
-      <div className="flex items-center gap-2 md:w-[140px] text-right mb-4 md:mb-0">
-        <Calendar className={cn(
-          "w-5 h-5",
-          isHighlighted ? "text-[#52ddeb]" : "text-muted-foreground"
-        )} />
+      {/* Left Side - Day Number */}
+      <motion.div 
+        initial={{ opacity: 0, x: -10 }}
+        whileInView={{ 
+          opacity: 1, 
+          x: 0,
+          transition: {
+            duration: 0.3,
+            delay: initialDelay + 0.2,
+            ease: "easeOut"
+          }
+        }}
+        viewport={{ once: true }}
+        className="flex-none w-14 pt-1 text-right"
+      >
         <span className={cn(
-          "text-sm font-medium",
-          isHighlighted ? "text-[#52ddeb]" : "text-muted-foreground"
+          "text-sm font-medium tracking-wider transition-colors duration-300",
+          isHighlighted ? "text-[#52ddeb]" : "text-muted-foreground/60"
         )}>
-          {day}
+          DIA {day}
         </span>
-      </div>
+      </motion.div>
 
-      {/* Line Container */}
-      <div className="relative w-[2px] h-[calc(100%+40px)] mx-6">
-        {/* Background Line (Always Visible) */}
-        <div className={cn(
-          "absolute inset-0",
-          isHighlighted 
-            ? "bg-gradient-to-b from-[#52ddeb]/20 to-transparent"
-            : "bg-gradient-to-b from-[#52ddeb]/10 to-transparent"
-        )} />
-        
-        {/* Animated Line */}
-        <motion.div
-          variants={lineVariants}
-          initial="initial"
-          whileInView="animate"
-          viewport={{ once: true, margin: "-100px" }}
+      {/* Timeline Dot & Line */}
+      <div className="relative flex flex-col items-center">
+        {/* Dot */}
+        <motion.div 
+          initial={{ scale: 0 }}
+          whileInView={{ 
+            scale: 1,
+            transition: {
+              duration: 0.3,
+              delay: initialDelay + 0.1,
+              ease: "easeOut"
+            }
+          }}
+          viewport={{ once: true }}
           className={cn(
-            "absolute inset-0",
+            "w-2.5 h-2.5 rounded-full transition-all duration-300 relative z-10",
             isHighlighted 
-              ? "bg-gradient-to-b from-[#52ddeb] to-transparent"
-              : "bg-gradient-to-b from-[#52ddeb]/30 to-transparent"
+              ? "bg-[#52ddeb] ring-[3px] ring-[#52ddeb]/10" 
+              : "bg-muted-foreground/30 group-hover:bg-[#52ddeb]/50"
           )}
-        />
-
-        {/* Animated Effects */}
-        <div className={cn(
-          "absolute inset-0",
-          "after:absolute after:inset-0 after:animate-pulse after:bg-gradient-to-b after:from-[#52ddeb]/10 after:to-transparent",
-          isHighlighted && "before:absolute before:inset-0 before:animate-glow before:bg-gradient-to-b before:from-[#52ddeb]/20 before:to-transparent"
-        )} />
+        >
+          {isHighlighted && (
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1.5, opacity: 0 }}
+              transition={{ 
+                duration: 2,
+                repeat: Infinity,
+                ease: "easeOut"
+              }}
+              className="absolute inset-0 rounded-full bg-[#52ddeb]/20"
+            />
+          )}
+        </motion.div>
+        
+        {/* Line */}
+        {!isLastDay && (
+          <motion.div
+            initial={{ height: 10, originY: 0 }}
+            whileInView={{ height: "calc(100% + 1.5rem)" }}
+            transition={{ 
+              duration: 1.2,
+              delay: initialDelay + 0.2,
+              ease: "easeOut"
+            }}
+            viewport={{ once: true }}
+            className={cn(
+              "absolute top-2.5 w-[2px] origin-top transition-colors duration-300",
+              isHighlighted 
+                ? "bg-gradient-to-b from-[#52ddeb]/30 via-[#52ddeb]/20 to-transparent" 
+                : "bg-gradient-to-b from-muted-foreground/10 via-muted-foreground/5 to-transparent"
+            )}
+          />
+        )}
       </div>
 
-      {/* Right Content */}
-      <div className="flex-1 md:max-w-[calc(100%-180px)]">
+      {/* Right Side - Content */}
+      <motion.div 
+        initial={{ opacity: 0, x: 10 }}
+        whileInView={{ 
+          opacity: 1, 
+          x: 0,
+          transition: {
+            duration: 0.3,
+            delay: initialDelay + 0.3,
+            ease: "easeOut"
+          }
+        }}
+        viewport={{ once: true }}
+        className="flex-1 pt-0.5"
+      >
         <h3 className={cn(
-          "text-base md:text-lg font-medium mb-2 transition-colors duration-300",
-          isHighlighted ? "text-[#52ddeb]" : "text-foreground group-hover:text-[#52ddeb]/80"
+          "text-base font-medium mb-2 transition-colors duration-300",
+          isHighlighted ? "text-[#52ddeb]" : "text-foreground/80 group-hover:text-[#52ddeb]/90"
         )}>
           {messages.services.timeline[titleKey].title}
         </h3>
         {descriptionKey && (
-          <p className="text-muted-foreground text-sm leading-relaxed">
+          <p className={cn(
+            "text-sm leading-relaxed transition-colors duration-300",
+            isHighlighted ? "text-muted-foreground/90" : "text-muted-foreground/60"
+          )}>
             {messages.services.timeline[titleKey].description}
           </p>
         )}
-      </div>
+      </motion.div>
     </motion.div>
   );
 }; 

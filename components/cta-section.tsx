@@ -47,12 +47,14 @@ export function CTASection({
   // Style configurations based on variant
   const sectionStyles = {
     default: {
-      background: 'bg-gradient-to-b from-accent/20 to-background',
-      text: 'text-foreground'
+      background: 'bg-gradient-to-b from-accent/5 to-background',
+      text: 'text-foreground',
+      border: 'border-accent/5'
     },
     gradient: {
       background: `bg-gradient-to-b from-[${gradientFrom}] to-[${gradientTo}]`,
-      text: textColor ? `text-[${textColor}]` : 'text-foreground'
+      text: textColor ? `text-[${textColor}]` : 'text-foreground',
+      border: `border-[${gradientFrom}]`
     },
     dynamic: {
       background: `bg-gradient-to-b from-[${gradientFrom}] to-[${gradientTo}]`,
