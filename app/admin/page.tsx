@@ -12,6 +12,7 @@ export default function AdminPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [updateStatus, setUpdateStatus] = useState<string>('');
+  const [selectedCache, setSelectedCache] = useState<string>('all');
   const router = useRouter();
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -41,7 +42,7 @@ export default function AdminPage() {
   };
 
   const handleUpdateCache = async () => {
-    setUpdateStatus('Atualizando cache...');
+    setUpdateStatus('Iniciando atualização do cache...');
     setIsLoading(true);
 
     try {
@@ -50,14 +51,19 @@ export default function AdminPage() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ password }),
+        body: JSON.stringify({ 
+          password,
+          cacheType: selectedCache 
+        }),
       });
 
+      const data = await response.json();
+
       if (response.ok) {
-        setUpdateStatus('Cache atualizado com sucesso!');
+        setUpdateStatus(`Cache ${selectedCache === 'all' ? 'geral' : 'específico'} atualizado com sucesso!`);
         router.refresh();
       } else {
-        setUpdateStatus('Erro ao atualizar cache');
+        setUpdateStatus(data.message || 'Erro ao atualizar cache');
       }
     } catch (err) {
       setUpdateStatus('Erro ao atualizar cache');
@@ -120,31 +126,52 @@ export default function AdminPage() {
 
         <div className="space-y-4">
           <div className="p-6 border rounded-lg">
-            <h2 className="text-xl font-semibold mb-4">Atualizar Cache do Coda</h2>
+            <h2 className="text-xl font-semibold mb-4">Gerenciamento de Cache</h2>
             <p className="text-sm text-muted-foreground mb-4">
-              Clique no botão abaixo para atualizar o cache das tabelas do Coda.
+              Selecione o tipo de cache que deseja atualizar e clique no botão abaixo.
             </p>
-            <Button
-              onClick={handleUpdateCache}
-              disabled={isLoading}
-              className="w-full"
-            >
-              {isLoading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Atualizando...
-                </>
-              ) : (
-                'Atualizar Cache'
+            
+            <div className="space-y-4">
+              <div className="flex flex-col space-y-2">
+                <label className="text-sm font-medium">Tipo de Cache</label>
+                <select
+                  value={selectedCache}
+                  onChange={(e) => setSelectedCache(e.target.value)}
+                  className="w-full p-2 border rounded-md bg-background"
+                  disabled={isLoading}
+                >
+                  <option value="all">Todos os Caches</option>
+                  <option value="coda">Cache do Coda</option>
+                  <option value="images">Cache de Imagens</option>
+                  <option value="metadata">Cache de Metadados</option>
+                </select>
+              </div>
+
+              <Button
+                onClick={handleUpdateCache}
+                disabled={isLoading}
+                className="w-full"
+              >
+                {isLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Atualizando...
+                  </>
+                ) : (
+                  'Atualizar Cache'
+                )}
+              </Button>
+
+              {updateStatus && (
+                <div className={`mt-4 p-3 rounded-md ${
+                  updateStatus.includes('sucesso') 
+                    ? 'bg-green-50 text-green-700' 
+                    : 'bg-red-50 text-red-700'
+                }`}>
+                  <p className="text-sm text-center">{updateStatus}</p>
+                </div>
               )}
-            </Button>
-            {updateStatus && (
-              <p className={`mt-4 text-sm text-center ${
-                updateStatus.includes('sucesso') ? 'text-green-500' : 'text-red-500'
-              }`}>
-                {updateStatus}
-              </p>
-            )}
+            </div>
           </div>
         </div>
       </div>
