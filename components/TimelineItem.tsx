@@ -25,13 +25,18 @@ export const TimelineItem = ({ day, titleKey, descriptionKey, index, totalItems 
 
   const isHighlighted = day === "1" || day === "15";
   const isLastDay = day === "15";
+  const isFirstDay = day === "1";
 
   // Enhanced animations
-  const opacity = useTransform(scrollYProgress, [0, 0.1], [0.1, 0.9]);
-  const scale = useTransform(scrollYProgress, [0, 1], [0.50, 1]);
-  const translateY = useTransform(scrollYProgress, [0, 0.1], [20, 0]);
-  const translateX = useTransform(scrollYProgress, [0, 0.1], [-20, 0]);
-
+  const opacity = useTransform(scrollYProgress, [0, 0.1], [0.1, 2]);
+  const scale = useTransform(scrollYProgress, [0, 1], [0.9, 1]);
+  const translateY = useTransform(scrollYProgress, [0, 0.1], [0, 0]);
+  const translateX = useTransform(scrollYProgress, [0, 0.1], [0, 0]);
+  
+  // Enhanced line progress effect for the main timeline
+  const progressHeight = useTransform(scrollYProgress, [0, 0.5], ["0%", "100%"]);
+  const progressOpacity = useTransform(scrollYProgress, [0, 0.3], [0.2, 5]);
+  
   // Sequential animation delay based on index
   const initialDelay = index * 0.15;
 
@@ -39,7 +44,7 @@ export const TimelineItem = ({ day, titleKey, descriptionKey, index, totalItems 
     <motion.div
       ref={itemRef}
       style={{ opacity, scale, y: translateY }}
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 50 }}
       whileInView={{ 
         opacity: 1, 
         y: 0,
@@ -50,7 +55,7 @@ export const TimelineItem = ({ day, titleKey, descriptionKey, index, totalItems 
         }
       }}
       viewport={{ once: true, margin: "-100px" }}
-      className="relative flex items-start gap-4 sm:gap-6 md:gap-8 w-full max-w-3xl mx-auto py-4 sm:py-5 md:py-6 group"
+      className="relative flex flex-col sm:flex-row items-start gap-4 sm:gap-6 md:gap-8 w-full max-w-3xl mx-auto py-4 sm:py-5 md:py-6 group min-h-[120px] sm:min-h-[100px]"
     >
       {/* Left Side - Day Number */}
       <motion.div 
@@ -65,18 +70,52 @@ export const TimelineItem = ({ day, titleKey, descriptionKey, index, totalItems 
           }
         }}
         viewport={{ once: true }}
-        className="flex-none w-10 sm:w-12 md:w-14 pt-1 text-right"
+        className="flex-none w-full sm:w-16 md:w-24 pt-1 text-left sm:text-right relative mb-2 sm:mb-0"
       >
+        {/* Background Shape */}
+        <div className={cn(
+          "absolute left-0 sm:left-auto sm:right-0 top-1/2 -translate-y-1/2 w-12 sm:w-14 md:w-16 aspect-[2/1] rounded-lg transform -rotate-2",
+          isHighlighted 
+            ? "bg-[#52ddeb]/10 border border-[#52ddeb]/20" 
+            : "bg-muted-foreground/5 border border-muted-foreground/10"
+        )} />
+        {/* Secondary Shape */}
+        <div className={cn(
+          "absolute left-1 sm:left-auto sm:right-1 top-1/2 -translate-y-1/2 w-10 sm:w-12 md:w-14 aspect-[2/1] rounded-lg transform rotate-3",
+          isHighlighted 
+            ? "bg-[#52ddeb]/5 border border-[#52ddeb]/10" 
+            : "bg-muted-foreground/5 border border-muted-foreground/10"
+        )} />
+        {/* Day Number */}
         <span className={cn(
-          "text-xs sm:text-sm font-medium tracking-wider transition-colors duration-300",
-          isHighlighted ? "text-[#52ddeb]" : "text-muted-foreground/60"
+          "relative inline-block text-xs sm:text-sm font-medium tracking-wider transition-colors duration-300 px-3 py-1 rounded-md",
+          isHighlighted 
+            ? "text-[#52ddeb] bg-[#52ddeb]/5 border border-[#52ddeb]/20" 
+            : "text-muted-foreground/60 bg-muted-foreground/5 border border-muted-foreground/10"
         )}>
           DIA {day}
         </span>
       </motion.div>
 
-      {/* Timeline Dot & Line */}
-      <div className="relative flex flex-col items-center">
+      {/* Timeline Line & Dot */}
+      <div className="relative flex flex-col items-center hidden sm:flex">
+        {/* Main Timeline Line */}
+        <div className={cn(
+          "absolute h-[10vh] w-[2px] bg-gradient-to-b from-transparent via-muted-foreground/5 to-transparent",
+        )}>
+          {/* Active Progress Line */}
+          <motion.div
+            style={{ 
+              height: progressHeight,
+              opacity: progressOpacity
+            }}
+            className={cn(
+              "absolute top-0 w-full",
+              "bg-gradient-to-b from-[#52ddeb] via-[#52ddeb]/20 to-[#52ddeb]/10"
+            )}
+          />
+        </div>
+
         {/* Dot */}
         <motion.div 
           initial={{ scale: 0 }}
@@ -90,45 +129,42 @@ export const TimelineItem = ({ day, titleKey, descriptionKey, index, totalItems 
           }}
           viewport={{ once: true }}
           className={cn(
-            "w-2 sm:w-2.5 h-2 sm:h-2.5 rounded-full transition-all duration-300 relative z-10",
+            "relative w-3 h-3 rounded-full transition-all duration-300 z-10",
             isHighlighted 
-              ? "bg-[#52ddeb] ring-[3px] ring-[#52ddeb]/10" 
-              : "bg-muted-foreground/30 group-hover:bg-[#52ddeb]/50"
+              ? "bg-[#52ddeb] ring-[4px] ring-[#52ddeb]/20" 
+              : "bg-[#52ddeb]/50 ring-2 ring-[#52ddeb]/10"
           )}
         >
+          {/* Inner Glow */}
+          <div className={cn(
+            "absolute inset-0 rounded-full transition-all duration-300",
+            isHighlighted
+              ? "bg-[#52ddeb] animate-pulse-subtle"
+              : "bg-[#52ddeb]/30"
+          )} />
+          
+          {/* Outer Glow */}
           {isHighlighted && (
-            <motion.div
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1.5, opacity: 0 }}
-              transition={{ 
-                duration: 2,
-                repeat: Infinity,
-                ease: "easeOut"
-              }}
-              className="absolute inset-0 rounded-full bg-[#52ddeb]/20"
-            />
+            <div className="absolute -inset-2 rounded-full bg-[#52ddeb]/10 animate-pulse" />
           )}
-        </motion.div>
-        
-        {/* Line */}
-        {!isLastDay && (
+
+          {/* Progress Indicator */}
           <motion.div
-            initial={{ height: 10, originY: 0 }}
-            whileInView={{ height: "calc(100% + 1rem)" }}
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1.2, opacity: [0, 0.2, 0] }}
             transition={{ 
-              duration: 1.2,
-              delay: initialDelay + 0.2,
+              duration: 2,
+              repeat: Infinity,
               ease: "easeOut"
             }}
-            viewport={{ once: true }}
             className={cn(
-              "absolute top-2.5 w-[1px] sm:w-[2px] origin-top transition-colors duration-300",
-              isHighlighted 
-                ? "bg-gradient-to-b from-[#52ddeb]/30 via-[#52ddeb]/20 to-transparent" 
-                : "bg-gradient-to-b from-muted-foreground/10 via-muted-foreground/5 to-transparent"
+              "absolute inset-0 rounded-full",
+              isHighlighted
+                ? "bg-[#52ddeb]/30"
+                : "bg-[#52ddeb]/10"
             )}
           />
-        )}
+        </motion.div>
       </div>
 
       {/* Right Side - Content */}
@@ -144,10 +180,10 @@ export const TimelineItem = ({ day, titleKey, descriptionKey, index, totalItems 
           }
         }}
         viewport={{ once: true }}
-        className="flex-1 pt-0.5"
+        className="flex-1 pt-0.5 min-h-[60px]"
       >
         <h3 className={cn(
-          "text-sm sm:text-base font-medium mb-1 sm:mb-2 transition-colors duration-300",
+          "text-sm sm:text-base font-medium mb-2 transition-colors duration-300",
           isHighlighted ? "text-[#52ddeb]" : "text-foreground/80 group-hover:text-[#52ddeb]/90"
         )}>
           {messages.services.timeline[titleKey].title}

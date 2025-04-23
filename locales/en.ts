@@ -93,7 +93,7 @@ export const messages = {
     methodologyTitle: "Our Methodology",
     methodologyDescription: "Every project requires market research, competitor analysis, target audience study, and current trends, ensuring coherent and well-founded results while avoiding clichés and irrelevant ideas.",
     methodologyExtra: "Our methodology is proprietary, evolved throughout our journey to deliver highly personalized results that communicate your brand's essence.",
-    differenceTitle: "Understand the Difference",
+    differenceTitle: "Logo vs Visual Identity",
     differenceDescription: "The logo is the \"icon\" that represents a business, while visual identity is the entire universe that makes up the brand, such as color palette, typography (fonts), and visual elements.",
     features: {
       optimizedTime: "Optimized Timeline",
@@ -126,4 +126,12 @@ export const messages = {
       }
     }
   },
+  iceberg: {
+    logo: "Logo",
+    visualIdentity: "Visual Identity",
+    branding: "Branding",
+    manifesto: "Manifesto",
+    positioning: "Positioning",
+    graphicMaterials: "Graphic Materials"
+  }
 }; 

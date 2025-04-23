@@ -273,7 +273,7 @@ export default function ServicesPage() {
               transition={{ duration: 0.5, delay: 0.2 }}
               viewport={{ once: true }}
               className="relative group"
-            >]
+            >
               <div className="absolute inset-0 bg-gradient-to-r from-[#2D393AFF]/10 to-transparent blur-7xl group-hover:opacity-20 transition-opacity" />
               <div className="relative bg-[#52ddeb]/5 border border-[#92D7DDFF]/10 rounded-2xl p-8 md:p-10">
                 <h3 className="text-xl font-semibold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/50">

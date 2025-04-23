@@ -24,7 +24,7 @@ export const messages = {
     methodologyTitle: "Nossa Metodologia",
     methodologyDescription: "Todo projeto demanda pesquisa de mercado, de concorrência, público alvo e atualidades, isso é feito para que o resultado esteja coerente e embasado, evitando clichês e ideias irrelevantes.",
     methodologyExtra: "Nossa metodologia é própria, evoluída durante nossa trajetória para entregar um resultado altamente personalizado, que se comunique com a essência de cada marca.",
-    differenceTitle: "Entenda a Diferença",
+    differenceTitle: "Logotipo vs Identidade Visual",
     differenceDescription: "O logotipo é o \"ícone\" que representa um negócio, já a identidade visual é todo universo que compõe a marca, como paleta de cores, tipografias (fontes) e elementos visuais.",
     features: {
       optimizedTime: "Prazo Otimizado",
@@ -102,11 +102,11 @@ export const messages = {
     brands: "Marcas",
     services: {
       branding: "Branding",
-      'branding.description': "Criação de marcas memoráveis e autênticas que conectam com seu público",
+      brandingDescription: "Criação de marcas memoráveis e autênticas que conectam com seu público",
       visualIdentity: "Identidade Visual",
-      'visualIdentity.description': "Desenvolvimento de linguagens visuais únicas e consistentes",
+      visualIdentityDescription: "Desenvolvimento de linguagens visuais únicas e consistentes",
       artDirection: "Direção de Arte",
-      'artDirection.description': "Guiando a visão criativa e execução de projetos visuais"
+      artDirectionDescription: "Guiando a visão criativa e execução de projetos visuais"
     }
   },
   footer: {
@@ -125,5 +125,13 @@ export const messages = {
     privacy: "Política de Privacidade",
     terms: "Termos de Serviço",
     visantIcon: "Visant"
+  },
+  iceberg: {
+    logo: "Logotipo",
+    visualIdentity: "Identidade Visual",
+    branding: "Branding",
+    manifesto: "Manifesto",
+    positioning: "Posicionamento",
+    graphicMaterials: "Materiais Gráficos"
   }
 }; 

@@ -2,9 +2,11 @@
 
 import { motion } from 'framer-motion';
 import { useState } from 'react';
+import { useI18n } from '@/context/i18n-context';
 
 export const Iceberg = () => {
   const [isHovered, setIsHovered] = useState(false);
+  const { messages } = useI18n();
   
   return (
     <div className="relative w-full min-h-[500px] h-[60vh] md:h-[70vh] lg:h-[80vh] overflow-hidden select-none">
@@ -74,7 +76,7 @@ export const Iceberg = () => {
           >
             <div className="rounded-md bg-black/20 backdrop-blur-sm px-2.5 py-1.5 shadow-xl">
               <span className="text-white text-[11px] sm:text-xs md:text-sm font-medium whitespace-nowrap tracking-wide">
-                Logotipo
+                {messages.iceberg.logo}
               </span>
             </div>
             <motion.div 
@@ -100,9 +102,13 @@ export const Iceberg = () => {
               className="h-[1px] w-4 sm:w-8 md:w-10 lg:w-12 bg-gradient-to-l from-[#52ddeb]/30 to-transparent" 
             />
             <div className="rounded-md bg-black/20 backdrop-blur-sm px-2.5 py-1.5 shadow-xl">
-              <div className="text-right">
+              <div className="text-left">
                 <div className="text-white text-[11px] sm:text-xs md:text-sm font-medium whitespace-nowrap tracking-wide">
-                  Identidade Visual
+                  • {messages.iceberg.visualIdentity} <br />
+                  • {messages.iceberg.branding} <br />
+                  • {messages.iceberg.manifesto} <br />
+                  • {messages.iceberg.positioning} <br />
+                  • {messages.iceberg.graphicMaterials}
                 </div>
               </div>
             </div>
