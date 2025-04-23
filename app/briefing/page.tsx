@@ -20,16 +20,20 @@ export default function BriefingPage() {
   }, []);
 
   return (
-    <div className="min-h-screen w-full">
+    <div className="min-h-screen w-full bg-background">
       <Script
         src="https://tally.so/widgets/embed.js"
         strategy="afterInteractive"
       />
-      <iframe
-        data-tally-src="https://tally.so/r/mJBWeJ?"
-        className="w-full h-screen border-0"
-        title="Briefing"
-      />
+      <div className="w-[80%] mx-auto p-4 sm:p-6 lg:p-8">
+        <div className="bg-card rounded-xl shadow-lg overflow-hidden border border-border/50">
+          <iframe
+            data-tally-src="https://tally.so/r/mJBWeJ?"
+            className="w-full h-screen border-0"
+            title="Briefing"
+          />
+        </div>
+      </div>
     </div>
   );
 } 
