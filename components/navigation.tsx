@@ -104,6 +104,9 @@ export function Navigation() {
           <div className="hidden md:block">
             <NavLink href="/about" translationKey="navigation.about" fallback="About" />
           </div>
+          <div className="hidden md:block">
+            <NavLink href="/services" translationKey="navigation.services" fallback="Services" />
+          </div>
           <NavLink href="/portfolio" translationKey="navigation.portfolio" fallback="Portfolio" />
           <div className="flex items-center gap-4">
             <ThemeSwitcher />

@@ -49,20 +49,20 @@ export const brands = [
 
 export const services: Service[] = [
   {
-    title: 'branding',
-    description: 'branding.description',
+    title: 'about.services.branding',
+    description: 'about.services.branding.description',
     icon: createElement(Layers, { className: "w-5 h-5" }),
     href: '/services'
   },
   {
-    title: 'visualIdentity',
-    description: 'visualIdentity.description',
+    title: 'about.services.visualIdentity',
+    description: 'about.services.visualIdentity.description',
     icon: createElement(Palette, { className: "w-5 h-5" }),
     href: '/services'
   },
   {
-    title: 'artDirection',
-    description: 'artDirection.description',
+    title: 'about.services.artDirection',
+    description: 'about.services.artDirection.description',
     icon: createElement(Layout, { className: "w-5 h-5" }),
     href: '/services'
   },

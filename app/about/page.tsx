@@ -5,7 +5,7 @@ import { Counter } from '../../components/Counter';
 import { ServiceCard } from '../../components/ServiceCard';
 import { TeamMember } from '../../components/TeamMember';
 import { BrandSlider } from '../../components/BrandSlider';
-import { services, team, fadeInUp } from './constants';
+import { services, team, fadeInUp } from '@/app/about/constants';
 import { cn } from '@/lib/utils';
 import { useI18n } from '@/context/i18n-context';
 import { t } from '@/utils/translations';
@@ -54,12 +54,12 @@ export default function About() {
             muted
             playsInline
             preload="auto"
-            className="w-full h-full object-cover scale-110 opacity-15"
-            poster="/assets/videos/0001-0250-poster.jpg"
+            className="w-full h-full object-cover scale-100 opacity-25"
+            poster="/assets/videos/desert-logo-vsn-3d-poster.jpg"
           >
-            <source src="/assets/videos/0001-0250.mp4" type="video/mp4" />
+            <source src="/assets/videos/desert-logo-vsn-3d.mp4" type="video/mp4" />
           </video>
-          <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/60 to-black/90" />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/60 to-black/10" />
         </div>
         <div className="max-w-[1800px] w-[90%] mx-auto grid grid-cols-1 gap-8 relative z-10 p-4 sm:p-5 md:px-12">
           <motion.div

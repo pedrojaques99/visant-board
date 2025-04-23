@@ -100,6 +100,14 @@ export const messages = {
     projects: "Projetos",
     clients: "Clientes",
     brands: "Marcas",
+    services: {
+      branding: "Branding",
+      'branding.description': "Criação de marcas memoráveis e autênticas que conectam com seu público",
+      visualIdentity: "Identidade Visual",
+      'visualIdentity.description': "Desenvolvimento de linguagens visuais únicas e consistentes",
+      artDirection: "Direção de Arte",
+      'artDirection.description': "Guiando a visão criativa e execução de projetos visuais"
+    }
   },
   footer: {
     description: "Criando identidades de marca ousadas e visionárias que causam um impacto duradouro.",

@@ -5,6 +5,7 @@ import { useI18n } from '@/context/i18n-context';
 import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
+import { t } from '@/utils/translations';
 
 interface ServiceCardProps {
   service: {
@@ -19,6 +20,9 @@ interface ServiceCardProps {
 export const ServiceCard = ({ service, index }: ServiceCardProps) => {
   const { messages } = useI18n();
 
+  // Extract just the service name from the full path
+  const serviceKey = service.title.split('.').pop() || '';
+
   return (
     <Link href={service.href}>
       <motion.div
@@ -32,13 +36,13 @@ export const ServiceCard = ({ service, index }: ServiceCardProps) => {
             {service.icon}
           </div>
           <h3 className="text-lg font-semibold text-foreground/90 group-hover:text-[#52ddeb] transition-colors">
-            {service.title}
+            {t(messages, service.title, serviceKey)}
           </h3>
           <p className="text-muted-foreground text-sm">
-            {service.description}
+            {t(messages, service.description, `${serviceKey} description`)}
           </p>
           <div className="flex items-center gap-2 text-foreground/70 group-hover:text-[#52ddeb] transition-colors">
-            <span className="text-sm font-medium">Learn more</span>
+            <span className="text-sm font-medium">{t(messages, 'common.showDetails', 'Learn more')}</span>
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
           </div>
         </div>

@@ -54,21 +54,19 @@ export function PortfolioCard({ item }: PortfolioCardProps) {
   // Handle video play/pause on hover
   useEffect(() => {
     if (!videoRef.current || !isVideo) return;
-
-    // Always play the video on loop
     videoRef.current.play().catch(console.error);
   }, [isVideo]);
 
-  // Cycle through images only when hovering and if we have hover images
+  // Simple image cycling on hover
   useEffect(() => {
-    if (hoverImages.length === 0 || !isHovering) return;
+    if (!isHovering || hoverImages.length === 0) return;
 
     const interval = setInterval(() => {
       setCurrentImageIndex((prev) => (prev + 1) % hoverImages.length);
-    }, 200); // Change image every 200ms
+    }, 1000); // Change image every 1 second
 
     return () => clearInterval(interval);
-  }, [hoverImages.length, isHovering]);
+  }, [isHovering, hoverImages.length]);
 
   return (
     <Link href={`/portfolio/${item.id}`}>
@@ -84,14 +82,12 @@ export function PortfolioCard({ item }: PortfolioCardProps) {
         <div className="relative w-full">
           {hasValidThumb && !imageError ? (
             <>
-              {/* Main image/video - only hide if we have hover images */}
+              {/* Main image/video - always visible */}
               {isVideo ? (
                 <video
                   ref={videoRef}
                   src={thumbUrl}
-                  className={`w-full object-cover transition-all duration-300 ${
-                    hoverImages.length > 0 ? 'group-hover:opacity-0' : ''
-                  }`}
+                  className="w-full object-cover transition-all duration-600"
                   muted
                   loop
                   playsInline
@@ -104,9 +100,7 @@ export function PortfolioCard({ item }: PortfolioCardProps) {
                   alt={item.title || 'Portfolio item'}
                   width={3840}
                   height={2160}
-                  className={`w-full object-cover transition-all duration-300 ${
-                    hoverImages.length > 0 ? 'group-hover:opacity-0' : ''
-                  }`}
+                  className="w-full object-cover transition-all duration-600"
                   sizes="(max-width: 768px) 95vw, (max-width: 1280px) 45vw, 45vw"
                   onError={() => {
                     console.error('Image failed to load:', thumbUrl);
@@ -116,7 +110,7 @@ export function PortfolioCard({ item }: PortfolioCardProps) {
                   quality={90}
                 />
               )}
-              {/* Hover images - only show if we have them */}
+              {/* Hover images - cycling effect */}
               {hoverImages.length > 0 && hoverImages.map((url, index) => (
                 <Image
                   key={url}
@@ -125,7 +119,7 @@ export function PortfolioCard({ item }: PortfolioCardProps) {
                   width={3840}
                   height={2160}
                   className={`absolute inset-0 w-full h-full object-cover transition-all duration-200 ${
-                    currentImageIndex === index ? 'opacity-100' : 'opacity-0'
+                    isHovering && currentImageIndex === index ? 'opacity-100' : 'opacity-0'
                   }`}
                   sizes="(max-width: 768px) 95vw, (max-width: 1280px) 45vw, 45vw"
                   onError={() => {

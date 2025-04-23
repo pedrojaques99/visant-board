@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { brands } from '../app/about/constants';
+import { brands } from '@/app/about/constants';
 import Image from 'next/image';
 
 // Duplicar o array para criar um efeito infinito
