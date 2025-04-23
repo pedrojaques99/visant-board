@@ -115,7 +115,7 @@ export default function ServicesPage() {
   const scale = useTransform(scrollYProgress, [0, 0.5], [0.95, 1]);
 
   return (
-    <main className="min-h-screen bg-background relative">
+    <main className="min-h-screen bg-background relative mx-auto">
       {/* Gradient Background */}
       <div className="absolute inset-0 bg-gradient-to-b from-background via-background/50 to-background pointer-events-none" />
 
@@ -195,7 +195,7 @@ export default function ServicesPage() {
       <section ref={containerRef} className="py-12 md:py-20">
         <motion.div 
           style={{ opacity, scale }}
-          className="container px-6 md:px-6"
+          className="container px-4 sm:px-6 md:px-8 max-w-[90%] mx-auto"
         >
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -203,14 +203,14 @@ export default function ServicesPage() {
             transition={{ duration: 0.5 }}
             className="max-w-3xl mx-auto"
           >
-            <div className="flex items-center gap-4 mb-10">
+            <div className="flex items-center text-center gap-4 mb-10">
               <Calendar className="w-8 h-8 text-[#52ddeb]" />
               <h2 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70">
                 {messages.services.timelineTitle}
               </h2>
             </div>
 
-            <div className="space-y-6">
+            <div className="space-y-6 px-4 sm:px-6 md:px-0">
               {timelineItems.map((item, index) => (
                 <TimelineItem
                   key={item.titleKey}
@@ -229,7 +229,7 @@ export default function ServicesPage() {
       {/* Methodology Section */}
       <section className="py-32 md:py-40 relative overflow-hidden -mt-20">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-[#52ddeb]/5 via-background to-background" />
-        <div className="container px-4 md:px-6 relative">
+        <div className="container px-4 md:px-6 max-w-[90%] mx-auto relative">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -273,7 +273,7 @@ export default function ServicesPage() {
               transition={{ duration: 0.5, delay: 0.2 }}
               viewport={{ once: true }}
               className="relative group"
-            >
+            >]
               <div className="absolute inset-0 bg-gradient-to-r from-[#2D393AFF]/10 to-transparent blur-7xl group-hover:opacity-20 transition-opacity" />
               <div className="relative bg-[#52ddeb]/5 border border-[#92D7DDFF]/10 rounded-2xl p-8 md:p-10">
                 <h3 className="text-xl font-semibold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/50">
