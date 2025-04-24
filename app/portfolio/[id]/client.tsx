@@ -33,6 +33,7 @@ interface ColorPalette {
 interface Props {
   id: string;
   initialData: PortfolioItem;
+  relatedProjects: PortfolioItem[];
 }
 
 function rgbToHex(r: number, g: number, b: number): string {
@@ -125,7 +126,7 @@ function addAlpha(color: string, alpha: number): string {
   return `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, ${alpha})`;
 }
 
-export function ProjectPageClient({ id, initialData }: Props) {
+export function ProjectPageClient({ id, initialData, relatedProjects }: Props) {
   const { messages, locale } = useI18n();
   const { resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
@@ -134,7 +135,6 @@ export function ProjectPageClient({ id, initialData }: Props) {
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const [colorPalette, setColorPalette] = useState<ColorPalette | null>(null);
-  const [relatedProjects, setRelatedProjects] = useState<PortfolioItem[]>([]);
   const isMobile = useMediaQuery('(max-width: 768px)');
   const [show3DModal, setShow3DModal] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
@@ -542,39 +542,26 @@ export function ProjectPageClient({ id, initialData }: Props) {
           </div>
         )}
 
-        {/* Call to Action */}
-        <CTASection 
-            variant="dynamic"
-            gradientFrom={`${colorPalette?.accent}15` || 'var(--primary)15'}
-            gradientTo="var(--project-bg)"
-            textColor="var(--project-text)"
-            buttonColor="var(--project-accent)" // Mantém a cor de destaque como fundo do botão
-            buttonTextColor="var(--project-bg)" // Usa a cor do fundo da página para o texto
-            className="mt-8 rounded-xl overflow-hidden border border-[var(--project-accent-alpha)] bg-[var(--project-bg-alpha)]"
-            title={t(messages, 'about.cta', 'Looking for a bold visual identity?')}
-            buttonText={t(messages, 'about.getInTouch', 'Get in touch')}
-            isWhatsApp={true}
-          />
-
-        {/* Related Projects */}
+        {/* Related Projects Section */}
         {relatedProjects.length > 0 && (
-          <section className="max-w-7xl mx-auto mt-16 sm:mt-24 px-4 sm:px-6 lg:px-8">
+          <section className="mt-16 sm:mt-24 px-4 sm:px-6 lg:px-8">
             <motion.h2
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
               className="text-xl sm:text-2xl font-bold mb-8"
+              style={{ color: 'var(--project-text)' }}
             >
               {t(messages, 'portfolio.relatedProjects', locale === 'pt' ? 'Projetos Relacionados' : 'Related Projects')}
             </motion.h2>
             
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {relatedProjects.map((project) => (
+            <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {relatedProjects.map((project, index) => (
                 <motion.div
                   key={project.id}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6 }}
+                  transition={{ duration: 0.6, delay: index * 0.1 }}
                 >
                   <PortfolioCard item={project} />
                 </motion.div>
@@ -582,6 +569,20 @@ export function ProjectPageClient({ id, initialData }: Props) {
             </div>
           </section>
         )}
+
+        {/* Call to Action */}
+        <CTASection 
+          variant="dynamic"
+          gradientFrom={`${colorPalette?.accent}15` || 'var(--primary)15'}
+          gradientTo="var(--project-bg)"
+          textColor="var(--project-text)"
+          buttonColor="var(--project-accent)"
+          buttonTextColor="var(--project-bg)"
+          className="mt-16 rounded-xl overflow-hidden border border-[var(--project-accent-alpha)] bg-[var(--project-bg-alpha)]"
+          title={t(messages, 'about.cta', 'Looking for a bold visual identity?')}
+          buttonText={t(messages, 'about.getInTouch', 'Get in touch')}
+          isWhatsApp={true}
+        />
       </div>
     </main>
   );

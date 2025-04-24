@@ -13,7 +13,7 @@ export function Footer() {
           {/* Logo and Description */}
           <div className="space-y-6">
             <Image
-              src="/assets/brand/icon visant.svg" 
+              src="/assets/brand/icon visant.svg"
               alt={t(messages, 'footer.visantIcon', 'Visant')}
               width={20}
               height={20}
@@ -26,6 +26,7 @@ export function Footer() {
 
           {/* Quick Links */}
           <div className="space-y-6">
+            <h3 className="text-sm font-medium text-foreground/80">{t(messages, 'footer.quickLinks', 'Links')}</h3>
             <ul className="space-y-3">
               <li>
                 <Link href="/portfolio" className="text-sm text-muted-foreground hover:text-foreground transition-colors">

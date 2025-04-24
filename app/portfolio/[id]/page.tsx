@@ -11,13 +11,35 @@ interface Props {
 export default async function ProjectPage({ params }: Props) {
   try {
     const { id } = await Promise.resolve(params);
-    const response = await getPortfolioItemById(id);
+    
+    // Fetch current project and all portfolio items in parallel
+    const [projectResponse, portfolioResponse] = await Promise.all([
+      getPortfolioItemById(id),
+      getPortfolioItems()
+    ]);
 
-    if (!response.success || !response.item) {
+    if (!projectResponse.success || !projectResponse.item) {
       return notFound();
     }
+
+    // Get related projects (same category/type, excluding current project)
+    const relatedProjects = portfolioResponse.success && portfolioResponse.items 
+      ? portfolioResponse.items
+          .filter(item => 
+            item.id !== id && // Exclude current project
+            item.type === projectResponse.item.type // Same type/category
+          )
+          .sort(() => Math.random() - 0.5) // Randomize order
+          .slice(0, 3) // Get up to 3 related projects
+      : [];
     
-    return <ClientWrapper id={id} initialData={response.item} />;
+    return (
+      <ClientWrapper 
+        id={id} 
+        initialData={projectResponse.item}
+        relatedProjects={relatedProjects}
+      />
+    );
   } catch (error) {
     console.error('Error in ProjectPage:', error);
     return notFound();

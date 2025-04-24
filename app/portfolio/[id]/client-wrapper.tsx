@@ -7,9 +7,10 @@ import { Loader2 } from 'lucide-react';
 interface ClientWrapperProps {
   id: string;
   initialData: PortfolioItem;
+  relatedProjects: PortfolioItem[];
 }
 
-const ClientWrapper = ({ id, initialData }: ClientWrapperProps) => {
+const ClientWrapper = ({ id, initialData, relatedProjects }: ClientWrapperProps) => {
   const [Component, setComponent] = useState<React.ComponentType<any> | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -61,7 +62,7 @@ const ClientWrapper = ({ id, initialData }: ClientWrapperProps) => {
     );
   }
 
-  return <Component id={id} initialData={initialData} />;
+  return <Component id={id} initialData={initialData} relatedProjects={relatedProjects} />;
 };
 
 export default ClientWrapper; 
