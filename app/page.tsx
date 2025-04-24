@@ -14,6 +14,7 @@ import { motion, AnimatePresence, useMotionValue, useTransform } from 'framer-mo
 import { Footer } from '@/components/footer';
 import About from '@/app/about/page';
 import { buttonVariants } from '@/components/ui/button';
+import Logo3D from '@/components/logo3d';
 
 interface ProjectCardProps {
   project: PortfolioItem;
@@ -212,19 +213,37 @@ export default function Home() {
         {/* Mobile/Tablet Hero Section with 3D Logo */}
         <section className="relative h-[80vh] md:h-[80vh] flex items-center justify-center px-4 overflow-hidden">
           {/* 3D Hero Component */}
-          <div className="absolute inset-0 w-full h-full scale-100 sm:scale-110 md:scale-125 md:-translate-y-20">
-            <Hero3D />
+          <div className="absolute inset-0 w-full h-full flex items-center justify-center">
+            <div className="w-full h-full max-w-4xl mx-auto">
+              <Logo3D isMobile={isMobileOrTablet} />
+            </div>
           </div>
 
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="relative text-center space-y-4 z-10 md:translate-y-12"
+            className="relative text-center space-y-4 z-10"
           >
-            <h1 className="text-4xl md:text-5xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70">
-              {t(messages, 'home.title', 'Welcome to Visant®')}
-            </h1>
+            <motion.h1
+              className="text-4xl md:text-5xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+            >
+              {Array.from(t(messages, 'home.title', 'Welcome to Visant®')).map((char, index) => (
+                <motion.span
+                  key={index}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{
+                    duration: 0.1,
+                    delay: index * 0.05,
+                  }}
+                >
+                  {char}
+                </motion.span>
+              ))}
+            </motion.h1>
             <p className="text-lg text-muted-foreground max-w-sm mx-auto">
               {t(messages, 'home.subtitle', 'Where visionary brands are born.')}
             </p>

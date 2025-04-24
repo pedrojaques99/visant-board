@@ -3,6 +3,7 @@
 import { useRef, useState, useEffect } from 'react';
 import { useFrame, useThree, OrbitControls, useGLTF, THREE, ensureComponent, isThreeAvailable, Canvas } from '@/lib/three-imports';
 import type { RootState } from '@/lib/three-imports';
+import { useMediaQuery } from '@/hooks/use-media-query';
 
 interface ProjectMedia3DProps {
   modelUrl: string;
@@ -25,15 +26,10 @@ function getLuminance(r: number, g: number, b: number): number {
 
 // Helper function to get contrasting color
 function getContrastingColor(hexColor: string): string {
-  // Convert hex to RGB
   const r = parseInt(hexColor.slice(1, 3), 16);
   const g = parseInt(hexColor.slice(3, 5), 16);
   const b = parseInt(hexColor.slice(5, 7), 16);
-  
-  // Calculate luminance
   const luminance = getLuminance(r, g, b);
-  
-  // Return dark or light color based on luminance
   return luminance > 0.5 ? '#000000' : '#ffffff';
 }
 
@@ -41,27 +37,32 @@ export function ProjectMedia3D({ modelUrl, color }: ProjectMedia3DProps) {
   const [mounted, setMounted] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const contrastingColor = getContrastingColor(color);
+  const isMobile = useMediaQuery('(max-width: 768px)');
   
   useEffect(() => {
     setMounted(true);
   }, []);
   
-  // Don't render on server or if THREE is not available
   if (!mounted || !isThreeAvailable() || !useGLTF || !useThree || !useFrame || !ensureComponent(OrbitControls)) {
-    return null;
+    return (
+      <div className="w-full h-[400px] sm:h-[500px] md:h-[600px] lg:h-[700px] flex items-center justify-center">
+        <div className="px-4 py-2 rounded-md bg-background/80 backdrop-blur-sm border border-border/50">
+          <span className="text-sm text-foreground">Loading 3D viewer...</span>
+        </div>
+      </div>
+    );
   }
 
-  // Check if modelUrl is valid
   if (!modelUrl) {
-    return <div className="w-full h-full flex items-center justify-center text-muted-foreground">No 3D model available</div>;
+    return (
+      <div className="w-full h-[400px] sm:h-[500px] md:h-[600px] lg:h-[700px] flex items-center justify-center text-muted-foreground">
+        No 3D model available
+      </div>
+    );
   }
-
-  // Log the model URL for debugging
-  console.log('3D Model URL:', modelUrl);
   
-  // Now we know THREE is available, so render the component
   return (
-    <div className="w-full h-full rounded-2xl overflow-hidden">
+    <div className="w-full h-[400px] sm:h-[500px] md:h-[600px] lg:h-[700px] rounded-2xl overflow-hidden">
       <Canvas
         camera={{
           position: [0, 0, 20],
@@ -72,14 +73,31 @@ export function ProjectMedia3D({ modelUrl, color }: ProjectMedia3DProps) {
         style={{
           background: contrastingColor,
           width: '100%',
-          height: '100%'
+          height: '100%',
+          cursor: isMobile ? 'default' : 'grab',
+          touchAction: isMobile ? 'none' : 'auto'
+        }}
+        onPointerDown={() => {
+          if (!isMobile) {
+            document.body.style.cursor = 'grabbing';
+          }
+        }}
+        onPointerUp={() => {
+          if (!isMobile) {
+            document.body.style.cursor = 'grab';
+          }
+        }}
+        onPointerLeave={() => {
+          if (!isMobile) {
+            document.body.style.cursor = 'default';
+          }
         }}
       >
         <color attach="background" args={[contrastingColor]} />
         <ambientLight intensity={2} />
         <pointLight position={[10, 20, 10]} />
         <directionalLight position={[0, 90, 100]} /> 
-        <ProjectMedia3DInner modelUrl={modelUrl} color={color} onError={setError} />
+        <ProjectMedia3DInner modelUrl={modelUrl} color={color} onError={setError} isMobile={isMobile} />
         {error && (
           <mesh position={[0, 0, 0]}>
             <boxGeometry args={[1, 1, 1]} />
@@ -91,7 +109,12 @@ export function ProjectMedia3D({ modelUrl, color }: ProjectMedia3DProps) {
   );
 }
 
-function ProjectMedia3DInner({ modelUrl, color, onError }: { modelUrl: string; color: string; onError: (error: string) => void }) {
+function ProjectMedia3DInner({ modelUrl, color, onError, isMobile }: { 
+  modelUrl: string; 
+  color: string; 
+  onError: (error: string) => void;
+  isMobile: boolean;
+}) {
   const { scene } = useGLTF(modelUrl, true);
   const { gl } = useThree();
   const modelRef = useRef<THREE.Group>();
@@ -115,7 +138,14 @@ function ProjectMedia3DInner({ modelUrl, color, onError }: { modelUrl: string; c
         // Center the model
         const box = new THREE.Box3().setFromObject(modelRef.current);
         const center = box.getCenter(new THREE.Vector3());
+        const size = box.getSize(new THREE.Vector3());
+        
+        // Calculate the scale to fit the model in the view
+        const maxDim = Math.max(size.x, size.y, size.z);
+        const scale = 10 / maxDim;
+        
         modelRef.current.position.sub(center);
+        modelRef.current.scale.set(scale, scale, scale);
         
         // Apply metallic material to all meshes
         modelRef.current.traverse((child: any) => {
@@ -152,16 +182,19 @@ function ProjectMedia3DInner({ modelUrl, color, onError }: { modelUrl: string; c
   return (
     <>
       <OrbitControls 
-        enableZoom={true}
+        enableZoom={!isMobile}
+        enablePan={!isMobile}
+        enableRotate={!isMobile}
+        autoRotate
+        autoRotateSpeed={0.5}
         minDistance={5}
         maxDistance={20}
-        enablePan={true}
+        minPolarAngle={Math.PI / 3}
+        maxPolarAngle={Math.PI / 2}
       />
       <primitive
         ref={modelRef}
         object={scene}
-        scale={10}
-        position={[0, 0, 0]}
         onPointerOver={() => setHovered(true)}
         onPointerOut={() => setHovered(false)}
       />

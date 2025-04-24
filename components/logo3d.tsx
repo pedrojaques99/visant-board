@@ -6,6 +6,7 @@ import { useGLTF, OrbitControls } from '@react-three/drei';
 import { useI18n } from '@/context/i18n-context';
 import { t } from '@/utils/translations';
 import * as THREE from 'three';
+import { useMediaQuery } from '@/hooks/use-media-query';
 
 interface Logo3DProps {
   isMobile: boolean;
@@ -112,6 +113,8 @@ function Stars() {
 function Model({ url }: { url: string }) {
   const { scene } = useGLTF(url);
   const modelRef = useRef<THREE.Group>();
+  const isMobile = useMediaQuery('(max-width: 768px)');
+  const isSmallScreen = useMediaQuery('(max-width: 640px)');
 
   // Apply wireframe material to all meshes
   if (scene) {
@@ -127,23 +130,52 @@ function Model({ url }: { url: string }) {
     });
   }
 
-  return <primitive ref={modelRef} object={scene} scale={12} />;
+  useEffect(() => {
+    if (modelRef.current) {
+      // Center and scale the model
+      const box = new THREE.Box3().setFromObject(modelRef.current);
+      const center = box.getCenter(new THREE.Vector3());
+      const size = box.getSize(new THREE.Vector3());
+      
+      // Calculate scale based on screen size and model dimensions
+      const maxDim = Math.max(size.x, size.y, size.z);
+      const scale = isMobile ? 
+        (isSmallScreen ? 6 : 8) : 
+        10;
+      
+      modelRef.current.position.set(-center.x, -center.y, -center.z);
+      modelRef.current.scale.set(scale, scale, scale);
+    }
+  }, [isMobile, isSmallScreen]);
+
+  return <primitive ref={modelRef} object={scene} />;
 }
 
 export default function Logo3D({ isMobile }: Logo3DProps) {
   const modelUrl = '/models/visant-3d-simple-2.glb';
   const { messages } = useI18n();
+  const isSmallScreen = useMediaQuery('(max-width: 640px)');
+  const isMediumScreen = useMediaQuery('(max-width: 768px)');
+
+  // Calculate camera position based on screen size
+  const cameraPosition = useMemo(() => {
+    if (isSmallScreen) return new THREE.Vector3(0, -2, 15);
+    if (isMediumScreen) return new THREE.Vector3(0, -1, 18);
+    return new THREE.Vector3(0, 0, 20);
+  }, [isSmallScreen, isMediumScreen]);
 
   return (
-    <div className="w-full h-full">
+    <div className="absolute inset-0 flex items-center justify-center">
       <Canvas
         camera={{
-          position: [0, 0, 20],
-          fov: 45,
+          position: cameraPosition,
+          fov: isSmallScreen ? 50 : 45,
           near: 0.1,
           far: 200
         }}
         style={{
+          width: '100%',
+          height: '100%',
           cursor: isMobile ? 'default' : 'grab',
           touchAction: isMobile ? 'none' : 'auto'
         }}
@@ -164,7 +196,7 @@ export default function Logo3D({ isMobile }: Logo3DProps) {
         }}
       >
         <Suspense fallback={null}>
-          <ambientLight intensity={0.5} />
+          <ambientLight intensity={isSmallScreen ? 0.7 : 0.5} />
           <pointLight position={[10, 10, 10]} />
           <Stars />
           <Model url={modelUrl} />
@@ -174,10 +206,11 @@ export default function Logo3D({ isMobile }: Logo3DProps) {
             enableRotate={!isMobile}
             autoRotate
             autoRotateSpeed={0.5}
-            minDistance={5}
-            maxDistance={20}
+            minDistance={isSmallScreen ? 8 : 5}
+            maxDistance={isSmallScreen ? 15 : 20}
             minPolarAngle={Math.PI / 3}
             maxPolarAngle={Math.PI / 2}
+            target={new THREE.Vector3(0, isSmallScreen ? -2 : -1, 0)}
           />
         </Suspense>
       </Canvas>
