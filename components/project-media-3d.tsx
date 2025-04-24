@@ -52,7 +52,7 @@ export function ProjectMedia3D({ modelUrl, color }: ProjectMedia3DProps) {
       </div>
     );
   }
-
+  
   if (!modelUrl) {
     return (
       <div className="w-full h-[400px] sm:h-[500px] md:h-[600px] lg:h-[700px] flex items-center justify-center text-muted-foreground">
@@ -135,31 +135,31 @@ function ProjectMedia3DInner({ modelUrl, color, onError, isMobile }: {
   useEffect(() => {
     if (modelRef.current) {
       try {
-        // Center the model
-        const box = new THREE.Box3().setFromObject(modelRef.current);
-        const center = box.getCenter(new THREE.Vector3());
+      // Center the model
+      const box = new THREE.Box3().setFromObject(modelRef.current);
+      const center = box.getCenter(new THREE.Vector3());
         const size = box.getSize(new THREE.Vector3());
         
         // Calculate the scale to fit the model in the view
         const maxDim = Math.max(size.x, size.y, size.z);
         const scale = 10 / maxDim;
         
-        modelRef.current.position.sub(center);
+      modelRef.current.position.sub(center);
         modelRef.current.scale.set(scale, scale, scale);
-        
+      
         // Apply metallic material to all meshes
-        modelRef.current.traverse((child: any) => {
-          if (isMesh(child)) {
+      modelRef.current.traverse((child: any) => {
+        if (isMesh(child)) {
             const material = new THREE.MeshStandardMaterial({
-              color: color,
+            color: color,
               metalness: 0.9,
               roughness: 0.2,
               envMapIntensity: 1.0
             });
             child.material = material;
             child.material.needsUpdate = true;
-          }
-        });
+        }
+      });
       } catch (error) {
         console.error('Error processing 3D model:', error);
         onError('Error processing 3D model');

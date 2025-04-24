@@ -160,7 +160,7 @@ export function Navigation() {
           </div>
           <MobileDropdown />
           <div className="flex items-center gap-4">
-            <div className="flex items-center gap-6">
+            <div className="hidden sm:flex items-center gap-8">
               <Link
                 href="https://wa.me/+554788475891"
                 target="_blank"
