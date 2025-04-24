@@ -55,13 +55,22 @@ const MobileDropdown = () => {
   const toggleDropdown = () => setIsOpen(!isOpen);
   const closeDropdown = () => setIsOpen(false);
 
+  // Get current page name for the dropdown button
+  const getCurrentPageName = () => {
+    if (pathname === '/') return t(messages, 'navigation.home', 'Home');
+    if (pathname === '/portfolio') return t(messages, 'navigation.portfolio', 'Portfolio');
+    if (pathname === '/services') return t(messages, 'navigation.services', 'Services');
+    if (pathname === '/about') return t(messages, 'navigation.about', 'About');
+    return t(messages, 'navigation.menu', 'Menu');
+  };
+
   return (
     <div className="relative md:hidden">
       <button
         onClick={toggleDropdown}
         className="flex items-center gap-1 text-sm font-medium hover:text-primary"
       >
-        {t(messages, 'navigation.portfolio', 'Portfolio')}
+        {getCurrentPageName()}
         <ChevronDown className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
       </button>
       
@@ -73,6 +82,13 @@ const MobileDropdown = () => {
             exit={{ opacity: 0, y: -10 }}
             className="absolute top-full left-1/5 -translate-x-1/2 mt-2 py-2 w-36 bg-background/95 backdrop-blur-sm border border-border/50 rounded-lg shadow-lg"
           >
+            <Link
+              href="/"
+              className={`block px-4 py-2 text-sm hover:bg-accent/10 transition-colors ${pathname === '/' ? 'text-primary' : ''}`}
+              onClick={closeDropdown}
+            >
+              {t(messages, 'navigation.home', 'Home')}
+            </Link>
             <Link
               href="/portfolio"
               className={`block px-4 py-2 text-sm hover:bg-accent/10 transition-colors ${pathname === '/portfolio' ? 'text-primary' : ''}`}
@@ -86,6 +102,13 @@ const MobileDropdown = () => {
               onClick={closeDropdown}
             >
               {t(messages, 'navigation.services', 'Services')}
+            </Link>
+            <Link
+              href="/about"
+              className={`block px-4 py-2 text-sm hover:bg-accent/10 transition-colors ${pathname === '/about' ? 'text-primary' : ''}`}
+              onClick={closeDropdown}
+            >
+              {t(messages, 'navigation.about', 'About')}
             </Link>
           </motion.div>
         )}
@@ -160,36 +183,34 @@ export function Navigation() {
           </div>
           <MobileDropdown />
           <div className="flex items-center gap-4">
-            <div className="hidden sm:flex items-center gap-8">
-              <Link
-                href="https://wa.me/+554788475891"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="transition-transform hover:scale-110 active:scale-100 opacity-70 hover:opacity-100"
-              >
-                <Image
-                  src="/assets/icons/whatsapp.svg"
-                  alt="WhatsApp"
-                  width={20}
-                  height={20}
-                  className="w-4 h-4"
-                />
-              </Link>
-              <Link
-                href="https://instagram.com/visant.co"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="transition-transform hover:scale-110 active:scale-100 opacity-70 hover:opacity-100"
-              >
-                <Image
-                  src="/assets/icons/instagram.svg"
-                  alt="Instagram"
-                  width={20}
-                  height={20}
-                  className="w-4 h-4" 
-                />
-              </Link>
-            </div>
+            <Link
+              href="https://wa.me/+554788475891"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="transition-transform hover:scale-110 active:scale-100 opacity-70 hover:opacity-100"
+            >
+              <Image
+                src="/assets/icons/whatsapp.svg"
+                alt="WhatsApp"
+                width={20}
+                height={20}
+                className="w-4 h-4"
+              />
+            </Link>
+            <Link
+              href="https://instagram.com/visant.co"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="transition-transform hover:scale-110 active:scale-100 opacity-70 hover:opacity-100"
+            >
+              <Image
+                src="/assets/icons/instagram.svg"
+                alt="Instagram"
+                width={20}
+                height={20}
+                className="w-4 h-4" 
+              />
+            </Link>
             <ThemeSwitcher />
             <LanguageSwitcher />
           </div>

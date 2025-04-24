@@ -323,7 +323,7 @@ export default function Home() {
         {/* Mobile/Tablet Latest Projects Stack */}
         <div className="relative z-10 bg-background -mt-20 projects-section">
           {latestProjects.length > 0 && (
-            <section className="pt-24 pb-12 md:py-12 px-8">
+            <section className="pt-24 pb-12 md:py-12 px-4 sm:px-8 overflow-hidden">
               <motion.h2 
                 initial={{ opacity: 0 }}
                 whileInView={{ opacity: 1 }}
@@ -367,7 +367,6 @@ export default function Home() {
                       strokeWidth="2"
                       strokeLinecap="round"
                       strokeLinejoin="round"
-                      className="text-foreground/80"
                     >
                       <path d="m15 18-6-6 6-6" />
                     </svg>
@@ -388,7 +387,6 @@ export default function Home() {
                       strokeWidth="2"
                       strokeLinecap="round"
                       strokeLinejoin="round"
-                      className="text-foreground/80"
                     >
                       <path d="m9 18 6-6-6-6" />
                     </svg>
