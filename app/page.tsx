@@ -83,7 +83,7 @@ function ProjectCard({ project, index, activeIndex, totalProjects, setActiveInde
         opacity: isActive ? 1 : 0.95,
         scale: isActive ? 1 : 0.95,
         y: 0,
-        x: relativePosition * (isMobileOrTablet ? 150 : 200),
+        x: relativePosition * (isMobileOrTablet ? 120 : 200),
         rotate: 0
       }}
       exit={{ 
@@ -258,16 +258,32 @@ export default function Home() {
                 </span>
                 <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-primary to-primary-foreground/10 opacity-0 blur transition-opacity group-hover:opacity-40" />
               </Link>
-              <Link
-                href="/briefing"
-                className="group relative inline-flex items-center justify-center rounded-lg border border-primary/30 bg-background/50 backdrop-blur-sm px-6 py-3 text-sm font-medium text-foreground transition-all hover:bg-primary/10 hover:scale-105 active:scale-100"
-              >
-                <span className="relative z-10 flex items-center gap-2">
-                  {t(messages, 'home.startProject', 'Começar um projeto')}
-                  <ArrowRight className="w-4 h-4" />
-                </span>
-                <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-primary to-primary-foreground/10 opacity-0 blur transition-opacity group-hover:opacity-20" />
-              </Link>
+              <div className="flex items-center gap-3 w-full">
+                <Link
+                  href="/briefing"
+                  className="group relative inline-flex items-center justify-center rounded-lg border border-primary/30 bg-background/50 backdrop-blur-sm px-6 py-3 text-sm font-medium text-foreground transition-all hover:bg-primary/10 hover:scale-105 active:scale-100 flex-1"
+                >
+                  <span className="relative z-10 flex items-center gap-2">
+                    {t(messages, 'home.startProject', 'Começar um projeto')}
+                    <ArrowRight className="w-4 h-4" />
+                  </span>
+                  <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-primary to-primary-foreground/10 opacity-0 blur transition-opacity group-hover:opacity-20" />
+                </Link>
+                <Link
+                  href="https://wa.me/+554788475891"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="transition-transform hover:scale-110 active:scale-100 opacity-70 hover:opacity-100"
+                >
+                  <Image
+                    src="/assets/icons/whatsapp.svg"
+                    alt="WhatsApp"
+                    width={20}
+                    height={20}
+                    className="w-5 h-5"
+                  />
+                </Link>
+              </div>
             </div>
 
             {/* Scroll Down Arrow */}
@@ -317,141 +333,139 @@ export default function Home() {
             </motion.button>
           </motion.div>
 
-          <div className="absolute inset-0 bg-gradient-to-b from-background via-background/30 to-background pointer-events-none z-[1]" />
-        </section>
+          {/* Mobile/Tablet Latest Projects Stack */}
+          <div className="relative z-10 bg-background -mt-20 projects-section">
+            {latestProjects.length > 0 && (
+              <section className="pt-24 pb-12 md:py-12 px-8">
+                <motion.h2 
+                  initial={{ opacity: 0 }}
+                  whileInView={{ opacity: 1 }}
+                  transition={{ duration: 0.6 }}
+                  className="text-2xl md:text-3xl font-bold text-center"
+                >
+                  {t(messages, 'home.latestProjects', 'Latest Projects')}
+                </motion.h2>
+                <div className="relative h-[600px] md:h-[600px] overflow-hidden -mt-10">
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <AnimatePresence mode="popLayout">
+                      {latestProjects.map((project, index) => (
+                        <ProjectCard
+                          key={project.id}
+                          project={project}
+                          index={index}
+                          activeIndex={activeIndex}
+                          totalProjects={latestProjects.length}
+                          setActiveIndex={setActiveIndex}
+                          onProjectClick={handleProjectClick}
+                        />
+                      ))}
+                    </AnimatePresence>
+                  </div>
 
-        {/* Mobile/Tablet Latest Projects Stack */}
-        <div className="relative z-10 bg-background -mt-20 projects-section">
-          {latestProjects.length > 0 && (
-            <section className="pt-24 pb-12 md:py-12 px-8">
-              <motion.h2 
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                transition={{ duration: 0.6 }}
-                className="text-2xl md:text-3xl font-bold text-center"
-              >
-                {t(messages, 'home.latestProjects', 'Latest Projects')}
-              </motion.h2>
-              <div className="relative h-[600px] md:h-[600px] overflow-visible -mt-10">
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <AnimatePresence mode="popLayout">
-                    {latestProjects.map((project, index) => (
-                      <ProjectCard
-                        key={project.id}
-                        project={project}
-                        index={index}
-                        activeIndex={activeIndex}
-                        totalProjects={latestProjects.length}
-                        setActiveIndex={setActiveIndex}
-                        onProjectClick={handleProjectClick}
-                      />
-                    ))}
-                  </AnimatePresence>
-                </div>
-
-                {/* Navigation Arrows - Mobile */}
-                <div className="md:hidden absolute -bottom-5 left-0 right-0 flex items-center justify-center gap-8 p-4 z-50">
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleNavigationClick(e, 'prev');
-                    }}
-                    className="p-4 rounded-full bg-background/90 backdrop-blur-sm border border-border/50 hover:bg-background transition-colors shadow-lg active:scale-95 transform"
-                  >
-                    <svg
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="text-foreground/80"
+                  {/* Navigation Arrows - Mobile */}
+                  <div className="md:hidden absolute -bottom-5 left-0 right-0 flex items-center justify-center gap-8 p-4 z-50">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleNavigationClick(e, 'prev');
+                      }}
+                      className="p-4 rounded-full bg-background/90 backdrop-blur-sm border border-border/50 hover:bg-background transition-colors shadow-lg active:scale-95 transform"
                     >
-                      <path d="m15 18-6-6 6-6" />
-                    </svg>
-                  </button>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleNavigationClick(e, 'next');
-                    }}
-                    className="p-4 rounded-full bg-background/90 backdrop-blur-sm border border-border/50 hover:bg-background transition-colors shadow-lg active:scale-95 transform"
-                  >
-                    <svg
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="text-foreground/80"
+                      <svg
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="text-foreground/80"
+                      >
+                        <path d="m15 18-6-6 6-6" />
+                      </svg>
+                    </button>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleNavigationClick(e, 'next');
+                      }}
+                      className="p-4 rounded-full bg-background/90 backdrop-blur-sm border border-border/50 hover:bg-background transition-colors shadow-lg active:scale-95 transform"
                     >
-                      <path d="m9 18 6-6-6-6" />
-                    </svg>
-                  </button>
-                </div>
+                      <svg
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="text-foreground/80"
+                      >
+                        <path d="m9 18 6-6-6-6" />
+                      </svg>
+                    </button>
+                  </div>
 
-                {/* Navigation Arrows - Desktop */}
-                <div className="hidden md:flex absolute inset-y-0 left-0 items-center justify-start px-4 z-50">
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleNavigationClick(e, 'prev');
-                    }}
-                    className="p-3 rounded-full bg-background/50 backdrop-blur-sm border border-border/50 hover:bg-background/80 transition-colors active:scale-95 transform"
-                  >
-                    <svg
-                      width="20"
-                      height="20"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="text-foreground/70"
+                  {/* Navigation Arrows - Desktop */}
+                  <div className="hidden md:flex absolute inset-y-0 left-0 items-center justify-start px-4 z-50">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleNavigationClick(e, 'prev');
+                      }}
+                      className="p-3 rounded-full bg-background/50 backdrop-blur-sm border border-border/50 hover:bg-background/80 transition-colors active:scale-95 transform"
                     >
-                      <path d="m15 18-6-6 6-6" />
-                    </svg>
-                  </button>
-                </div>
+                      <svg
+                        width="20"
+                        height="20"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="text-foreground/70"
+                      >
+                        <path d="m15 18-6-6 6-6" />
+                      </svg>
+                    </button>
+                  </div>
 
-                <div className="hidden md:flex absolute inset-y-0 right-0 items-center justify-end px-4 z-50">
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleNavigationClick(e, 'next');
-                    }}
-                    className="p-3 rounded-full bg-background/50 backdrop-blur-sm border border-border/50 hover:bg-background/80 transition-colors active:scale-95 transform"
-                  >
-                    <svg
-                      width="20"
-                      height="20"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="text-foreground/70"
+                  <div className="hidden md:flex absolute inset-y-0 right-0 items-center justify-end px-4 z-50">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleNavigationClick(e, 'next');
+                      }}
+                      className="p-3 rounded-full bg-background/50 backdrop-blur-sm border border-border/50 hover:bg-background/80 transition-colors active:scale-95 transform"
                     >
-                      <path d="m9 18 6-6-6-6" />
-                    </svg>
-                  </button>
+                      <svg
+                        width="20"
+                        height="20"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="text-foreground/70"
+                      >
+                        <path d="m9 18 6-6-6-6" />
+                      </svg>
+                    </button>
+                  </div>
                 </div>
-              </div>
-            </section>
-          )}
+              </section>
+            )}
 
-          {/* Mobile/Tablet About Section */}
-          <div className="block lg:hidden mt-32 md:mt-40">
-            <About />
+            {/* Mobile/Tablet About Section */}
+            <div className="block lg:hidden mt-32 md:mt-40">
+              <About />
+            </div>
           </div>
-        </div>
+        </section>
       </div>
     );
   }
@@ -490,16 +504,32 @@ export default function Home() {
               </span>
               <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-primary to-primary-foreground/10 opacity-0 blur transition-opacity group-hover:opacity-40" />
             </Link>
-            <Link
-              href="/briefing"
-              className="group relative inline-flex items-center justify-center rounded-lg border border-primary/30 bg-background/50 backdrop-blur-sm px-6 py-3 text-sm font-medium text-foreground transition-all hover:bg-accent/10 hover:border-accent/50 hover:scale-105 active:scale-100"
-            >
-              <span className="relative z-10 flex items-center gap-2">
-                {t(messages, 'home.startProject', 'Começar um projeto')}
-                <ArrowRight className="w-4 h-4" />
-              </span>
-              <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-primary to-primary-foreground/10 opacity-0 blur transition-opacity group-hover:opacity-20" />
-            </Link>
+            <div className="flex items-center gap-3 w-full">
+              <Link
+                href="/briefing"
+                className="group relative inline-flex items-center justify-center rounded-lg border border-primary/30 bg-background/50 backdrop-blur-sm px-6 py-3 text-sm font-medium text-foreground transition-all hover:bg-accent/10 hover:border-accent/50 hover:scale-105 active:scale-100 flex-1"
+              >
+                <span className="relative z-10 flex items-center gap-2">
+                  {t(messages, 'home.startProject', 'Começar um projeto')}
+                  <ArrowRight className="w-4 h-4" />
+                </span>
+                <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-primary to-primary-foreground/10 opacity-0 blur transition-opacity group-hover:opacity-20" />
+              </Link>
+              <Link
+                href="https://wa.me/+554788475891"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="transition-transform hover:scale-110 active:scale-100 opacity-70 hover:opacity-100"
+              >
+                <Image
+                  src="/assets/icons/whatsapp.svg"
+                  alt="WhatsApp"
+                  width={20}
+                  height={20}
+                  className="w-5 h-5"
+                />
+              </Link>
+            </div>
           </div>
         </motion.div>
 

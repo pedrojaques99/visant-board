@@ -160,38 +160,38 @@ export function Navigation() {
           </div>
           <MobileDropdown />
           <div className="flex items-center gap-4">
+            <div className="flex items-center gap-6">
+              <Link
+                href="https://wa.me/+554788475891"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="transition-transform hover:scale-110 active:scale-100 opacity-70 hover:opacity-100"
+              >
+                <Image
+                  src="/assets/icons/whatsapp.svg"
+                  alt="WhatsApp"
+                  width={20}
+                  height={20}
+                  className="w-4 h-4"
+                />
+              </Link>
+              <Link
+                href="https://instagram.com/visant.co"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="transition-transform hover:scale-110 active:scale-100 opacity-70 hover:opacity-100"
+              >
+                <Image
+                  src="/assets/icons/instagram.svg"
+                  alt="Instagram"
+                  width={20}
+                  height={20}
+                  className="w-4 h-4" 
+                />
+              </Link>
+            </div>
             <ThemeSwitcher />
             <LanguageSwitcher />
-          </div>
-          <div className="hidden sm:flex items-center gap-8">
-            <Link
-              href="https://wa.me/+554788475891"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="transition-transform hover:scale-110 active:scale-100 opacity-70 hover:opacity-100"
-            >
-              <Image
-                src="/assets/icons/whatsapp.svg"
-                alt="WhatsApp"
-                width={20}
-                height={20}
-                className="w-4 h-4"
-              />
-            </Link>
-            <Link
-              href="https://instagram.com/visant.co"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="transition-transform hover:scale-110 active:scale-100 opacity-70 hover:opacity-100"
-            >
-              <Image
-                src="/assets/icons/instagram.svg"
-                alt="Instagram"
-                width={20}
-                height={20}
-                className="w-4 h-4" 
-              />
-            </Link>
           </div>
         </div>
       </div>
