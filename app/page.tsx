@@ -461,18 +461,17 @@ export default function Home() {
       {/* Hero Section with 3D Logo */}
       <section className="relative h-[80vh] md:h-[80vh] flex items-center justify-center px-2 overflow-hidden">
         {/* 3D Hero Component */}
-        <div className={cn(
-          "absolute inset-0 w-full h-full scale-110",
-          isMobileOrTablet ? "pointer-events-none" : ""
-        )}>
-          <Hero3D />
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="relative w-full h-full">
+            <Logo3D isMobile={isMobileOrTablet} />
+          </div>
         </div>
 
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="relative text-center space-y-6 z-10 md:translate-y-16"
+          className="relative text-center space-y-6 z-10"
         >
           <h1 className="text-4xl md:text-5xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70">
             {t(messages, 'home.title', 'Welcome to Visant®')}
