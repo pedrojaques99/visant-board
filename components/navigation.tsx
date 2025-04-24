@@ -7,19 +7,20 @@ import { LanguageSwitcher } from './language-switcher';
 import { createBrowserClient } from '@supabase/ssr';
 import { useEffect, useState } from 'react';
 import { Session } from '@supabase/supabase-js';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { usePathname } from 'next/navigation';
 import { useI18n } from '@/context/i18n-context';
 import { t } from '@/utils/translations';
 import { useMediaQuery } from '@/hooks/use-media-query';
+import { ChevronDown } from 'lucide-react';
 
-const NavLink = ({ href, translationKey, fallback }: { href: string; translationKey: string; fallback: string }) => {
+const NavLink = ({ href, translationKey, fallback, onClick }: { href: string; translationKey: string; fallback: string; onClick?: () => void }) => {
   const pathname = usePathname();
   const isActive = pathname === href;
   const { messages } = useI18n();
 
   return (
-    <Link href={href} className="relative">
+    <Link href={href} className="relative" onClick={onClick}>
       <motion.span
         className={`text-sm font-medium transition-colors ${
           isActive ? 'text-primary' : 'hover:text-primary'
@@ -43,6 +44,53 @@ const NavLink = ({ href, translationKey, fallback }: { href: string; translation
         />
       )}
     </Link>
+  );
+};
+
+const MobileDropdown = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const { messages } = useI18n();
+  const pathname = usePathname();
+
+  const toggleDropdown = () => setIsOpen(!isOpen);
+  const closeDropdown = () => setIsOpen(false);
+
+  return (
+    <div className="relative md:hidden">
+      <button
+        onClick={toggleDropdown}
+        className="flex items-center gap-1 text-sm font-medium hover:text-primary"
+      >
+        {t(messages, 'navigation.portfolio', 'Portfolio')}
+        <ChevronDown className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+      </button>
+      
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            className="absolute top-full left-1/5 -translate-x-1/2 mt-2 py-2 w-36 bg-background/95 backdrop-blur-sm border border-border/50 rounded-lg shadow-lg"
+          >
+            <Link
+              href="/portfolio"
+              className={`block px-4 py-2 text-sm hover:bg-accent/10 transition-colors ${pathname === '/portfolio' ? 'text-primary' : ''}`}
+              onClick={closeDropdown}
+            >
+              {t(messages, 'navigation.portfolio', 'Portfolio')}
+            </Link>
+            <Link
+              href="/services"
+              className={`block px-4 py-2 text-sm hover:bg-accent/10 transition-colors ${pathname === '/services' ? 'text-primary' : ''}`}
+              onClick={closeDropdown}
+            >
+              {t(messages, 'navigation.services', 'Services')}
+            </Link>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
   );
 };
 
@@ -107,7 +155,10 @@ export function Navigation() {
           <div className="hidden md:block">
             <NavLink href="/services" translationKey="navigation.services" fallback="Services" />
           </div>
-          <NavLink href="/portfolio" translationKey="navigation.portfolio" fallback="Portfolio" />
+          <div className="hidden md:block">
+            <NavLink href="/portfolio" translationKey="navigation.portfolio" fallback="Portfolio" />
+          </div>
+          <MobileDropdown />
           <div className="flex items-center gap-4">
             <ThemeSwitcher />
             <LanguageSwitcher />

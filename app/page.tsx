@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { PortfolioItem } from '@/utils/coda';
 import Image from 'next/image';
-import { X, ArrowRight, Search, ArrowUpRight, Info } from 'lucide-react';
+import { X, ArrowRight, Search, ArrowUpRight, Info, Eye } from 'lucide-react';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence, useMotionValue, useTransform } from 'framer-motion';
@@ -228,12 +228,15 @@ export default function Home() {
             <p className="text-lg text-muted-foreground max-w-sm mx-auto">
               {t(messages, 'home.subtitle', 'Where visionary brands are born.')}
             </p>
-            <div className="flex flex-col md:flex-row gap-3 mt-4">
+            <div className="flex flex-col gap-3 mt-4">
               <Link
                 href="/portfolio"
                 className="group relative inline-flex items-center justify-center rounded-lg bg-primary/90 px-6 py-3 text-sm font-medium text-primary-foreground transition-all hover:bg-primary hover:scale-105 active:scale-100"
               >
-                <span className="relative z-10">{t(messages, 'portfolio.exploreOurWork', 'Explore o portfólio')}</span>
+                <span className="relative z-10 flex items-center gap-2">
+                  {t(messages, 'portfolio.exploreOurWork', 'Explore o portfólio')}
+                  <Eye className="w-4 h-4" />
+                </span>
                 <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-primary to-primary-foreground/10 opacity-0 blur transition-opacity group-hover:opacity-40" />
               </Link>
               <Link
@@ -458,17 +461,20 @@ export default function Home() {
           <p className="text-lg text-muted-foreground max-w-sm mx-auto">
             {t(messages, 'home.subtitle', 'Where visionary brands are born.')}
           </p>
-          <div className="flex flex-col md:flex-row gap-3 mt-6">
+          <div className="flex flex-col gap-3 mt-6">
             <Link
               href="/portfolio"
-              className="group relative inline-flex items-center justify-center rounded-lg bg-primary/90 px-6 py-3 text-sm font-medium text-primary-foreground transition-all hover:bg-primary hover:scale-105 active:scale-100"
+              className="group relative inline-flex items-center justify-center rounded-lg bg-primary/80 px-6 py-3 text-sm font-medium text-primary-foreground transition-all hover:bg-accent/90 border border-accent/50 hover:scale-105 active:scale-100"
             >
-              <span className="relative z-10">{t(messages, 'portfolio.exploreOurWork', 'Explore o portfólio')}</span>
+              <span className="relative z-10 flex items-center gap-2">
+                {t(messages, 'portfolio.exploreOurWork', 'Explore o portfólio')}
+                <Eye className="w-4 h-4" />
+              </span>
               <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-primary to-primary-foreground/10 opacity-0 blur transition-opacity group-hover:opacity-40" />
             </Link>
             <Link
               href="/briefing"
-              className="group relative inline-flex items-center justify-center rounded-lg border border-primary/30 bg-background/50 backdrop-blur-sm px-6 py-3 text-sm font-medium text-foreground transition-all hover:bg-primary/10 hover:scale-105 active:scale-100"
+              className="group relative inline-flex items-center justify-center rounded-lg border border-primary/30 bg-background/50 backdrop-blur-sm px-6 py-3 text-sm font-medium text-foreground transition-all hover:bg-accent/10 hover:border-accent/50 hover:scale-105 active:scale-100"
             >
               <span className="relative z-10 flex items-center gap-2">
                 {t(messages, 'home.startProject', 'Começar um projeto')}
@@ -559,7 +565,7 @@ export default function Home() {
 
       {/* Desktop Fixed Footer with Latest Projects */}
       <div className="fixed bottom-0 left-0 right-0 pointer-events-auto z-[2]">
-        <div className="bg-background/80 backdrop-blur-sm border-t border-border/50">
+        <div className="backdrop-blur-lg border-t border-border/50">
           {/* Desktop Hint */}
           <div className="hidden md:block absolute bottom-full right-1/2 -translate-x-2 mb-10">
             <motion.button
@@ -596,21 +602,20 @@ export default function Home() {
             </motion.button>
           </div>
 
-          <div className="container mx-auto px-4 py-3 sm:py-4">
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-16">
+          <div className="flex flex-col w-full mx-auto sm:py-6 sm:px-6 backdrop-blur-sm">
+            <div className="flex items-center justify-center gap-3 sm:gap-8">
               <span className="text-xs text-muted-foreground font-medium">
                 {t(messages, 'home.latestProjects', 'Latest Projects')}:
               </span>
-              <div className="flex flex-wrap sm:flex-nowrap justify-center items-center gap-3 sm:gap-16">
+              <div className="flex flex-wrap sm:flex-nowrap justify-center items-center gap-3 sm:gap-8">
                 {latestProjects.map((project, index) => (
                   <div key={project.id} className="relative group">
-                    {index > 0 && <span className="hidden sm:block absolute -left-8 top-1/2 -translate-y-1/2 text-muted-foreground/30">|</span>}
                     <Link
                       href={`/portfolio/${project.id}`}
                       className={cn(
-                        "text-xs sm:text-sm transition-all px-3 sm:px-4 py-1 sm:py-1.5 rounded-full border hover:border-primary/50 hover:bg-primary/5 flex items-center gap-1.5",
+                        "text-xs sm:text-sm transition-all px-6 py-2 bg-gradient-to-l from-accent/0 to-accent/5 rounded-full border hover:border-accent/50 hover:bg-accent/5 hover:scale-105 active:scale-100 flex items-center gap-6",
                         activeProject?.id === project.id 
-                          ? "border-primary text-primary bg-primary/5" 
+                          ? "border-accent text-accent bg-accent/5" 
                           : "border-border/50 text-foreground hover:text-primary"
                       )}
                       onMouseEnter={() => {

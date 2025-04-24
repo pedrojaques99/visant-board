@@ -1,4 +1,4 @@
-import { Layers, Palette, Layout } from 'lucide-react';
+import { Layers, Palette, Layout, Type } from 'lucide-react';
 import { ReactElement, createElement } from 'react';
 
 interface Service {
@@ -66,6 +66,12 @@ export const services: Service[] = [
     icon: createElement(Layout, { className: "w-5 h-5" }),
     href: '/services'
   },
+  {
+    title: 'about.services.naming',
+    description: 'about.services.naming.description',
+    icon: createElement(Type, { className: "w-5 h-5" }),
+    href: '/services'
+  }
 ];
 
 export const team = [

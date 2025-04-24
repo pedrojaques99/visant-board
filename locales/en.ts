@@ -14,13 +14,14 @@ export const messages = {
     about: "About",
     portfolio: "Portfolio",
     contact: "Contact",
+    services: "Services"
   },
   home: {
     title: "Welcome to Visant®",
     subtitle: "Where visionary brands are born.",
     interactionHint: "Click and drag to interact with the 3D logo",
     rotateHint: "Click and drag to rotate",
-    latestProjects: "Latest Projects",
+    latestProjects: "Explore our latest projects",  
     startProject: "Start a project",
     swipeHint: "Scroll or swipe to explore",
     footerHint: "Click on the projects below to see more details"
@@ -28,7 +29,7 @@ export const messages = {
   portfolio: {
     title: "Portfolio",
     subtitle: "Explore our collection of projects and client work",
-    exploreOurWork: "Explore our work",
+    exploreOurWork: "View portfolio",
     filter: {
       all: "All",
     },
@@ -39,7 +40,7 @@ export const messages = {
     portugueseDescription: "Description",
     project: "Project",
     noImages: "No images available for this project",
-    show3D: "View in 3D",
+    show3D: "View 3D",
     hide3D: "Hide 3D",
     relatedProjects: "Related Projects",
     credits: "Credits"
@@ -65,21 +66,23 @@ export const messages = {
       'visualIdentity.description': 'Crafting unique visual languages',
       artDirection: 'Art Direction',
       'artDirection.description': 'Guiding creative vision and execution',
+      naming: 'Naming',
+      'naming.description': 'Creating memorable and meaningful brand names',
     },
   },
   footer: {
     description: "Creating bold and visionary brand identities that make a lasting impact.",
     quickLinks: "Quick Links",
     portfolio: "Portfolio",
-    startProject: "Start a Project",
+    startProject: "Start a Project Now",
     about: "About",
     contact: "Contact",
     followUs: "Follow Us",
     instagram: "Instagram",
     whatsapp: "WhatsApp",
-    email: "contact@visant.design",
-    phone: "+55 (47) 88475-891",
-    rights: "All rights reserved.",
+    email: "contact@visant.co",
+    phone: "+55 (47) 9 8847-5891",
+    rights: "© Visant® 2025. All rights reserved.",
     privacy: "Privacy Policy",
     terms: "Terms of Service",
     visantIcon: "Visant"
@@ -87,7 +90,7 @@ export const messages = {
   services: {
     badge: "Services",
     title: "Branding & Visual Identity Project",
-    subtitle: "A Complete Branding service that will transform your brand's identity",
+    subtitle: "A Branding service that will transform your brand's identity in a strategic and visually impactful way.",
     cta: "Start Project",
     timelineTitle: "Project Timeline",
     methodologyTitle: "Our Methodology",
@@ -97,7 +100,7 @@ export const messages = {
     differenceDescription: "The logo is the \"icon\" that represents a business, while visual identity is the entire universe that makes up the brand, such as color palette, typography (fonts), and visual elements.",
     features: {
       optimizedTime: "Optimized Timeline",
-      optimizedTimeDescription: "Delivery in 5-15 business days with quality and dedication",
+      optimizedTimeDescription: "Delivery in 15-30 business days with quality and dedication",
       focusedGoal: "Goal-Focused",
       focusedGoalDescription: "In-depth research and personalized strategy",
       uniqueResult: "Unique Result",
@@ -106,23 +109,23 @@ export const messages = {
     timeline: {
       closing: {
         title: "Closing",
-        description: "project and delivery schedule reservation"
+        description: "Project start and delivery schedule reservation"
       },
       alignment: {
         title: "First alignment call",
-        description: "reference research"
+        description: "Reference research, positioning and target audience"
       },
       strategy: {
         title: "Strategy",
-        description: "brand (positioning, target audience, archetype and more)"
+        description: "Reference research, positioning, target audience and archetype"
       },
       refinement: {
         title: "Final refinement",
-        description: "presentation creation"
+        description: "Presentation creation"
       },
       delivery: {
         title: "Presentation and Delivery",
-        description: "final files delivery"
+        description: "Final files delivery"
       }
     }
   },
@@ -132,6 +135,7 @@ export const messages = {
     branding: "Branding",
     manifesto: "Manifesto",
     positioning: "Positioning",
-    graphicMaterials: "Graphic Materials"
+    graphicMaterials: "Graphic Materials",
+    naming: "Naming"
   }
 }; 

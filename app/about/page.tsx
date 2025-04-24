@@ -96,7 +96,7 @@ export default function About() {
           >
             {t(messages, 'about.whatWeDo', 'What we do')}
           </motion.h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 sm:gap-4 sm:w-[90%] mx-auto">
             {services.map((service, index) => (
               <ServiceCard key={service.title} service={service} index={index} />
             ))}

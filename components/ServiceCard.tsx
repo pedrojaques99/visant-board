@@ -20,8 +20,6 @@ interface ServiceCardProps {
 export const ServiceCard = ({ service, index }: ServiceCardProps) => {
   const { messages } = useI18n();
 
-  // Extract just the service name from the full path
-  const serviceKey = service.title.split('.').pop() || '';
 
   return (
     <Link href={service.href}>
@@ -36,13 +34,13 @@ export const ServiceCard = ({ service, index }: ServiceCardProps) => {
             {service.icon}
           </div>
           <h3 className="text-lg font-semibold text-foreground/90 group-hover:text-[#52ddeb] transition-colors">
-            {t(messages, service.title, serviceKey)}
+            {t(messages, service.title)}
           </h3>
           <p className="text-muted-foreground text-sm">
-            {t(messages, service.description, `${serviceKey} description`)}
+            {t(messages, service.description)}
           </p>
           <div className="flex items-center gap-2 text-foreground/70 group-hover:text-[#52ddeb] transition-colors">
-            <span className="text-sm font-medium">{t(messages, 'common.showDetails', 'Learn more')}</span>
+            <span className="text-sm font-light">{t(messages, 'common.showDetails', 'Learn more')}</span>
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
           </div>
         </div>

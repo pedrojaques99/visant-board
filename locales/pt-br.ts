@@ -14,11 +14,12 @@ export const messages = {
     about: "Sobre",
     portfolio: "Portfólio",
     contact: "Contato",
+    services: "Serviços"
   },
   services: {
     badge: "Serviços",
-    title: "Projeto de Branding & Identidade Visual",
-    subtitle: "O serviço de criação de um Branding Completo que vai transformar a identidade da sua marca",
+    title: "Branding & Identidade Visual",
+    subtitle: "O serviço de criação de um Branding que vai transformar a identidade da sua marca de uma forma estratégica e visualmente impactante.",
     cta: "Começar Projeto",
     timelineTitle: "Timeline do Projeto",
     methodologyTitle: "Nossa Metodologia",
@@ -28,7 +29,7 @@ export const messages = {
     differenceDescription: "O logotipo é o \"ícone\" que representa um negócio, já a identidade visual é todo universo que compõe a marca, como paleta de cores, tipografias (fontes) e elementos visuais.",
     features: {
       optimizedTime: "Prazo Otimizado",
-      optimizedTimeDescription: "Entrega em 5-15 dias úteis com qualidade e dedicação",
+      optimizedTimeDescription: "Entrega em 15-30 dias úteis com qualidade e dedicação",
       focusedGoal: "Foco no Objetivo",
       focusedGoalDescription: "Pesquisa aprofundada e estratégia personalizada",
       uniqueResult: "Resultado Único",
@@ -37,23 +38,23 @@ export const messages = {
     timeline: {
       closing: {
         title: "Fechamento",
-        description: "do projeto e reserva da agenda de entrega"
+        description: "Começo do projeto e reserva da agenda de entrega"
       },
       alignment: {
         title: "Primeira call de alinhamento",
-        description: "pesquisa de referências"
+        description: "Pesquisa de referências, posicionamento e público-alvo"
       },
       strategy: {
         title: "Estratégia",
-        description: "da marca (posicionamento, público-alvo, arquétipo e mais)"
+        description: "Pesquisa de referências, posicionamento, público-alvo e arquétipo"
       },
       refinement: {
         title: "Refinamento final",
-        description: "criação da apresentação"
+        description: "Criação da apresentação final"
       },
       delivery: {
         title: "Apresentação e Entrega",
-        description: "entrega dos arquivos finais"
+        description: "Entrega dos arquivos finais"
       }
     }
   },
@@ -62,15 +63,15 @@ export const messages = {
     subtitle: "Onde marcas visionárias nascem.",
     interactionHint: "Clique e arraste para interagir com o logo 3D",
     rotateHint: "Clique e arraste para girar",
-    latestProjects: "Últimos Projetos",
-    startProject: "Começar um projeto",
-    swipeHint: "Role ou arraste para explorar",
+    latestProjects: "Explore nossos últimos projetos",
+    startProject: "Começar um projeto agora",
+    swipeHint: "Arraste para explorar",
     footerHint: "Clique nos projetos abaixo para ver mais detalhes"
   },
   portfolio: {
     title: "Portfólio",
-    subtitle: "Explore nossa coleção de projetos e trabalhos para clientes",
-    exploreOurWork: "Explore nosso trabalho",
+    subtitle: "Explore nossa coleção de projetos e nos conte o que você acha",
+    exploreOurWork: "Ver portfólio",
     filter: {
       all: "Todos",
     },
@@ -81,7 +82,7 @@ export const messages = {
     portugueseDescription: "Descrição",
     project: "Projeto",
     noImages: "Não há imagens disponíveis para este projeto",
-    show3D: "Ver em 3D",
+    show3D: "Ver 3D",
     hide3D: "Ocultar 3D",
     relatedProjects: "Projetos Relacionados",
     credits: "Créditos"
@@ -90,7 +91,7 @@ export const messages = {
     title: "Sobre Nós",
     subtitle: "Nossa História",
     description: "Somos uma agência de design especializada em criar identidades de marca que contam histórias e inspiram conexões.",
-    descriptionMore: "Trabalhamos diretamente com fundadores, criativos e empresas que acreditam no poder do design.",
+    descriptionMore: "Trabalhamos diretamente com fundadores, criativos e empresas que acreditam no poder do design e do branding.",
     whatWeDo: "O que fazemos",
     team: "Equipe",
     cta: "Procurando uma identidade visual marcante?",
@@ -101,17 +102,19 @@ export const messages = {
     clients: "Clientes",
     brands: "Marcas",
     services: {
-      branding: "Branding",
-      brandingDescription: "Criação de marcas memoráveis e autênticas que conectam com seu público",
-      visualIdentity: "Identidade Visual",
-      visualIdentityDescription: "Desenvolvimento de linguagens visuais únicas e consistentes",
-      artDirection: "Direção de Arte",
-      artDirectionDescription: "Guiando a visão criativa e execução de projetos visuais"
+      branding: 'Branding',
+      'branding.description': 'Criando marcas memoráveis',
+      visualIdentity: 'Identidade Visual',
+      'visualIdentity.description': 'Criando linguagens visuais únicas',
+      artDirection: 'Direção de Arte',
+      'artDirection.description': 'Guiando a visão criativa e execução',
+      naming: 'Naming',
+      'naming.description': 'Criando nomes memoráveis e significativos para marcas',
     }
   },
   footer: {
-    description: "Criando identidades de marca ousadas e visionárias que causam um impacto duradouro.",
-    quickLinks: "Links Rápidos",
+    description: "Criando identidades ousadas e visionárias que causam um impacto atemporal.",
+    quickLinks: "Links",
     portfolio: "Portfólio",
     startProject: "Iniciar um Projeto",
     about: "Sobre",
@@ -119,9 +122,9 @@ export const messages = {
     followUs: "Siga-nos",
     instagram: "Instagram",
     whatsapp: "WhatsApp",
-    email: "contato@visant.design",
-    phone: "+55 (47) 88475-891",
-    rights: "Todos os direitos reservados.",
+    email: "contato@visant.co",
+    phone: "+55 (47) 9 8847-5891",
+    rights: "© Visant® 2025. Todos os direitos reservados.",
     privacy: "Política de Privacidade",
     terms: "Termos de Serviço",
     visantIcon: "Visant"
@@ -132,6 +135,7 @@ export const messages = {
     branding: "Branding",
     manifesto: "Manifesto",
     positioning: "Posicionamento",
-    graphicMaterials: "Materiais Gráficos"
+    graphicMaterials: "Materiais Gráficos",
+    naming: "Naming"
   }
 }; 
