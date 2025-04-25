@@ -446,7 +446,7 @@ export function ProjectPageClient({ id, initialData, relatedProjects }: Props) {
             {media.map((mediaItem, index) => (
               <div 
                 key={mediaItem.url} 
-                className="relative w-full overflow-hidden bg-muted rounded-lg sm:rounded-lg cursor-pointer"
+                className="relative w-full overflow-hidden rounded-lg sm:rounded-lg cursor-pointer"
                 onClick={() => setSelectedImage(mediaItem.url)}
               >
                 {mediaItem.type === 'video' ? (
@@ -469,7 +469,8 @@ export function ProjectPageClient({ id, initialData, relatedProjects }: Props) {
                     sizes="(max-width: 768px) 100vw, (max-width: 1280px) 100vw, 1280px"
                     priority={index === 0}
                     loading={index === 0 ? "eager" : "lazy"}
-                    quality={index === 0 ? 90 : 75}
+                    quality={100}
+                    unoptimized={mediaItem.url.toLowerCase().endsWith('.png')}
                     placeholder="blur"
                     blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDABQODxIPDRQSEBIXFRQdHx4eHRoaHSQtJSEkLzUvLy0vMC4uLzU1LzU1LzU1LzU1LzU1LzU1LzU1LzU1LzX/2wBDARUXFycdHx0dHy0dHy0dHy0dHy0dHy0dHy0dHy0dHy0dHy0dHy0dHy0dHy0dHy0dHy0dHy0dHX/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAb/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k="
                     onError={(e) => {
