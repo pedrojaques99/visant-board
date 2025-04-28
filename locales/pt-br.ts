@@ -110,6 +110,23 @@ export const messages = {
       'artDirection.description': 'Guiando a visão criativa e execução',
       naming: 'Naming',
       'naming.description': 'Criando nomes memoráveis e significativos para marcas',
+    },
+    teamMembers: {
+      pedroXavier: {
+        name: 'Pedro Xavier',
+        role: 'Co-fundador',
+        href: 'https://api.whatsapp.com/send?phone=5547988475891'
+      },
+      pedroJaques: {
+        name: 'Pedro Jaques',
+        role: 'Co-fundador',
+        href: 'https://api.whatsapp.com/send?phone=5547999306718'
+      },
+      you: {
+        name: 'Você 🫵',
+        role: 'Envie seu portfólio',
+        href: 'https://api.whatsapp.com/send?phone=5547988475891'
+      }
     }
   },
   footer: {

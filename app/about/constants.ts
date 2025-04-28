@@ -78,17 +78,20 @@ export const team = [
   { 
     name: 'Pedro Xavier', 
     role: 'Co-founder',
-    image: '/assets/images/pedro.webp'
+    image: '/assets/images/pedro.webp',
+    href: 'https://api.whatsapp.com/send?phone=5547988475891'
   },
   { 
     name: 'Pedro Jaques', 
     role: 'Co-founder',
-    image: '/assets/images/jacao.webp'
+    image: '/assets/images/jacao.webp',
+    href: 'https://api.whatsapp.com/send?phone=5547999306718'
   },
   { 
     name: 'You', 
-    role: 'Designer',
-    image: '/assets/images/you.webp'
+    role: 'Send your portfolio',
+    image: '/assets/images/you.png',
+    href: 'https://api.whatsapp.com/send?phone=5547988475891'
   }
 ];
 
