@@ -107,10 +107,9 @@ export default function About() {
       {/* Numbers */}
       <section className="w-full py-16 sm:py-32">
         <div className="max-w-[1800px] mx-auto px-4 sm:px-5 md:px-12">
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 sm:gap-12">
-            <Counter end={statistics.totalProjects} label={t(messages, 'about.projects', 'Projects')} />
-            <Counter end={statistics.totalClients} label={t(messages, 'about.clients', 'Clients')} />
-            <Counter end={statistics.totalBrands} label={t(messages, 'about.brands', 'Brands')} />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 sm:gap-12">
+            <Counter end={1500} label={t(messages, 'about.graphics', 'Materiais Gráficos')} />
+            <Counter end={statistics.totalBrands + 63} label={t(messages, 'about.brands', 'Brands')} />
           </div>
         </div>
       </section>

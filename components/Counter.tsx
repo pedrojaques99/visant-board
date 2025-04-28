@@ -40,7 +40,9 @@ export const Counter = ({ end, duration = 2000, label }: CounterProps) => {
       transition={{ duration: 0.5 }}
       className="text-center relative group"
     >
-      <div className="text-8xl font-medium mb-3 bg-clip-text text-transparent bg-gradient-to-r from-[#2F5F65FF] to-[#52ddeb]/70">+{count}</div>
+      <div className="text-8xl font-medium mb-3 bg-clip-text text-transparent bg-gradient-to-r from-[#2F5F65FF] to-[#52ddeb]/70">
+        +{count >= 1000 ? `${(count / 1000).toFixed(1)}k` : count}
+      </div>
       <div className="text-muted-foreground font-medium group-hover:text-[#464646FF] transition-colors duration-300">{label}</div>
     </motion.div>
   );

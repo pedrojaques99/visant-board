@@ -259,7 +259,7 @@ export default function Home() {
                 <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-primary to-primary-foreground/10 opacity-0 blur transition-opacity group-hover:opacity-40" />
               </Link>
               <Link
-                href="/briefing"
+                href="Https://api.whatsapp.com/send?phone=5547988475891"
                 className="group relative inline-flex items-center justify-center rounded-lg border border-primary/30 bg-background/50 backdrop-blur-sm px-6 py-3 text-sm font-medium text-foreground transition-all hover:bg-primary/10 hover:scale-105 active:scale-100"
               >
                 <span className="relative z-10 flex items-center gap-2">
@@ -489,7 +489,7 @@ export default function Home() {
               <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-primary to-primary-foreground/10 opacity-0 blur transition-opacity group-hover:opacity-40" />
             </Link>
             <Link
-              href="/briefing"
+              href="https://api.whatsapp.com/send?phone=5547988475891"
               className="group relative inline-flex items-center justify-center rounded-lg border border-primary/30 bg-background/50 backdrop-blur-sm px-6 py-3 text-sm font-medium text-foreground transition-all hover:bg-accent/10 hover:border-accent/50 hover:scale-105 active:scale-100"
             >
               <span className="relative z-10 flex items-center gap-2">
