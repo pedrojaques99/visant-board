@@ -86,9 +86,9 @@ export const team = [
     image: '/assets/images/jacao.webp'
   },
   { 
-    name: 'Miguel Soares', 
+    name: 'You', 
     role: 'Designer',
-    image: '/assets/images/Captura de tela 2025-04-12 145420.png'
+    image: '/assets/images/you.webp'
   }
 ];
 
