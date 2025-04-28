@@ -12,7 +12,7 @@ const manrope = Manrope({
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
-  : "http://localhost:3000";
+  : "https://www.visant.co";
 
 export const viewport: Viewport = {
   width: 'device-width',

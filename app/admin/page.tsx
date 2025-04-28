@@ -6,6 +6,10 @@ import { Input } from '@/components/ui/input';
 import { Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
+// Allow this page to be dynamic
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
 export default function AdminPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -61,7 +65,8 @@ export default function AdminPage() {
 
       if (response.ok) {
         setUpdateStatus(`Cache ${selectedCache === 'all' ? 'geral' : 'específico'} atualizado com sucesso!`);
-        router.refresh();
+        // Force a hard refresh of the page
+        window.location.reload();
       } else {
         setUpdateStatus(data.message || 'Erro ao atualizar cache');
       }
@@ -74,28 +79,24 @@ export default function AdminPage() {
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="w-full max-w-md space-y-8 p-8">
-          <div className="text-center">
-            <h2 className="text-2xl font-bold">Admin</h2>
-            <p className="text-sm text-muted-foreground mt-2">Digite a senha para acessar</p>
-          </div>
-          <form onSubmit={handleLogin} className="mt-8 space-y-4">
-            <Input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Senha"
-              className="w-full"
-            />
-            {error && (
-              <p className="text-sm text-red-500 text-center">{error}</p>
-            )}
-            <Button
-              type="submit"
-              className="w-full"
-              disabled={isLoading}
-            >
+      <div className="min-h-screen bg-background p-8">
+        <div className="max-w-md mx-auto space-y-8">
+          <h1 className="text-2xl font-bold text-center">Painel Admin</h1>
+          <form onSubmit={handleLogin} className="space-y-4">
+            <div>
+              <label htmlFor="password" className="block text-sm font-medium mb-2">
+                Senha
+              </label>
+              <Input
+                id="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full"
+                disabled={isLoading}
+              />
+            </div>
+            <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -105,6 +106,9 @@ export default function AdminPage() {
                 'Entrar'
               )}
             </Button>
+            {error && (
+              <p className="text-sm text-red-500 text-center">{error}</p>
+            )}
           </form>
         </div>
       </div>

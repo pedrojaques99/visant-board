@@ -5,9 +5,13 @@ import { updatePortfolioCache } from '@/utils/coda';
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'visant2024';
 const TABLE_ID = 'grid-7B5GxoqgKn'; // ID específico da tabela do portfólio
 
+// Allow this route to be called in production
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
 export async function POST(request: Request) {
   try {
-    const { password } = await request.json();
+    const { password, cacheType } = await request.json();
 
     if (password !== ADMIN_PASSWORD) {
       return NextResponse.json(
