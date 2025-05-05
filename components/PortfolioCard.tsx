@@ -100,7 +100,7 @@ export function PortfolioCard({ item }: PortfolioCardProps) {
                   alt={item.title || 'Portfolio item'}
                   width={3840}
                   height={2160}
-                  className="w-full object-cover transition-all duration-600"
+                  className="w-full object-cover transition-all duration-600 bg-transparent"
                   sizes="(max-width: 768px) 95vw, (max-width: 1280px) 45vw, 45vw"
                   onError={() => {
                     console.error('Image failed to load:', thumbUrl);
@@ -118,7 +118,7 @@ export function PortfolioCard({ item }: PortfolioCardProps) {
                   alt={`${item.title || 'Portfolio item'} - View ${index + 2}`}
                   width={3840}
                   height={2160}
-                  className={`absolute inset-0 w-full h-full object-cover transition-all duration-200 ${
+                  className={`absolute inset-0 w-full h-full object-cover transition-all duration-200 bg-transparent ${
                     isHovering && currentImageIndex === index ? 'opacity-100' : 'opacity-0'
                   }`}
                   sizes="(max-width: 768px) 95vw, (max-width: 1280px) 45vw, 45vw"

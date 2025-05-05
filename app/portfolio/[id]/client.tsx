@@ -476,8 +476,11 @@ export function ProjectPageClient({ id, initialData, relatedProjects }: Props) {
                     onError={(e) => {
                       console.error('Image failed to load:', mediaItem.url);
                       const target = e.target as HTMLImageElement;
-                      target.src = '/images/fallback.jpg';
-                      target.onerror = null; // Prevent infinite loop
+                      target.style.display = 'none';
+                      const skeleton = document.createElement('div');
+                      skeleton.className = 'w-full h-[200px] bg-muted animate-pulse rounded-lg flex items-center justify-center';
+                      skeleton.innerHTML = '<span style="color:#aaa;font-size:2rem;">🖼️</span>';
+                      target.parentNode?.insertBefore(skeleton, target.nextSibling);
                     }}
                   />
                 )}

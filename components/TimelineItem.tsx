@@ -74,16 +74,9 @@ export const TimelineItem = ({ day, titleKey, descriptionKey, index, totalItems 
       >
         {/* Background Shape */}
         <div className={cn(
-          "absolute left-0 sm:left-auto sm:right-0 top-1/2 -translate-y-1/2 w-12 sm:w-14 md:w-16 aspect-[2/1] rounded-lg transform -rotate-2",
+          "absolute left-0 sm:left-auto sm:right-0 top-1/2 -translate-y-1/2 w-12 sm:w-14 md:w-16 aspect-[2/1] rounded-lg",
           isHighlighted 
             ? "bg-[#52ddeb]/10 border border-[#52ddeb]/20" 
-            : "bg-muted-foreground/5 border border-muted-foreground/10"
-        )} />
-        {/* Secondary Shape */}
-        <div className={cn(
-          "absolute left-1 sm:left-auto sm:right-1 top-1/2 -translate-y-1/2 w-10 sm:w-12 md:w-14 aspect-[2/1] rounded-lg transform rotate-3",
-          isHighlighted 
-            ? "bg-[#52ddeb]/5 border border-[#52ddeb]/10" 
             : "bg-muted-foreground/5 border border-muted-foreground/10"
         )} />
         {/* Day Number */}
