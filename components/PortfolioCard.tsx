@@ -6,6 +6,7 @@ import { useState, useEffect, useRef } from 'react';
 import { PortfolioItem } from '@/utils/coda';
 import { useI18n } from '@/context/i18n-context';
 import { t } from '@/utils/translations';
+import { getVersionedImageUrl, isValidImageUrl } from '@/utils/image-helper';
 
 interface PortfolioCardProps {
   item: PortfolioItem;
@@ -24,7 +25,8 @@ export function PortfolioCard({ item }: PortfolioCardProps) {
   const thumbUrl = typeof item.thumb === 'string' 
     ? item.thumb.trim() 
     : '';
-  const hasValidThumb = thumbUrl.length > 0 && thumbUrl.startsWith('http');
+  const hasValidThumb = isValidImageUrl(thumbUrl);
+  const versionedThumbUrl = getVersionedImageUrl(thumbUrl);
 
   // Check if thumb is a video
   const isVideo = thumbUrl.toLowerCase().endsWith('.mp4');
@@ -33,7 +35,7 @@ export function PortfolioCard({ item }: PortfolioCardProps) {
   const hoverImages = Array.from({ length: 9 }, (_, i) => {
     const key = `image${String(i + 2).padStart(2, '0')}` as keyof typeof item;
     const url = typeof item[key] === 'string' ? item[key].trim() : '';
-    return url.length > 0 && url.startsWith('http') ? url : null;
+    return isValidImageUrl(url) ? getVersionedImageUrl(url) : null;
   }).filter((url): url is string => url !== null);
 
   // Validate item data
@@ -86,7 +88,7 @@ export function PortfolioCard({ item }: PortfolioCardProps) {
               {isVideo ? (
                 <video
                   ref={videoRef}
-                  src={thumbUrl}
+                  src={versionedThumbUrl}
                   className="w-full object-cover transition-all duration-600"
                   muted
                   loop
@@ -96,18 +98,20 @@ export function PortfolioCard({ item }: PortfolioCardProps) {
                 />
               ) : (
                 <Image
-                  src={thumbUrl}
+                  src={versionedThumbUrl}
                   alt={item.title || 'Portfolio item'}
                   width={3840}
                   height={2160}
                   className="w-full object-cover transition-all duration-600 bg-transparent"
                   sizes="(max-width: 768px) 95vw, (max-width: 1280px) 45vw, 45vw"
                   onError={() => {
-                    console.error('Image failed to load:', thumbUrl);
+                    console.error('Image failed to load:', versionedThumbUrl);
                     setImageError(true);
                   }}
                   priority={false}
                   quality={90}
+                  unoptimized={true}
+                  loading="eager"
                 />
               )}
               {/* Hover images - cycling effect */}
@@ -128,6 +132,8 @@ export function PortfolioCard({ item }: PortfolioCardProps) {
                   }}
                   priority={false}
                   quality={90}
+                  unoptimized={true}
+                  loading="eager"
                 />
               ))}
             </>

@@ -21,7 +21,11 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'cndvlwjphohgfgydvgum.supabase.co',
       }
-    ]
+    ],
+    domains: ['codahosted.io', 'cndvlwjphohgfgydvgum.supabase.co'],
+    minimumCacheTTL: 0,
+    dangerouslyAllowSVG: true,
+    unoptimized: true,
   },
   webpack: (config, { dev }) => {
     config.module.rules.push({
@@ -50,6 +54,23 @@ const nextConfig = {
   
   experimental: {
     // Updated property for Next.js 15
+  },
+  async headers() {
+    return [
+      {
+        source: '/assets/images/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'no-store, no-cache, must-revalidate',
+          },
+          {
+            key: 'Pragma',
+            value: 'no-cache',
+          },
+        ],
+      },
+    ];
   },
 };
 
