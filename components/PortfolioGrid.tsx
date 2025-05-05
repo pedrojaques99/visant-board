@@ -25,7 +25,7 @@ export function PortfolioGrid({ items, tipos, initialType }: PortfolioGridProps)
   const [isInitialLoading, setIsInitialLoading] = useState(true);
 
   // Gap responsivo: 8px no mobile, 24px no desktop
-  const GAP = isMobile ? 8 : 24;
+  const GAP = isMobile ? 6 : 14;
 
   const displayToActualSize = (display: number) => Math.min(display, 0.99);
   const actualToDisplaySize = (actual: number) => Math.min(actual, 1);
