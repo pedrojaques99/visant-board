@@ -17,7 +17,7 @@ export function PortfolioCard({ item }: PortfolioCardProps) {
   const [hoverImageErrors, setHoverImageErrors] = useState<Record<string, boolean>>({});
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isHovering, setIsHovering] = useState(false);
-  const [showDebug, setShowDebug] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const { messages } = useI18n();
   
@@ -65,7 +65,7 @@ export function PortfolioCard({ item }: PortfolioCardProps) {
 
     const interval = setInterval(() => {
       setCurrentImageIndex((prev) => (prev + 1) % hoverImages.length);
-    }, 1000); // Change image every 1 second
+    }, 1000);
 
     return () => clearInterval(interval);
   }, [isHovering, hoverImages.length]);
@@ -80,11 +80,9 @@ export function PortfolioCard({ item }: PortfolioCardProps) {
           setCurrentImageIndex(0);
         }}
       >
-        {/* Image container with dynamic aspect ratio */}
         <div className="relative w-full">
           {hasValidThumb && !imageError ? (
             <>
-              {/* Main image/video - always visible */}
               {isVideo ? (
                 <video
                   ref={videoRef}
@@ -97,24 +95,32 @@ export function PortfolioCard({ item }: PortfolioCardProps) {
                   preload="auto"
                 />
               ) : (
-                <Image
-                  src={versionedThumbUrl}
-                  alt={item.title || 'Portfolio item'}
-                  width={3840}
-                  height={2160}
-                  className="w-full object-cover transition-all duration-600 bg-transparent"
-                  sizes="(max-width: 768px) 95vw, (max-width: 1280px) 45vw, 45vw"
-                  onError={() => {
-                    console.error('Image failed to load:', versionedThumbUrl);
-                    setImageError(true);
-                  }}
-                  priority={false}
-                  quality={90}
-                  unoptimized={true}
-                  loading="eager"
-                />
+                <div className="relative">
+                  <Image
+                    src={versionedThumbUrl}
+                    alt={item.title || 'Portfolio item'}
+                    width={3840}
+                    height={2160}
+                    className={`w-full object-cover transition-all duration-600 bg-transparent ${
+                      isLoaded ? 'opacity-100' : 'opacity-0'
+                    }`}
+                    sizes="(max-width: 768px) 95vw, (max-width: 1280px) 45vw, 45vw"
+                    onError={() => {
+                      console.error('Image failed to load:', versionedThumbUrl);
+                      setImageError(true);
+                    }}
+                    onLoad={() => setIsLoaded(true)}
+                    priority={false}
+                    quality={85}
+                    loading="lazy"
+                    placeholder="blur"
+                    blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDABQODxIPDRQSEBIXFRQdHx4eHRoaHSQtJSEkMjU1LS0yMi4qLjgyPj4+OD5AQEBAR0dHSEhISFJSUlJSUlJSUlL/2wBDAR4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHhL/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAb/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k="
+                  />
+                  {!isLoaded && (
+                    <div className="absolute inset-0 bg-muted animate-pulse" />
+                  )}
+                </div>
               )}
-              {/* Hover images - cycling effect */}
               {hoverImages.length > 0 && hoverImages.map((url, index) => (
                 <Image
                   key={url}
@@ -131,9 +137,8 @@ export function PortfolioCard({ item }: PortfolioCardProps) {
                     setHoverImageErrors(prev => ({ ...prev, [url]: true }));
                   }}
                   priority={false}
-                  quality={90}
-                  unoptimized={true}
-                  loading="eager"
+                  quality={85}
+                  loading="lazy"
                 />
               ))}
             </>
@@ -146,7 +151,6 @@ export function PortfolioCard({ item }: PortfolioCardProps) {
             </div>
           )}
           
-          {/* Overlay with project info - using black gradient */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
             <div className="max-w-[80%] flex flex-wrap items-center gap-2">
               <h3 className="text-xl font-semibold text-white line-clamp-2">
