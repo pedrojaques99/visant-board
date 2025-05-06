@@ -18,6 +18,7 @@ export function PortfolioCard({ item }: PortfolioCardProps) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isHovering, setIsHovering] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [loadedHoverImages, setLoadedHoverImages] = useState<Record<string, boolean>>({});
   const videoRef = useRef<HTMLVideoElement>(null);
   const { messages } = useI18n();
   
@@ -59,7 +60,7 @@ export function PortfolioCard({ item }: PortfolioCardProps) {
     videoRef.current.play().catch(console.error);
   }, [isVideo]);
 
-  // Simple image cycling on hover
+  // Load hover images only when hovering
   useEffect(() => {
     if (!isHovering || hoverImages.length === 0) return;
 
@@ -99,8 +100,8 @@ export function PortfolioCard({ item }: PortfolioCardProps) {
                   <Image
                     src={versionedThumbUrl}
                     alt={item.title || 'Portfolio item'}
-                    width={3840}
-                    height={2160}
+                    width={800}
+                    height={450}
                     className={`w-full object-cover transition-all duration-600 bg-transparent ${
                       isLoaded ? 'opacity-100' : 'opacity-0'
                     }`}
@@ -111,7 +112,7 @@ export function PortfolioCard({ item }: PortfolioCardProps) {
                     }}
                     onLoad={() => setIsLoaded(true)}
                     priority={false}
-                    quality={85}
+                    quality={60}
                     loading="lazy"
                     placeholder="blur"
                     blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDABQODxIPDRQSEBIXFRQdHx4eHRoaHSQtJSEkMjU1LS0yMi4qLjgyPj4+OD5AQEBAR0dHSEhISFJSUlJSUlJSUlL/2wBDAR4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHhL/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAb/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k="
@@ -121,23 +122,26 @@ export function PortfolioCard({ item }: PortfolioCardProps) {
                   )}
                 </div>
               )}
-              {hoverImages.length > 0 && hoverImages.map((url, index) => (
+              {isHovering && hoverImages.length > 0 && hoverImages.map((url, index) => (
                 <Image
                   key={url}
                   src={url}
                   alt={`${item.title || 'Portfolio item'} - View ${index + 2}`}
-                  width={3840}
-                  height={2160}
+                  width={800}
+                  height={450}
                   className={`absolute inset-0 w-full h-full object-cover transition-all duration-200 bg-transparent ${
-                    isHovering && currentImageIndex === index ? 'opacity-100' : 'opacity-0'
+                    currentImageIndex === index ? 'opacity-100' : 'opacity-0'
                   }`}
                   sizes="(max-width: 768px) 95vw, (max-width: 1280px) 45vw, 45vw"
                   onError={() => {
                     console.error('Hover image failed to load:', url);
                     setHoverImageErrors(prev => ({ ...prev, [url]: true }));
                   }}
+                  onLoad={() => {
+                    setLoadedHoverImages(prev => ({ ...prev, [url]: true }));
+                  }}
                   priority={false}
-                  quality={85}
+                  quality={60}
                   loading="lazy"
                 />
               ))}
