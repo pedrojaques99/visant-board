@@ -1,12 +1,14 @@
 /**
- * Adds a cache-busting parameter to image URLs
+ * Adds a stable version parameter to image URLs for caching
  */
 export const getVersionedImageUrl = (url: string) => {
   if (!url) return url;
   
-  // Add a timestamp as a query parameter
+  // Use a stable version number instead of timestamp
+  // This ensures the same URL is generated across page loads
+  const version = process.env.NEXT_PUBLIC_IMAGE_VERSION || '1.0';
   const separator = url.includes('?') ? '&' : '?';
-  return `${url}${separator}v=${Date.now()}`;
+  return `${url}${separator}v=${version}`;
 };
 
 /**
