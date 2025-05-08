@@ -18,6 +18,8 @@ export function Footer() {
               width={20}
               height={20}
               className="h-6 w-auto"
+              unoptimized
+              priority
             />
             <p className="text-sm text-muted-foreground max-w-[280px]">
               {t(messages, 'footer.description', 'Creating bold and visionary brand identities that make a lasting impact.')}
@@ -66,6 +68,7 @@ export function Footer() {
                   width={20}
                   height={20}
                   className="w-5 h-5"
+                  unoptimized
                 />
               </Link>
               <Link
@@ -80,6 +83,7 @@ export function Footer() {
                   width={20}
                   height={20}
                   className="w-5 h-5"
+                  unoptimized
                 />
               </Link>
             </div>

@@ -190,7 +190,7 @@ export function Navigation() {
               className="transition-transform hover:scale-110 active:scale-100 opacity-70 hover:opacity-100"
             >
               <Image
-                src={`/assets/icons/whatsapp.svg`}
+                src="/assets/icons/whatsapp.svg"
                 alt="WhatsApp"
                 width={20}
                 height={20}
@@ -205,7 +205,7 @@ export function Navigation() {
               className="transition-transform hover:scale-110 active:scale-100 opacity-70 hover:opacity-100"
             >
               <Image
-                src={`/assets/icons/instagram.svg`}
+                src="/assets/icons/instagram.svg"
                 alt="Instagram"
                 width={20}
                 height={20}
