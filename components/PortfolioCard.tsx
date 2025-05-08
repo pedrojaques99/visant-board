@@ -105,14 +105,25 @@ export function PortfolioCard({ item }: PortfolioCardProps) {
                       isLoaded ? 'opacity-100' : 'opacity-0'
                     }`}
                     sizes="(max-width: 768px) 95vw, (max-width: 1280px) 45vw, 45vw"
-                    onError={() => {
-                      console.error('Image failed to load:', thumbUrl);
+                    onError={(error) => {
+                      const target = error.target as HTMLImageElement;
+                      console.error('Image failed to load:', {
+                        url: thumbUrl,
+                        naturalWidth: target.naturalWidth,
+                        naturalHeight: target.naturalHeight,
+                        currentSrc: target.currentSrc,
+                        loading: target.loading,
+                        complete: target.complete,
+                        error: error,
+                        timestamp: new Date().toISOString(),
+                      });
                       setImageError(true);
                     }}
                     onLoad={() => setIsLoaded(true)}
                     priority={true}
                     quality={60}
                     loading="eager"
+                    unoptimized={thumbUrl.toLowerCase().endsWith('.png')}
                     placeholder="blur"
                     blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDABQODxIPDRQSEBIXFRQdHx4eHRoaHSQtJSEkMjU1LS0yMi4qLjgyPj4+OD5AQEBAR0dHSEhISFJSUlJSUlJSUlL/2wBDAR4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHhL/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAb/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k="
                   />
@@ -132,8 +143,19 @@ export function PortfolioCard({ item }: PortfolioCardProps) {
                     currentImageIndex === index ? 'opacity-100' : 'opacity-0'
                   }`}
                   sizes="(max-width: 768px) 95vw, (max-width: 1280px) 45vw, 45vw"
-                  onError={() => {
-                    console.error('Hover image failed to load:', url);
+                  onError={(error) => {
+                    const target = error.target as HTMLImageElement;
+                    console.error('Hover image failed to load:', {
+                      url,
+                      index,
+                      naturalWidth: target.naturalWidth,
+                      naturalHeight: target.naturalHeight,
+                      currentSrc: target.currentSrc,
+                      loading: target.loading,
+                      complete: target.complete,
+                      error: error,
+                      timestamp: new Date().toISOString(),
+                    });
                     setHoverImageErrors(prev => ({ ...prev, [url]: true }));
                   }}
                   onLoad={() => {

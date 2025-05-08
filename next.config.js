@@ -20,10 +20,10 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: 'cndvlwjphohgfgydvgum.supabase.co',
+        pathname: '/storage/v1/object/public/**',
       }
     ],
-    domains: ['codahosted.io', 'cndvlwjphohgfgydvgum.supabase.co'],
-    minimumCacheTTL: 60,
+    minimumCacheTTL: 31536000, // 1 ano
     dangerouslyAllowSVG: true,
     unoptimized: false,
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048],
