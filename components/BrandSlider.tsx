@@ -39,6 +39,7 @@ export const BrandSlider = () => (
             width={160}
             height={80}
             className="w-auto h-auto max-h-full object-contain opacity-70 hover:opacity-100 transition-opacity"
+            unoptimized={true}
           />
         </div>
       ))}
@@ -68,6 +69,7 @@ export const BrandSlider = () => (
             width={160}
             height={80}
             className="w-auto h-auto max-h-full object-contain opacity-70 hover:opacity-100 transition-opacity"
+            unoptimized={true}
           />
         </div>
       ))}

@@ -157,6 +157,7 @@ export function Navigation() {
                 height={32}
                 priority
                 className="invert dark:invert-0"
+                unoptimized={true}
               />
             ) : (
               <Image
@@ -166,6 +167,7 @@ export function Navigation() {
                 height={32}
                 priority
                 className="invert dark:invert-0"
+                unoptimized={true}
               />
             )}
           </Link>

@@ -470,7 +470,7 @@ export function ProjectPageClient({ id, initialData, relatedProjects }: Props) {
                     priority={index === 0}
                     loading={index === 0 ? "eager" : "lazy"}
                     quality={100}
-                    unoptimized={mediaItem.url.toLowerCase().endsWith('.png')}
+                    unoptimized={true}
                     placeholder="blur"
                     blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDABQODxIPDRQSEBIXFRQdHx4eHRoaHSQtJSEkLzUvLy0vMC4uLzU1LzU1LzU1LzU1LzU1LzU1LzU1LzU1LzX/2wBDARUXFycdHx0dHy0dHy0dHy0dHy0dHy0dHy0dHy0dHy0dHy0dHy0dHy0dHy0dHy0dHy0dHy0dHX/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAb/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k="
                     onError={(e) => {
@@ -527,6 +527,7 @@ export function ProjectPageClient({ id, initialData, relatedProjects }: Props) {
                 className="max-h-[90vh] w-auto object-contain"
                 onClick={(e) => e.stopPropagation()}
                 quality={100}
+                unoptimized={true}
               />
             )}
           </div>
