@@ -51,6 +51,13 @@ export function PortfolioGrid({ items, tipos, initialType }: PortfolioGridProps)
     ? items.filter((item) => item.type === selectedTipo)
     : items;
 
+  // Sort items by date (newest first)
+  const sortedItems = [...filteredItems].sort((a, b) => {
+    const dateA = a.date ? new Date(a.date).getTime() : 0;
+    const dateB = b.date ? new Date(b.date).getTime() : 0;
+    return dateB - dateA;
+  });
+
   const SkeletonCard = () => (
     <motion.div
       initial={{ opacity: 0.5 }}
@@ -199,7 +206,7 @@ export function PortfolioGrid({ items, tipos, initialType }: PortfolioGridProps)
             ))
           ) : (
             // Actual content
-            filteredItems.map((item) => (
+            sortedItems.map((item) => (
               <motion.div 
                 key={item.id} 
                 className="inline-block w-full break-inside-avoid"
