@@ -8,6 +8,7 @@ import { Footer } from "@/components/footer";
 import { usePathname } from 'next/navigation';
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { type PropsWithChildren } from 'react';
+import { Analytics } from "@vercel/analytics/react";
 
 interface RootLayoutProps extends PropsWithChildren {
   // Adicione props específicas do layout aqui se necessário
@@ -35,6 +36,7 @@ export function RootLayout({ children }: RootLayoutProps) {
             </PageTransition>
           </div>
           {showFooter && <Footer />}
+          <Analytics />
         </main>
       </I18nProvider>
     </ThemeProvider>

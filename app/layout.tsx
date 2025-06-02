@@ -3,6 +3,7 @@ import "./globals.css";
 import type { Metadata, Viewport } from 'next';
 import { Analytics } from "@vercel/analytics/react";
 import { RootLayout } from "./_components/layouts/root-layout";
+import { SpeedInsights } from "@vercel/speed-insights/next"
 
 const manrope = Manrope({
   subsets: ['latin'],
@@ -10,9 +11,7 @@ const manrope = Manrope({
   variable: '--font-manrope',
 });
 
-const defaultUrl = process.env.VERCEL_URL
-  ? `https://${process.env.VERCEL_URL}`
-  : "https://www.visant.co";
+const defaultUrl = "https://www.visant.co";
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -35,12 +34,12 @@ export const metadata: Metadata = {
   },
   openGraph: {
     type: 'website',
-    locale: 'en_US',
-    alternateLocale: 'pt_BR',
+    locale: 'pt_BR',
+    alternateLocale: 'en_US',
     url: defaultUrl,
     siteName: 'Visant® Studio',
     title: 'Visant® Studio',
-    description: 'Visant® Studio - Where visionary brands are born',
+    description: 'Visant® Studio - Criando marcas para empreendedores visionários',
     images: [
       {
         url: '/assets/og-image.jpg',
@@ -53,8 +52,8 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'Visant® Studio',
-    description: 'Visant Studio - Where visionary brands are born',
-    images: ['/assets/og-image.jpg'],
+    description: 'Visant Studio - Criando marcas para empreendedores visionários',
+    images: ['https://www.visant.co/assets/og-image.jpg'],
     creator: '@visant_co',
     site: '@visant_co',
   },
@@ -72,9 +71,10 @@ export default function Layout({
   return (
     <html lang="en" className={`${manrope.variable} font-sans`} suppressHydrationWarning>
       <body className="bg-background text-foreground">
-        <RootLayout>
-          {children}
-        </RootLayout>
+        <SpeedInsights />
+          <RootLayout>
+            {children}
+          </RootLayout>
         <Analytics />
       </body>
     </html>
