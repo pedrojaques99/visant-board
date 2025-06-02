@@ -22,8 +22,15 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL(defaultUrl),
   title: "Visant® Studio",
-  description: "Visant Studio - Where visionary brands are born",
-  keywords: ["branding", "design", "visual identity", "project management", "dashboard", "studio", "creative", "agency", "digital", "marketing", "branding", "design", "visual identity", "project management", "dashboard", "studio", "creative", "agency", "digital", "marketing"],
+  description: "Visant Studio - Criando marcas para empreendedores visionários",
+  keywords: [
+    "branding", "design", "identidade visual", "gestão de projetos", "dashboard",
+    "estúdio criativo", "agência digital", "marketing digital", "empreendedorismo",
+    "empreendedor", "negócios", "startup", "logo", "logotipo", "marca", "criação de marca",
+    "consultoria de branding", "design gráfico", "projeto visual", "inovação", "criatividade",
+    "identidade de marca", "posicionamento de marca", "estratégia de marca", "branding para startups",
+    "branding para empresas", "branding digital", "branding pessoal", "branding corporativo"
+  ],
   authors: [{ name: "Visant®" }],
   creator: "Visant®",
   publisher: "Visant®",
