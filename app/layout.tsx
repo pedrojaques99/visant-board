@@ -49,10 +49,10 @@ export const metadata: Metadata = {
     description: 'Visant® Studio - Criando marcas para empreendedores visionários',
     images: [
       {
-        url: '/assets/og-image.jpg',
+        url: 'https://cndvlwjphohgfgydvgum.supabase.co/storage/v1/object/public/portfolio/Visant/WhatsApp%20Image%202022-08-09%20at%2014.21.47.jpeg',
         width: 1200,
         height: 630,
-        alt: 'Visant® Studio Preview',
+        alt: 'Visant® Studio Website and Portfolio',
       }
     ],
   },
