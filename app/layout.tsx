@@ -60,7 +60,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Visant® Studio',
     description: 'Visant Studio - Criando marcas para empreendedores visionários',
-    images: ['https://www.visant.co/assets/og-image.jpg'],
+    images: ['https://cndvlwjphohgfgydvgum.supabase.co/storage/v1/object/public/portfolio/Visant/WhatsApp%20Image%202022-08-09%20at%2014.21.47.jpeg'],
     creator: '@visant_co',
     site: '@visant_co',
   },
